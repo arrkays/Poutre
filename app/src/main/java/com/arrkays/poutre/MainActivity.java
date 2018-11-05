@@ -13,6 +13,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,11 +27,16 @@ public class MainActivity extends AppCompatActivity {
     MyBluetoothService BTServices;
     BluetoothAdapter mBluetoothAdapter = null;
     String TAG = "debug-bluetooth";
+    Graph graph = null;
+    TextView monPoid = null;
+    TextView currentPull = null;
+    TextView record = null;
+
     public Handler myHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.arg1 == 1){
-                bluetoothClient();
+            if(msg.arg1 == Res.BTDATA){
+                pullUptade(Double.parseDouble(msg.obj.toString()));
             }
         }
     };
@@ -40,14 +46,50 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkPrehension();
+        graph = (Graph)findViewById(R.id.graph);
+        graph.handler = myHandler;
 
-        Graph g = (Graph)findViewById(R.id.graph);
+        monPoid = (TextView)findViewById(R.id.monPoid);
+        record = (TextView)findViewById(R.id.record);
+        currentPull = (TextView)findViewById(R.id.currentPull);
 
         Log.d("debug-bluetooth", "device bond state : "+BluetoothDevice.DEVICE_TYPE_LE);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        checkPrehension();
+
         //new AcceptThread().start();
         //bluetoothClient();
+    }
+
+    /**
+     * vérifie si aucune préhension existe. si c'est le cas en créée une
+     */
+    private void checkPrehension() {
+        if(Res.currentPrehension == null){
+            if(Res.prehensions.size() == 0){
+                Res.currentPrehension = new Prehension("Default");
+                Res.prehensions.add(Res.currentPrehension);
+            }
+            else{
+                Res.prehensions.get(0);
+            }
+        }
+    }
+
+    /**
+     * updatePullexercice
+     * @param pull
+     */
+    public void pullUptade(double pull){
+        graph.setPull(pull);
+        if(pull>Res.currentPrehension.maxPull) {//verifie si le record est batue
+            //TODO Faire annimation est feedback sonnor
+            Res.currentPrehension.maxPull = pull;
+            record.setText(pull+" Kg");
+        }
+        currentPull.setText(pull+" Kg");
     }
 
     void bluetoothClient(){

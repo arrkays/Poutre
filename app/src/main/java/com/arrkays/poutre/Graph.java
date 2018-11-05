@@ -27,9 +27,11 @@ public class Graph extends View {
     int width;
     int height;
     double ratio = 0.9;//ratio beetween sub weight pull and fuul graph
+    double ratio2 = 0.5;//ratio beetween half weight pull and fuul graph
     Rect rec = new Rect();
     public int max;
     private Paint p = new Paint();
+    public Handler handler = null;
 
     public Graph(Context c, AttributeSet attrs) {
         super(c, attrs);
@@ -57,6 +59,8 @@ public class Graph extends View {
         p.setStyle(Paint.Style.FILL);
         if(poid==0)
             poid =60;
+
+        //bare vert
         int top = (int)(((double)height*ratio) * pull/poid);
         rec.bottom = height;
         rec.left = 0;
@@ -64,37 +68,51 @@ public class Graph extends View {
         rec.top = height-top;
         c.drawRect(rec, p);
 
+        //bar orange
+        if(ratio2 <= pull/poid){
+            Log.d(TAG,"Orange, height:"+height+" , bottom: "+(int)(double)(((height*ratio))*ratio2)+" top: "+(height-top));
+            rec.set(0,height-top, width,height-(int)(double)(((height*ratio))*ratio2));
+            p.setColor(Color.rgb(255,140 ,0));
+            c.drawRect(rec, p);
+        }
+
         //bar rouge si pull depace poid
         if(1 <= pull/poid){
-            rec.set(0,height-top,width,(int)(height*(1-ratio)));
+            rec.set(0,height-top, width, (int)(height*(1-ratio)));
             p.setColor(Color.RED);
             c.drawRect(rec, p);
         }
 
         //bare max
-        top = (int)(((double)height*ratio) * maxPull/poid);
+        int topBar = (int)(((double)height*ratio) * maxPull/poid);
+        if(topBar>height-32)
+            topBar=height - 32;
         p.setColor(Color.BLACK);
-        rec.set(0,height-top-4,width,height-top);
+        rec.set(0,height-topBar-4,width,height-topBar);
         c.drawRect(rec, p);
 
         //text
         p.setTextSize(30);
-        c.drawText(maxPull+" Kg",2,height-top-12,p);
-    }
 
-    private getTop
+        c.drawText(maxPull+" Kg ("+(int)((pull/poid)*100)+"%)",2,height-topBar-12,p);
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.d(TAG,"pull"+pull);
-        super.invalidate();
+        double p;
         if(event.getY() > (height/2)){
-            setPull(pull-1);
+            p = -1;
         }
         else
         {
-            setPull(pull+1);
+            p = +1;
         }
+        Message msg= new Message();
+        msg.arg1=Res.BTDATA;
+        msg.obj=(pull+p)+"";
+        handler.sendMessage(msg);
+
         return super.onTouchEvent(event);
     }
 }
