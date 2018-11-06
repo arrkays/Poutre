@@ -93,8 +93,10 @@ public class Graph extends View {
 
         //text
         p.setTextSize(30);
-
-        c.drawText(maxPull+" Kg ("+(int)((pull/poid)*100)+"%)",2,height-topBar-12,p);
+        if(Res.POID == 0)
+            c.drawText(maxPull+" Kg",2,height-topBar-12,p);
+        else
+            c.drawText(maxPull+" Kg ("+Res.getPour(pull)+"%)",2,height-topBar-12,p);
     }
 
     @Override

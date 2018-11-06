@@ -27,10 +27,15 @@ public class MainActivity extends AppCompatActivity {
     MyBluetoothService BTServices;
     BluetoothAdapter mBluetoothAdapter = null;
     String TAG = "debug-bluetooth";
+
+    //VIEW
     Graph graph = null;
     TextView monPoid = null;
     TextView currentPull = null;
     TextView record = null;
+    TextView recordPullPour = null;
+    TextView currentPullPour = null;
+
 
     public Handler myHandler = new Handler(){
         @Override
@@ -53,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         monPoid = (TextView)findViewById(R.id.monPoid);
         record = (TextView)findViewById(R.id.record);
         currentPull = (TextView)findViewById(R.id.currentPull);
+        recordPullPour = (TextView)findViewById(R.id.recordPullPourcentage);
+        currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
 
         Log.d("debug-bluetooth", "device bond state : "+BluetoothDevice.DEVICE_TYPE_LE);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -86,10 +93,17 @@ public class MainActivity extends AppCompatActivity {
         graph.setPull(pull);
         if(pull>Res.currentPrehension.maxPull) {//verifie si le record est batue
             //TODO Faire annimation est feedback sonnor
-            Res.currentPrehension.maxPull = pull;
+            Res.currentPrehension.setRecordPull(pull);
             record.setText(pull+" Kg");
+            recordPullPour.setText(Res.currentPrehension.pourcentage+"%");
+            recordPullPour.setText(Res.getPour(pull)+"%");
         }
         currentPull.setText(pull+" Kg");
+        if(Res.getPour(pull) == 0)
+            currentPullPour.setText("");
+        else
+            currentPullPour.setText(Res.getPour(pull)+"%");
+
     }
 
     void bluetoothClient(){

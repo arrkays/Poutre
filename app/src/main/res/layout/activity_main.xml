@@ -75,4 +75,19 @@
 
     </com.arrkays.poutre.Graph>
 
+    <TextView
+        android:id="@+id/currentPullPoucentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/currentPull" />
+
+    <TextView
+        android:id="@+id/recordPullPourcentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/record"
+        app:layout_constraintTop_toBottomOf="@+id/record" />
+
 </android.support.constraint.ConstraintLayout>
