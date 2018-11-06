@@ -5,8 +5,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +25,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.Permission;
 import java.util.Set;
 import java.util.UUID;
 
@@ -70,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
         BTbutton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                BTConnexion.startConnexionBT(ma);
+                //BTConnexion.startConnexionBT(ma);
+                ble();
                 return false;
             }
         });
@@ -83,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         //new AcceptThread().start();
         //bluetoothClient();
+        ble();
     }
 
     /**
@@ -121,7 +128,59 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /*
+
+    void ble(){
+        if (mBluetoothAdapter != null) {
+            Log.d(TAG, "bluetooth activé");
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+            if (pairedDevices.size() > 0) {
+                Log.d("debug-bluetooth", "device paired: ");
+                // There are paired devices. Get the name and address of each paired device.
+                for (BluetoothDevice device : pairedDevices) {
+                    if (device.getName().equals("POUTRE")) {
+                        board = device;
+                    }
+                }
+            }
+        }
+
+        if(board != null){
+
+            //call back
+            BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+                @Override
+                public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+                    super.onDescriptorRead(gatt, descriptor, status);
+                    Log.d(TAG, "ondescription!!!");
+                }
+
+                @Override
+                public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                    super.onCharacteristicWrite(gatt, characteristic, status);
+                    Log.d(TAG, "onchar!!!");
+                }
+            };
+
+
+
+            BluetoothGatt mBluetoothGatt = board.connectGatt(this, false, mGattCallback);
+            Log.d(TAG,"bt connecter");
+
+            BluetoothGattCharacteristic bChar = new BluetoothGattCharacteristic(UUID.fromString("0000"),25,1);
+            mBluetoothGatt.writeCharacteristic(bChar);
+
+
+            BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.d(TAG,"coucou callback");
+                }
+            };
+        }
+
+
+    }
+
     void bluetoothClient(){
         if (mBluetoothAdapter != null) {
             Log.d(TAG, "bluetooth activé");
