@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     MyBluetoothService BTServices;
     BluetoothAdapter mBluetoothAdapter = null;
     String TAG = "debug-bluetooth";
-
+    MainActivity ma = this;
     //VIEW
     Graph graph = null;
     TextView monPoid = null;
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         BTbutton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                BTConnexion.startConnexionBT();
+                BTConnexion.startConnexionBT(ma);
                 return false;
             }
         });
