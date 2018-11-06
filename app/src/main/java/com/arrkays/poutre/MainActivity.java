@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         //new AcceptThread().start();
         //bluetoothClient();
-        ble();
+        //ble();
     }
 
     /**
