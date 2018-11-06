@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         checkPrehension();
 
         //new AcceptThread().start();
-        //bluetoothClient();
+        bluetoothClient();
     }
 
     /**
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     void bluetoothClient(){
         if (mBluetoothAdapter != null) {
-            Log.d("debug-bluetooth", "bluetooth activé");
+            Log.d(TAG, "bluetooth activé");
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
             if (pairedDevices.size() > 0) {
                 Log.d("debug-bluetooth", "device paired: ");
@@ -117,11 +117,11 @@ public class MainActivity extends AppCompatActivity {
                     if(device.getName().equals("POUTRE")) {
                         board = device;
 
-                        Log.d("debug-bluetooth", "name : " + device.getName());
-                        Log.d("debug-bluetooth", "bond state : " + device.getBondState());
-                        Log.d("debug-bluetooth", "type : " + device.getType());
-                        Log.d("debug-bluetooth", "uuids : " + device.getUuids());
-                        Log.d("debug-bluetooth", "Mac Adresse : " + device.getAddress());
+                        Log.d("debug-bluetooth", "name : " + board.getName());
+                        Log.d("debug-bluetooth", "bond state : " + board.getBondState());
+                        Log.d("debug-bluetooth", "type : " + board.getType());
+                        Log.d("debug-bluetooth", "uuids : " + board.getUuids());
+                        Log.d("debug-bluetooth", "Mac Adresse : " + board.getAddress());
                         Log.d("debug-bluetooth", "------------------------");
                     }
                 }
