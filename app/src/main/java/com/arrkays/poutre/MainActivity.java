@@ -13,6 +13,9 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -55,11 +58,23 @@ public class MainActivity extends AppCompatActivity {
         graph = (Graph)findViewById(R.id.graph);
         graph.handler = myHandler;
 
+        //instanciation des Views
         monPoid = (TextView)findViewById(R.id.monPoid);
         record = (TextView)findViewById(R.id.record);
         currentPull = (TextView)findViewById(R.id.currentPull);
         recordPullPour = (TextView)findViewById(R.id.recordPullPourcentage);
         currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
+        Button BTbutton = (Button)findViewById(R.id.buttonTestBT);
+
+        //Event
+        BTbutton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                BTConnexion.startConnexionBT();
+                return false;
+            }
+        });
+
 
         Log.d("debug-bluetooth", "device bond state : "+BluetoothDevice.DEVICE_TYPE_LE);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -67,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         checkPrehension();
 
         //new AcceptThread().start();
-        bluetoothClient();
+        //bluetoothClient();
     }
 
     /**
@@ -106,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*
     void bluetoothClient(){
         if (mBluetoothAdapter != null) {
             Log.d(TAG, "bluetooth activé");
@@ -158,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*
     private class AcceptThread extends Thread {
         private final BluetoothServerSocket mmServerSocket;
 
@@ -211,5 +228,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    */
 }
 
