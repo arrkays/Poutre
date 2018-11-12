@@ -7,8 +7,12 @@ public class Res {
     /**
      * data from  bluetooth device
      */
-    public static int BTDATA=1;
+    public static int BT_DATA=1;
 
+    /**
+     * update le statu du bluetooth: connecter ou non
+     */
+    public static int BT_STATUS_UPDATE = 2;
     /**
      * poid de l'utilisateur
      */

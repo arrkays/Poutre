@@ -117,7 +117,7 @@ public class BT {
                     @Override
                     public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
                         Message msg= new Message();
-                        msg.arg1=Res.BTDATA;
+                        msg.arg1=Res.BT_DATA;
                         msg.obj=byteToString(characteristic.getValue());
                         ma.myHandler.sendMessage(msg);
                     }
@@ -134,6 +134,11 @@ public class BT {
      */
     private void BTconected(boolean b) {
         connected = b;
+        Message msg = new Message();
+        msg.arg1 = Res.BT_STATUS_UPDATE;
+        msg.obj = b;
+        ma.myHandler.sendMessage(msg);
+
         if(b){
             //TODO afficher feedback dans menu
         }

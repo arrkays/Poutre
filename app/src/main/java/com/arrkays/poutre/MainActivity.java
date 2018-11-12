@@ -15,6 +15,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -41,18 +42,21 @@ public class MainActivity extends AppCompatActivity {
     TextView record = null;
     TextView recordPullPour = null;
     TextView currentPullPour = null;
-
+    Button BTbutton = null;
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.arg1 == Res.BTDATA){
+            if(msg.arg1 == Res.BT_DATA){// données en provenance du module blutoooth
                 try {
                     pullUptade(Double.parseDouble(msg.obj.toString()));
                 }
                 catch(NumberFormatException e){
                     pullUptade(0);
                 }
+            }
+            else if(msg.arg1 == Res.BT_STATUS_UPDATE){
+                bluetoothUpdate((boolean) msg.obj);
             }
         }
     };
@@ -74,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         currentPull = (TextView)findViewById(R.id.currentPull);
         recordPullPour = (TextView)findViewById(R.id.recordPullPourcentage);
         currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
-        Button BTbutton = (Button)findViewById(R.id.buttonTestBT);
+        BTbutton = (Button)findViewById(R.id.buttonTestBT);
 
         //Event
         BTbutton.setOnTouchListener(new View.OnTouchListener() {
@@ -124,12 +128,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private String byteToString(byte[] tab){
-        String msg="";
-        for(byte b : tab){
-            msg += (char)(b & 0xFF);
+    /**
+     * feedback graphique en fonction de l'etat de la connexion bluetooth
+     */
+    public void bluetoothUpdate(boolean activer){
+        if(activer){
+            BTbutton.setBackgroundColor(Color.GREEN);
         }
-        return msg;
+        else{
+            BTbutton.setBackgroundColor(Color.RED);
+        }
     }
 }
 
