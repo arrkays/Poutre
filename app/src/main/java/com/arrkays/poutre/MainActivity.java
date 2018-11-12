@@ -25,28 +25,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.Permission;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    BluetoothDevice board = null;
-    MyBluetoothService BTServices;
-    BluetoothAdapter mBluetoothAdapter = null;
-    String TAG = "debug-bluetooth";
-    MainActivity ma = this;
-    BluetoothGatt bluetoothGatt = null;
 
-    final UUID serviceUUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
-    final UUID charUUID = UUID.fromString("ffe1-0000-1000-8000-00805f9b34fb");
-    final UUID configChar = UUID.fromString("00002901-0000-1000-8000-00805f9b34fb");
+    String TAG = "debug-bluetooth";
+    BT blutoothManager = null;
 
     //VIEW
     Graph graph = null;
@@ -56,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     TextView recordPullPour = null;
     TextView currentPullPour = null;
 
-
+    //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -76,11 +62,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         checkPrehension();
-        graph = (Graph)findViewById(R.id.graph);
         graph.handler = myHandler;
+        blutoothManager = new BT(this);
 
         //instanciation des Views
+        graph = (Graph)findViewById(R.id.graph);
         monPoid = (TextView)findViewById(R.id.monPoid);
         record = (TextView)findViewById(R.id.record);
         currentPull = (TextView)findViewById(R.id.currentPull);
@@ -88,35 +76,17 @@ public class MainActivity extends AppCompatActivity {
         currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
         Button BTbutton = (Button)findViewById(R.id.buttonTestBT);
 
+
         //Event
         BTbutton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                //BTConnexion.startConnexionBT(ma);
-                ble();
+                blutoothManager.connect();
                 return false;
             }
         });
 
-        record.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                BluetoothGattCharacteristic characteristic = bluetoothGatt.getService(serviceUUID).getCharacteristic(charUUID);
-                characteristic.setValue(new byte[] {65,65,65,65});
-                bluetoothGatt.writeCharacteristic(characteristic);
-                return false;
-            }
-        });
-
-
-        Log.d("debug-bluetooth", "device bond state : "+BluetoothDevice.DEVICE_TYPE_LE);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        checkPrehension();
-
-        //new AcceptThread().start();
-        //bluetoothClient();
-        ble();
+        blutoothManager.connect();
     }
 
     /**
@@ -153,79 +123,6 @@ public class MainActivity extends AppCompatActivity {
         else
             currentPullPour.setText(Res.getPour(pull)+"%");
 
-    }
-
-
-    void ble(){
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            //startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-        else {
-            Log.d(TAG, "bluetooth activé");
-            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-            if (pairedDevices.size() > 0) {
-                Log.d("debug-bluetooth", "device paired: ");
-                // There are paired devices. Get the name and address of each paired device.
-                for (BluetoothDevice device : pairedDevices) {
-                    Log.d("debug-bluetooth", device.getName());
-                    if (device.getName().equals("POUTRE")) {
-                        board = device;
-                    }
-                }
-            }
-        }
-
-
-        if(board != null){
-
-            //call back
-            BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
-
-                @Override
-                public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-
-                    if(newState == BluetoothProfile.STATE_CONNECTED){
-                        Log.d(TAG,"STATE_CONNECTED");
-                        Log.d(TAG,"discover services "+gatt.discoverServices());
-                    }
-                }
-
-                @Override
-                // New services discovered
-                public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-
-                    BluetoothGattCharacteristic characteristic = gatt.getService(serviceUUID).getCharacteristic(charUUID);
-                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(configChar);
-                    gatt.setCharacteristicNotification(characteristic, true);
-
-                    //input
-                    descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                    gatt.writeDescriptor(descriptor);
-
-                    //output
-                    BluetoothGattDescriptor descriptorOut = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
-                    descriptorOut.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
-                    gatt.writeDescriptor(descriptorOut);
-                  }
-
-                @Override
-                public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                    Log.d(TAG, "le msg :\""+byteToString(characteristic.getValue())+"\" abien été envoyer");
-                }
-
-                @Override
-                public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-                    Log.d(TAG,"msg : "+byteToString(characteristic.getValue()));
-                    Message msg= new Message();
-                    msg.arg1=Res.BTDATA;
-                    msg.obj=byteToString(characteristic.getValue());
-                    myHandler.sendMessage(msg);
-                }
-            };
-
-            bluetoothGatt = board.connectGatt(this, true, mGattCallback);
-        }
     }
 
     private String byteToString(byte[] tab){
