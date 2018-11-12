@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
         Button BTbutton = (Button)findViewById(R.id.buttonTestBT);
 
-
         //Event
         BTbutton.setOnTouchListener(new View.OnTouchListener() {
             @Override
