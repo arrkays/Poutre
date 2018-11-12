@@ -61,7 +61,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.arg1 == Res.BTDATA){
-                pullUptade(Double.parseDouble(msg.obj.toString()));
+                try {
+                    pullUptade(Double.parseDouble(msg.obj.toString()));
+                }
+                catch(NumberFormatException e){
+                    pullUptade(0);
+                }
             }
         }
     };
@@ -176,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
 
             //call back
             BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
 
@@ -183,34 +189,11 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG,"STATE_CONNECTED");
                         Log.d(TAG,"discover services "+gatt.discoverServices());
                     }
-
                 }
 
                 @Override
                 // New services discovered
                 public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-
-                    /*Log.d(TAG, "callback onServicesDiscovered ");
-                    Log.d(TAG, "list of Services: ");
-                    for(BluetoothGattService e : gatt.getServices()){
-                        Log.d(TAG, e.toString());
-                        Log.d(TAG, "service uuid "+e.getUuid());
-                        Log.d(TAG, "Characteristic of this service : ");
-                        for(BluetoothGattCharacteristic c : e.getCharacteristics()){
-                            Log.d(TAG, "    "+c.toString());
-                            Log.d(TAG, "    value "+c.getValue());
-                            Log.d(TAG, "    uuid "+c.getUuid());
-                            Log.d(TAG, "    descriptor of the characteristique : ");
-                            for(BluetoothGattDescriptor d : c.getDescriptors()){
-                                Log.d(TAG, "        "+d.toString());
-                                Log.d(TAG, "        "+d.getUuid());
-                                d.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                                gatt.writeDescriptor(d);
-                                gatt.setCharacteristicNotification(c, true);
-                            }
-                        }
-                    }*/
-
 
                     BluetoothGattCharacteristic characteristic = gatt.getService(serviceUUID).getCharacteristic(charUUID);
                     BluetoothGattDescriptor descriptor = characteristic.getDescriptor(configChar);
@@ -227,35 +210,30 @@ public class MainActivity extends AppCompatActivity {
                   }
 
                 @Override
-                public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-                    Log.d(TAG,"onDescriptorWrite");
-                }
-
-                @Override
-                public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-                    Log.d(TAG, "onDescriptorRead!!!");
-                }
-
-
-
-                @Override
                 public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                    Log.d(TAG, "onchar!!!");
+                    Log.d(TAG, "le msg :\""+byteToString(characteristic.getValue())+"\" abien été envoyer");
                 }
 
                 @Override
                 public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-                    String msg="";
-                    for(byte b : characteristic.getValue()){
-
-                        msg += (char)(b & 0xFF);
-                    }
-                    Log.d(TAG,"msg : "+msg);
+                    Log.d(TAG,"msg : "+byteToString(characteristic.getValue()));
+                    Message msg= new Message();
+                    msg.arg1=Res.BTDATA;
+                    msg.obj=byteToString(characteristic.getValue());
+                    myHandler.sendMessage(msg);
                 }
             };
 
             bluetoothGatt = board.connectGatt(this, true, mGattCallback);
         }
+    }
+
+    private String byteToString(byte[] tab){
+        String msg="";
+        for(byte b : tab){
+            msg += (char)(b & 0xFF);
+        }
+        return msg;
     }
 }
 
