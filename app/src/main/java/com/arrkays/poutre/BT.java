@@ -33,7 +33,6 @@ public class BT {
     MainActivity ma;
     public BT(MainActivity a){
         ma = a;
-        connect();
     }
 
     public void connect(){

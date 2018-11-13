@@ -16,6 +16,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +26,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.Set;
 import java.util.UUID;
@@ -42,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
     TextView record = null;
     TextView recordPullPour = null;
     TextView currentPullPour = null;
-    Button BTbutton = null;
+    ImageView bluetoothOn = null;
+    ImageView bluetoothOff = null;
+
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
         @Override
@@ -67,10 +71,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkPrehension();
-        graph.handler = myHandler;
-        blutoothManager = new BT(this);
-
         //instanciation des Views
         graph = (Graph)findViewById(R.id.graph);
         monPoid = (TextView)findViewById(R.id.monPoid);
@@ -78,17 +78,23 @@ public class MainActivity extends AppCompatActivity {
         currentPull = (TextView)findViewById(R.id.currentPull);
         recordPullPour = (TextView)findViewById(R.id.recordPullPourcentage);
         currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
-        BTbutton = (Button)findViewById(R.id.buttonTestBT);
+        bluetoothOff = (ImageView) findViewById(R.id.bluetoothNotActiv);
+        bluetoothOn = (ImageView) findViewById(R.id.bluetoothActiv);
+        graph.handler = myHandler;
 
         //Event
-        BTbutton.setOnTouchListener(new View.OnTouchListener() {
+        bluetoothOff.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                Log.d(TAG,"touche");
                 blutoothManager.connect();
                 return false;
             }
         });
 
+        //instruction
+        checkPrehension();
+        blutoothManager = new BT(this);
         blutoothManager.connect();
     }
 
@@ -133,10 +139,12 @@ public class MainActivity extends AppCompatActivity {
      */
     public void bluetoothUpdate(boolean activer){
         if(activer){
-            BTbutton.setBackgroundColor(Color.GREEN);
+            bluetoothOff.setVisibility(View.GONE);
+            bluetoothOn.setVisibility(View.VISIBLE);
         }
         else{
-            BTbutton.setBackgroundColor(Color.RED);
+            bluetoothOn.setVisibility(View.GONE);
+            bluetoothOff.setVisibility(View.VISIBLE);
         }
     }
 }

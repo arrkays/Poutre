@@ -111,7 +111,7 @@ public class Graph extends View {
             p = +1;
         }
         Message msg= new Message();
-        msg.arg1=Res.BTDATA;
+        msg.arg1=Res.BT_DATA;
         msg.obj=(pull+p)+"";
         handler.sendMessage(msg);
 
