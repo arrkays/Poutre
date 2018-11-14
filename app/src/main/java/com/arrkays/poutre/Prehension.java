@@ -32,4 +32,9 @@ public class Prehension {
         pourcentage = Res.getPour(pull);
         dateRecord =  Calendar.getInstance().getTime();
     }
+
+    @Override
+    public String toString() {
+        return nom;
+    }
 }

@@ -25,8 +25,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.Set;
 import java.util.UUID;
@@ -46,18 +49,15 @@ public class MainActivity extends AppCompatActivity {
     TextView currentPullPour = null;
     ImageView bluetoothOn = null;
     ImageView bluetoothOff = null;
+    Spinner spinnerPrise = null;
 
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             if(msg.arg1 == Res.BT_DATA){// données en provenance du module blutoooth
-                try {
-                    pullUptade(Double.parseDouble(msg.obj.toString()));
-                }
-                catch(NumberFormatException e){
-                    pullUptade(0);
-                }
+                pullUptade((double) msg.obj);
+                Res.weightNotif.updateWeight((double) msg.obj);
             }
             else if(msg.arg1 == Res.BT_STATUS_UPDATE){
                 bluetoothUpdate((boolean) msg.obj);
@@ -80,7 +80,17 @@ public class MainActivity extends AppCompatActivity {
         currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
         bluetoothOff = (ImageView) findViewById(R.id.bluetoothNotActiv);
         bluetoothOn = (ImageView) findViewById(R.id.bluetoothActiv);
+        spinnerPrise = (Spinner) findViewById(R.id.selectPrise);
         graph.handler = myHandler;
+
+        //Ajouter prehenssion dans select
+        updateSpinner();
+        addAddButton();
+        //instruction
+        checkPrehension();
+        blutoothManager = new BT(this);
+        blutoothManager.connect();
+
 
         //Event
         bluetoothOff.setOnTouchListener(new View.OnTouchListener() {
@@ -92,10 +102,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //instruction
-        checkPrehension();
-        blutoothManager = new BT(this);
-        blutoothManager.connect();
+        spinnerPrise.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, parent.getItemAtPosition(position).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     /**
@@ -146,6 +163,20 @@ public class MainActivity extends AppCompatActivity {
             bluetoothOn.setVisibility(View.GONE);
             bluetoothOff.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void updateSpinner(){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, Res.getListPrehenssionString());
+        adapter.add("ajouter †");
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinnerPrise.setAdapter(adapter);
+    }
+
+    /**
+     * ajout du bouton ajout prenssion
+     */
+    private void addAddButton() {
     }
 }
 
