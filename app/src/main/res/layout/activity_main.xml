@@ -101,4 +101,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/monPoid" />
 
+    <Button
+        android:id="@+id/buttonBodyWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BodyWeight"
+        app:layout_constraintEnd_toEndOf="@+id/buttonTestBT"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/buttonTestBT"
+        app:layout_constraintTop_toBottomOf="@+id/buttonTestBT" />
+
+    <Button
+        android:id="@+id/zeroButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zero"
+        app:layout_constraintStart_toStartOf="@+id/buttonBodyWeight"
+        app:layout_constraintTop_toBottomOf="@+id/buttonBodyWeight" />
+
 </android.support.constraint.ConstraintLayout>

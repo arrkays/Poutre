@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     String TAG = "debug-bluetooth";
     BT blutoothManager = null;
+    WeightFunctions bodyWeight = null; // class pout mesuré le poids d'un mec ou d'une meuf, nous ne sommes pas sexiste
 
     //VIEW
     Graph graph = null;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     TextView recordPullPour = null;
     TextView currentPullPour = null;
     Button BTbutton = null;
+    Button bodyWeightButton = null;
+    Button zeroButton = null;
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
         @Override
@@ -68,8 +71,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         checkPrehension();
-        graph.handler = myHandler;
+
         blutoothManager = new BT(this);
+        bodyWeight = new WeightFunctions(this);
 
         //instanciation des Views
         graph = (Graph)findViewById(R.id.graph);
@@ -79,7 +83,10 @@ public class MainActivity extends AppCompatActivity {
         recordPullPour = (TextView)findViewById(R.id.recordPullPourcentage);
         currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
         BTbutton = (Button)findViewById(R.id.buttonTestBT);
+        bodyWeightButton = (Button)findViewById(R.id.buttonBodyWeight);
+        zeroButton = (Button)findViewById(R.id.zeroButton);
 
+        graph.handler = myHandler;
         //Event
         BTbutton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -90,6 +97,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
         blutoothManager.connect();
+
+        bodyWeightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bodyWeight.bodyWeightAsked = true;
+                Log.i(TAG, "body weight asked");
+            }
+        });
+        zeroButton.setOnClickListener(new View.OnClickListener() { // Pour remettre à zero
+            @Override
+            public void onClick(View v) {
+                blutoothManager.sendMsg("z");
+                Log.i(TAG, "Remise à zéro");
+            }
+        });
     }
 
     /**
@@ -112,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
      * @param pull
      */
     public void pullUptade(double pull){
+        Res.currentWeight = pull;    // actualisation du poids dans ressources
+        bodyWeight.onWeightChange(Res.currentWeight); //
         graph.setPull(pull);
         if(pull>Res.currentPrehension.maxPull) {//verifie si le record est batue
             //TODO Faire annimation est feedback sonnor
