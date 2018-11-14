@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     Button BTbutton = null;
     Button bodyWeightButton = null;
     Button zeroButton = null;
+    Button suspensionsButton = null;
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
         @Override
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         BTbutton = (Button)findViewById(R.id.buttonTestBT);
         bodyWeightButton = (Button)findViewById(R.id.buttonBodyWeight);
         zeroButton = (Button)findViewById(R.id.zeroButton);
+        suspensionsButton = (Button)findViewById(R.id.suspensionsButton);
+
 
         graph.handler = myHandler;
         //Event
@@ -109,6 +112,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 blutoothManager.sendMsg("z");
                 Log.i(TAG, "Remise à zéro");
+            }
+        });
+        suspensionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SuspensionsActivity.class);
+                startActivity(intent);
             }
         });
     }

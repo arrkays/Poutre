@@ -22,6 +22,8 @@ public class Res {
     public static ArrayList<Prehension> prehensions = new ArrayList<Prehension>();
 
     public static Prehension currentPrehension;
+    public static double currentWeight;
+
 
     /**
      * ajouter ou suprimer listener pour etre notifier des changement de poid
