@@ -33,7 +33,6 @@ public class BT {
     MainActivity ma;
     public BT(MainActivity a){
         ma = a;
-        connect();
     }
 
     public void connect(){
@@ -116,9 +115,16 @@ public class BT {
 
                     @Override
                     public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+                        double weight;
+                        try {
+                            weight = Double.parseDouble(byteToString(characteristic.getValue()));
+                        }
+                        catch(NumberFormatException e){
+                            weight = 0;
+                        }
                         Message msg= new Message();
                         msg.arg1=Res.BT_DATA;
-                        msg.obj=byteToString(characteristic.getValue());
+                        msg.obj=weight;
                         ma.myHandler.sendMessage(msg);
                     }
                 };
