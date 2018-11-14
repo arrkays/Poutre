@@ -88,11 +88,10 @@ public class MainActivity extends AppCompatActivity {
 
         graph.handler = myHandler;
         //Event
-        BTbutton.setOnTouchListener(new View.OnTouchListener() {
+        BTbutton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View v) {
                 blutoothManager.connect();
-                return false;
             }
         });
 
