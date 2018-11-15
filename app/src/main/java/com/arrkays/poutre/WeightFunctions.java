@@ -21,7 +21,7 @@ public class WeightFunctions {
     WeightListener weightListenerBody = new WeightListener() {
         @Override
         public void onChange(double weight) {
-            if (bodyWeightAsked && (weight > minWeight)){
+            if (weight > minWeight){
                 weightMeasures.add(weight);
                 if (weightMeasures.size() == 1){
                     timeFirstMeasure = Calendar.getInstance().getTimeInMillis();

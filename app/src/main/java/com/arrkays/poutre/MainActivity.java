@@ -96,11 +96,13 @@ public class MainActivity extends AppCompatActivity {
         //Ajouter prehenssion dans select
         updateSpinner();
         addAddButton();
+
         //instruction
         checkPrehension();
         blutoothManager = new BT(this);
         blutoothManager.connect();
         weightFunctions = new WeightFunctions(this); // instantiation de la classe pour mesurer le poids de corps
+
 
         //Event
         bluetoothOff.setOnClickListener(new View.OnClickListener() {
