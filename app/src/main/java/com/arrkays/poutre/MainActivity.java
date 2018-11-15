@@ -62,9 +62,13 @@ public class MainActivity extends AppCompatActivity {
             else if(msg.arg1 == Res.BT_STATUS_UPDATE){
                 bluetoothUpdate((boolean) msg.obj);
             }
+            else if( msg.arg1 == Res.MESURE_POID){
+                mesurePoid((double) msg.obj);
+            }
+
+
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +167,13 @@ public class MainActivity extends AppCompatActivity {
             bluetoothOn.setVisibility(View.GONE);
             bluetoothOff.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * affiche feedback graphique dans le popupMesurPoid
+     * @param w
+     */
+    private void mesurePoid(double w) {
     }
 
     public void updateSpinner(){
