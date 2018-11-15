@@ -14,37 +14,60 @@ public class WeightFunctions {
     double bodyWeight = 0;
     boolean bodyWeightAsked = false;
     double minWeight = 15.0;
-    long timeBetweenMeasures = 2000;
+    long timeBetweenMeasures = 5000;
     long timeMax = 15000;
     List<Double> weightMeasures = new ArrayList<Double>();
     long timeFirstMeasure = 0;
-    WeightListener weightListenerBody = new WeightListener() {
-        @Override
-        public void onChange(double weight) {
-            if (weight > minWeight){
-                weightMeasures.add(weight);
-                if (weightMeasures.size() == 1){
-                    timeFirstMeasure = Calendar.getInstance().getTimeInMillis();
-                }
-                else if (weightMeasures.size() >= 2 && (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure > timeBetweenMeasures)){ // Si il y au moins 2 valeurs et assez de temps entre les 2
-                    if (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure >= timeMax){
-                        weightMeasures.clear();
-                        Log.i(TAG, "trop long, mesure poids abandonnée");
-                        // Too long, there must be an error
-                        stopBodyWeightMeasurement();
-                    }
-                    else {
-                        bodyWeightMeasure();
-                    }
-                }
-            }
-        }
-    };
 
     MainActivity ma;
     public WeightFunctions(MainActivity a){
         ma = a;
     }
+
+    WeightListener weightListenerBody = new WeightListener() {
+        @Override
+        public void onChange(double weight) {
+            if (weight > minWeight){
+                weightMeasures.add(weight);
+                bodyWeightMeasure();
+            }
+        }
+    };
+
+    public void bodyWeightMeasure(){
+        if (weightMeasures.size() == 1){
+            timeFirstMeasure = Calendar.getInstance().getTimeInMillis();
+        }
+        else if (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure > timeMax){
+            //stopBodyWeightMeasurement();
+        }
+        else if (weightMeasures.size() >= 2) {
+            double weightSum = 0;
+            double min = Collections.min(weightMeasures);
+            double max = Collections.max(weightMeasures);
+            if ((max - min) / min < 1.0) {
+                //ma.myHandler.sendMessage(Res.msg(Res.MESURE_POID, 50)); //
+                double diff = (double) Calendar.getInstance().getTimeInMillis() - (double) timeFirstMeasure;
+                double prog = (100.0 * diff / timeBetweenMeasures);
+                if (prog > 100.0) {prog = 100.0;}
+                ma.loaderMonPoids.setProgress((int) prog); //
+
+                if (diff > timeBetweenMeasures) { // écart max entre le min et le max de 5%
+                    for (int i = 0; i < weightMeasures.size(); i++) {
+                        weightSum += weightMeasures.get(i);
+                    }
+                    bodyWeight = Math.floor(weightSum / weightMeasures.size() * 10) / 10; // fait la moyenne et garde un seul chiffre après la virgule
+                    ma.monPoid.setText(bodyWeight + " kg"); // affichage dans le textView
+                    weightMeasures.clear();
+                    //stopBodyWeightMeasurement();
+                }
+            }
+            else {
+                    timeFirstMeasure = Calendar.getInstance().getTimeInMillis();
+            }
+        }
+    }
+
 
     public void startBodyWeightMeasurement(){
         Res.weightNotif.addListener(weightListenerBody);
@@ -58,30 +81,7 @@ public class WeightFunctions {
     }
 
 
-    public double bodyWeightMeasure(){
-        double weightSum = 0;
-        double min = Collections.min(weightMeasures);
-        double max = Collections.max(weightMeasures);
-        if (weightMeasures.size() > 5){ // pour ne garder que les 5 dernières mesures
-            weightMeasures.subList(0, weightMeasures.size()-5);
-        }
-        //Log.i(TAG, String.valueOf((max-min)/min) );
-        if ( (max-min)/min < 0.05 ) { // écart max entre le min et le max de 5%
-            for (int i = 0; i < weightMeasures.size(); i++) {
-                weightSum += weightMeasures.get(i);
-            }
-            bodyWeight = Math.floor(weightSum/weightMeasures.size() * 10) / 10; // fait la moyenne et garde un seul chiffre après la virgule
-            bodyWeightAsked = false;
-            Log.i(TAG, "body weight measured");
-            ma.monPoid.setText(String.valueOf(bodyWeight)+ " kg"); // affichage dans le textView
-            weightMeasures.clear();
-            return bodyWeight;
-        }
-        else {
-            return 0.0;
-        }
 
-    }
 
 
 }

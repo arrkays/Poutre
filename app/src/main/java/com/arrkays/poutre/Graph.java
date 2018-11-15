@@ -35,8 +35,6 @@ public class Graph extends View {
 
     public Graph(Context c, AttributeSet attrs) {
         super(c, attrs);
-
-
     }
 
     public void setPull(double p){
@@ -113,7 +111,7 @@ public class Graph extends View {
         Message msg= new Message();
         msg.arg1=Res.BT_DATA;
         msg.obj=(pull+p)+"";
-        handler.sendMessage(msg);
+        //handler.sendMessage(msg);
 
         return super.onTouchEvent(event);
     }

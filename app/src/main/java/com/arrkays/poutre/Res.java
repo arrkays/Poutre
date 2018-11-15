@@ -1,5 +1,7 @@
 package com.arrkays.poutre;
 
+import android.os.Message;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,5 +53,12 @@ public class Res {
             list.add(p.toString());
         }
         return list;
+    }
+
+    public static Message msg(int id, Object message){
+        Message msg= new Message();
+        msg.arg1=id;
+        msg.obj=message;
+        return msg;
     }
 }

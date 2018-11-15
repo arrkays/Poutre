@@ -30,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.Set;
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     Spinner spinnerPrise = null;
     ConstraintLayout popUpMesurepoids = null;
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
+    Button suspensionsButton = null;
+    ProgressBar loaderMonPoids = null;
 
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
@@ -66,11 +69,6 @@ public class MainActivity extends AppCompatActivity {
             else if(msg.arg1 == Res.BT_STATUS_UPDATE){
                 bluetoothUpdate((boolean) msg.obj);
             }
-            else if( msg.arg1 == Res.MESURE_POID){
-                mesurePoid((double) msg.obj);
-            }
-
-
         }
     };
 
@@ -92,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         graph.handler = myHandler;
         popUpMesurepoids = (ConstraintLayout)findViewById(R.id.popUpMesurePoids);
         cancelWeightMeasurement = (Button)findViewById(R.id.annulerMesurePoid);
+        suspensionsButton = (Button)findViewById(R.id.suspensionsButton);
+        loaderMonPoids = (ProgressBar)findViewById(R.id.loaderMesurePoid);
 
         //Ajouter prehenssion dans select
         updateSpinner();
@@ -110,6 +110,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG,"touche");
                 blutoothManager.connect();
+            }
+        });
+        suspensionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(MainActivity.this, SuspensionsActivity.class);
+                //myIntent.putExtra("key", value); //Optional parameters
+                MainActivity.this.startActivity(myIntent);
             }
         });
         monPoid.setOnClickListener(new View.OnClickListener() {

@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="0 Kg"
+        android:text="@string/_0_kg"
         android:textAlignment="textEnd"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="record"
+        android:text="@string/record"
         android:textAlignment="textEnd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/graph" />
@@ -34,7 +34,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="0 Kg"
+        android:text="@string/_0_kg"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Mon poids"
+            android:text="@string/mon_poids"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -107,7 +107,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/titreMonPoid"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/bluetooth_connected_128" />
+            app:srcCompat="@drawable/bluetooth_connected_128"
+            android:contentDescription="@string/todo" />
 
         <ImageView
             android:id="@+id/bluetoothNotActiv"
@@ -120,7 +121,8 @@
             app:layout_constraintStart_toEndOf="@+id/titreMonPoid"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/bluetooth_not_connected"
-            tools:srcCompat="@drawable/bluetooth_not_connected_128" />
+            tools:srcCompat="@drawable/bluetooth_not_connected_128"
+            android:contentDescription="@string/todo" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -151,19 +153,23 @@
 
         <ProgressBar
             android:id="@+id/loaderMesurePoid"
-            style="?android:attr/progressBarStyle"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:background="@drawable/circle_shape"
             android:indeterminate="false"
-            android:indeterminateOnly="false"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/circular_progress_bar"
             app:layout_constraintBottom_toTopOf="@+id/annulerMesurePoid"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
             android:id="@+id/poidPopUp"
@@ -173,7 +179,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="0"
+            android:text="@string/_0"
             android:textColor="@android:color/white"
             android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@+id/annulerMesurePoid"
@@ -188,7 +194,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="Annuler"
+            android:text="@string/annuler"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -200,7 +206,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="BodyWeight"
+        android:text="@string/bodyweight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/selectPrise" />
 
@@ -209,7 +215,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Zero"
+        android:text="@string/zero"
         app:layout_constraintStart_toStartOf="@+id/buttonBodyWeight"
         app:layout_constraintTop_toBottomOf="@+id/buttonBodyWeight" />
 
@@ -218,7 +224,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="Suspensions"
+        android:text="@string/suspensions"
         app:layout_constraintBottom_toBottomOf="@+id/zeroButton"
         app:layout_constraintEnd_toEndOf="parent" />
 
