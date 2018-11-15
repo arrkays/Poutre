@@ -1,5 +1,7 @@
 package com.arrkays.poutre;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,13 +23,17 @@ public class WeightNotif {
     }
 
     public void updateWeight(double w) {
-
-        // Notify everybody that may be interested.
-        for(it = listeners.iterator(); it.hasNext();){
-            WeightListener hl = it.next();
-            hl.onChange(w);
+        try {
+            // Notify everybody that may be interested.
+            for (it = listeners.iterator(); it.hasNext(); ) {
+                WeightListener hl = it.next();
+                hl.onChange(w);
+            }
+            it = null;
         }
-        it=null;
+        catch (NullPointerException e) {
+            Log.d(Res.TAG, "weightListener cassé : problème remove listener");
+        }
     }
 }
 

@@ -1,6 +1,8 @@
 package com.arrkays.poutre;
 
 import android.util.Log;
+import android.view.View;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -26,10 +28,10 @@ public class WeightFunctions {
                 }
                 else if (weightMeasures.size() >= 2 && (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure > timeBetweenMeasures)){ // Si il y au moins 2 valeurs et assez de temps entre les 2
                     if (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure >= timeMax){
-                        bodyWeightAsked = false;
                         weightMeasures.clear();
                         Log.i(TAG, "trop long, mesure poids abandonnée");
                         // Too long, there must be an error
+                        stopBodyWeightMeasurement();
                     }
                     else {
                         bodyWeightMeasure();
@@ -42,7 +44,17 @@ public class WeightFunctions {
     MainActivity ma;
     public WeightFunctions(MainActivity a){
         ma = a;
+    }
+
+    public void startBodyWeightMeasurement(){
         Res.weightNotif.addListener(weightListenerBody);
+        bodyWeightAsked = true;
+        ma.popUpMesurepoids.setVisibility(View.VISIBLE);
+    }
+    public void stopBodyWeightMeasurement(){
+        Res.weightNotif.removeListener(weightListenerBody);
+        bodyWeightAsked = false;
+        ma.popUpMesurepoids.setVisibility(View.GONE);
     }
 
 

@@ -20,6 +20,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     String TAG = "debug-bluetooth";
     BT blutoothManager = null;
+    WeightFunctions weightFunctions = null;
 
     //VIEW
     Graph graph = null;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView bluetoothOn = null;
     ImageView bluetoothOff = null;
     Spinner spinnerPrise = null;
+    ConstraintLayout popUpMesurepoids = null;
+    Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
 
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
@@ -86,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         bluetoothOn = (ImageView) findViewById(R.id.bluetoothActiv);
         spinnerPrise = (Spinner) findViewById(R.id.selectPrise);
         graph.handler = myHandler;
+        popUpMesurepoids = (ConstraintLayout)findViewById(R.id.popUpMesurePoids);
+        cancelWeightMeasurement = (Button)findViewById(R.id.annulerMesurePoid);
 
         //Ajouter prehenssion dans select
         updateSpinner();
@@ -94,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         checkPrehension();
         blutoothManager = new BT(this);
         blutoothManager.connect();
-
+        weightFunctions = new WeightFunctions(this); // instantiation de la classe pour mesurer le poids de corps
 
         //Event
         bluetoothOff.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +108,18 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG,"touche");
                 blutoothManager.connect();
+            }
+        });
+        monPoid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                weightFunctions.startBodyWeightMeasurement();
+            }
+        });
+        cancelWeightMeasurement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                weightFunctions.stopBodyWeightMeasurement();
             }
         });
 

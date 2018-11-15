@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Res {
 
+    public static String TAG = "debug-bluetooth";
+
     public static final int MESURE_POID = 3;
     /**
      * data from  bluetooth device
