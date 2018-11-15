@@ -16,6 +16,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -24,7 +25,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.Set;
 import java.util.UUID;
@@ -33,8 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     String TAG = "debug-bluetooth";
-    BT bluetoothManager = null;
-    WeightFunctions bodyWeight = null; // class pout mesuré le poids d'un mec ou d'une meuf, nous ne sommes pas sexiste
+    BT blutoothManager = null;
 
     //VIEW
     Graph graph = null;
@@ -43,25 +47,26 @@ public class MainActivity extends AppCompatActivity {
     TextView record = null;
     TextView recordPullPour = null;
     TextView currentPullPour = null;
-    Button BTbutton = null;
-    Button bodyWeightButton = null;
-    Button zeroButton = null;
-    Button suspensionsButton = null;
+    ImageView bluetoothOn = null;
+    ImageView bluetoothOff = null;
+    Spinner spinnerPrise = null;
+
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             if(msg.arg1 == Res.BT_DATA){// données en provenance du module blutoooth
-                try {
-                    pullUptade(Double.parseDouble(msg.obj.toString()));
-                }
-                catch(NumberFormatException e){
-                    pullUptade(0);
-                }
+                pullUptade((double) msg.obj);
+                Res.weightNotif.updateWeight((double) msg.obj);
             }
             else if(msg.arg1 == Res.BT_STATUS_UPDATE){
                 bluetoothUpdate((boolean) msg.obj);
             }
+            else if( msg.arg1 == Res.MESURE_POID){
+                mesurePoid((double) msg.obj);
+            }
+
+
         }
     };
 
@@ -70,11 +75,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkPrehension();
-
-        bluetoothManager = new BT(this);
-        bodyWeight = new WeightFunctions(this);
-
         //instanciation des Views
         graph = (Graph)findViewById(R.id.graph);
         monPoid = (TextView)findViewById(R.id.monPoid);
@@ -82,42 +82,39 @@ public class MainActivity extends AppCompatActivity {
         currentPull = (TextView)findViewById(R.id.currentPull);
         recordPullPour = (TextView)findViewById(R.id.recordPullPourcentage);
         currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
-        BTbutton = (Button)findViewById(R.id.buttonTestBT);
-        bodyWeightButton = (Button)findViewById(R.id.buttonBodyWeight);
-        zeroButton = (Button)findViewById(R.id.zeroButton);
-        suspensionsButton = (Button)findViewById(R.id.suspensionsButton);
-
+        bluetoothOff = (ImageView) findViewById(R.id.bluetoothNotActiv);
+        bluetoothOn = (ImageView) findViewById(R.id.bluetoothActiv);
+        spinnerPrise = (Spinner) findViewById(R.id.selectPrise);
         graph.handler = myHandler;
+
+        //Ajouter prehenssion dans select
+        updateSpinner();
+        addAddButton();
+        //instruction
+        checkPrehension();
+        blutoothManager = new BT(this);
+        blutoothManager.connect();
+
+
         //Event
-
-        BTbutton.setOnClickListener(new View.OnClickListener() {
+        bluetoothOff.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                bluetoothManager.connect();
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d(TAG,"touche");
+                blutoothManager.connect();
+                return false;
             }
         });
 
-        bluetoothManager.connect();
+        spinnerPrise.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, parent.getItemAtPosition(position).toString());
+            }
 
-        bodyWeightButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                bodyWeight.bodyWeightAsked = true;
-                Log.i(TAG, "body weight asked");
-            }
-        });
-        zeroButton.setOnClickListener(new View.OnClickListener() { // Pour remettre à zero
-            @Override
-            public void onClick(View v) {
-                bluetoothManager.sendMsg("z");
-                Log.i(TAG, "Remise à zéro");
-            }
-        });
-        suspensionsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, SuspensionsActivity.class);
-                startActivity(intent);
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
@@ -142,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
      * @param pull
      */
     public void pullUptade(double pull){
-        Res.currentWeight = pull;    // actualisation du poids dans ressources
         graph.setPull(pull);
         if(pull>Res.currentPrehension.maxPull) {//verifie si le record est batue
             //TODO Faire annimation est feedback sonnor
@@ -164,11 +160,34 @@ public class MainActivity extends AppCompatActivity {
      */
     public void bluetoothUpdate(boolean activer){
         if(activer){
-            BTbutton.setBackgroundColor(Color.GREEN);
+            bluetoothOff.setVisibility(View.GONE);
+            bluetoothOn.setVisibility(View.VISIBLE);
         }
         else{
-            BTbutton.setBackgroundColor(Color.RED);
+            bluetoothOn.setVisibility(View.GONE);
+            bluetoothOff.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * affiche feedback graphique dans le popupMesurPoid
+     * @param w
+     */
+    private void mesurePoid(double w) {
+    }
+
+    public void updateSpinner(){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, Res.getListPrehenssionString());
+        adapter.add("ajouter †");
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinnerPrise.setAdapter(adapter);
+    }
+
+    /**
+     * ajout du bouton ajout prenssion
+     */
+    private void addAddButton() {
     }
 }
 

@@ -126,6 +126,7 @@ public class BT {
                         msg.arg1=Res.BT_DATA;
                         msg.obj=weight;
                         ma.myHandler.sendMessage(msg);
+                        Res.weightNotif.updateWeight(weight);
                     }
                 };
 
