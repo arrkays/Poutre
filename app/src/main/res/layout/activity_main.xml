@@ -195,32 +195,28 @@
         android:id="@+id/buttonBodyWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="BodyWeight"
-        tools:layout_editor_absoluteX="29dp"
-        tools:layout_editor_absoluteY="128dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/selectPrise" />
 
     <Button
         android:id="@+id/zeroButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Zero"
         app:layout_constraintStart_toStartOf="@+id/buttonBodyWeight"
         app:layout_constraintTop_toBottomOf="@+id/buttonBodyWeight" />
-
-    <ProgressBar
-        android:id="@+id/progressBar2"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="272dp"
-        android:layout_height="47dp"
-        tools:layout_editor_absoluteX="58dp"
-        tools:layout_editor_absoluteY="383dp" />
 
     <Button
         android:id="@+id/suspensionsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:text="Suspensions"
-        tools:layout_editor_absoluteX="258dp"
-        tools:layout_editor_absoluteY="154dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/zeroButton"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
