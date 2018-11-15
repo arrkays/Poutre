@@ -11,7 +11,7 @@
         android:id="@+id/menu"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:background="@color/colorPrimary"
+        android:background="@android:color/holo_blue_dark"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -65,43 +65,6 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <EditText
-        android:id="@+id/suspensionTimeText"
-        style="@android:style/Widget.EditText"
-        android:layout_width="168dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:inputType="number"
-        android:selectAllOnFocus="false"
-        android:singleLine="false"
-        android:text="10"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/suspensionRestTimeText"
-        app:layout_constraintEnd_toStartOf="@+id/suspensionRestTimeText"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/menu"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <EditText
-        android:id="@+id/suspensionRestTimeText"
-        android:layout_width="168dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:inputType="number"
-        android:text="0"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/menu" />
-
     <Button
         android:id="@+id/startButton"
         android:layout_width="wrap_content"
@@ -152,8 +115,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="@+id/progressBar"
         app:layout_constraintStart_toStartOf="@+id/progressBar"
-        app:layout_constraintTop_toTopOf="@+id/progressBar"
-        />
+        app:layout_constraintTop_toTopOf="@+id/progressBar" />
 
     <Button
         android:id="@+id/optionsButton"
@@ -163,22 +125,20 @@
         android:layout_marginEnd="16dp"
         android:text="Options"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/suspensionRestTimeText" />
+        app:layout_constraintTop_toBottomOf="@+id/menu" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/optionsLayout"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@android:color/background_light"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/holo_blue_dark"
+        android:minHeight="138dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/startButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/optionsButton"
-        app:layout_constraintVertical_bias="1.0"><![CDATA[
+        app:layout_constraintTop_toBottomOf="@+id/optionsButton"><![CDATA[
 
         /restTimePlusButton"
         app:layout_constrairestTimePlusButtonTopOf="@+id/restTimePlusButton" />
@@ -243,5 +203,43 @@
             app:layout_constraintTop_toTopOf="@+id/textView2" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/chronoTextView"
+        android:layout_width="97dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_orange_dark"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBar2"
+        app:layout_constraintEnd_toEndOf="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
+        app:layout_constraintTop_toTopOf="@+id/progressBar" />
+
+    <TextView
+        android:id="@+id/repTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toStartOf="@+id/setTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="129dp" />
+
+    <TextView
+        android:id="@+id/setTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/repTextView"
+        tools:layout_editor_absoluteY="129dp" />
 
 </android.support.constraint.ConstraintLayout>

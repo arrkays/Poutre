@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import static java.lang.Integer.valueOf;
 
@@ -31,9 +32,15 @@ public class SuspensionsActivity extends AppCompatActivity {
     NumberPicker suspensionsTimeNPmin = null;
     NumberPicker restTimeNPsec = null;
     NumberPicker restTimeNPmin = null;
+    TextView chronoTextView = null;
+    TextView repTextView = null;
+    TextView setTextView = null;
+
 
     long suspensionTime = 10;
     long restTime = 10;
+    int nbrSet = 5;
+    int nbrRep = 5;
 
 
     @Override
@@ -41,8 +48,6 @@ public class SuspensionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suspensions);
 
-        suspensionsTimeText = (EditText) findViewById(R.id.suspensionTimeText);
-        suspensionsRestTimeText = (EditText) findViewById(R.id.suspensionRestTimeText);
         startButton = (Button) findViewById(R.id.startButton);
         optionsButton = (Button) findViewById(R.id.optionsButton);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -62,6 +67,10 @@ public class SuspensionsActivity extends AppCompatActivity {
         restTimeNPmin = (NumberPicker) findViewById(R.id.restTimeNPmin);
         restTimeNPmin.setMinValue(0);
         restTimeNPmin.setMaxValue(59);
+        chronoTextView = (TextView) findViewById(R.id.chronoTextView);
+        setTextView = (TextView) findViewById(R.id.setTextView);
+        repTextView = (TextView) findViewById(R.id.repTextView);
+
 
         final Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -70,35 +79,16 @@ public class SuspensionsActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressBar.setProgress(0);
-                progressBar2.setProgress(0);
-                Log.i("timer", "go");
-                //final double duration =  suspensionTime * 1000;
-                timer = new CountDownTimer(suspensionTime, 100) {
+                Thread threadExercice = new Thread() {
                     @Override
-                    public void onTick(long millisUntilFinished) {
-                        progressBar.setProgress( (int)((suspensionTime - (double)(millisUntilFinished-100)) / suspensionTime * 100));
-                    }
-                    @Override
-                    public void onFinish() {
-                        v.vibrate(400);
-                        restTimer = new CountDownTimer(restTime, 100){
-                            @Override
-                            public void onTick(long millisUntilFinishedRest) {
-                                progressBar2.setProgress( (int)((restTime - (double)(millisUntilFinishedRest-100)) / restTime * 100));
-                            }
-                            @Override
-                            public void onFinish(){
-                                v.vibrate(400);
-                            }
-                        };
-                        restTimer.start();
+                    public void run() {
+                        exercice();
                     }
                 };
-                timer.start();
-
+                threadExercice.start();
             }
         });
+
         optionsButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -122,5 +112,36 @@ public class SuspensionsActivity extends AppCompatActivity {
         });
 
 
+    }
+    public void exercice(){
+        progressBar.setProgress(0);
+        progressBar2.setProgress(0);
+        timer = new CountDownTimer(suspensionTime, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                progressBar.setProgress( (int)((suspensionTime - (double)(millisUntilFinished-100)) / suspensionTime * 100));
+                chronoTextView.setText((int) (1+(millisUntilFinished-100)/1000) + "");
+            }
+            @Override
+            public void onFinish() {
+                //v.vibrate(400);
+                chronoTextView.setText(0+"");
+                restTimer = new CountDownTimer(restTime, 100){
+                    @Override
+                    public void onTick(long millisUntilFinishedRest) {
+                        progressBar2.setProgress( (int)((restTime - (double)(millisUntilFinishedRest-100)) / restTime * 100));
+                        chronoTextView.setText((int) (1+(millisUntilFinishedRest-100)/1000) + "");
+
+                    }
+                    @Override
+                    public void onFinish(){
+                        //v.vibrate(400);
+                        chronoTextView.setText(0+"");
+                    }
+                };
+                restTimer.start();
+            }
+        };
+        timer.start();
     }
 }

@@ -74,7 +74,7 @@
         android:id="@+id/menu"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:background="@color/colorPrimary"
+        android:background="@android:color/holo_blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -103,12 +103,12 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
+            android:contentDescription="@string/todo"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/titreMonPoid"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/bluetooth_connected_128"
-            android:contentDescription="@string/todo" />
+            app:srcCompat="@drawable/bluetooth_connected_128" />
 
         <ImageView
             android:id="@+id/bluetoothNotActiv"
@@ -117,12 +117,12 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
+            android:contentDescription="@string/todo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/titreMonPoid"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/bluetooth_not_connected"
-            tools:srcCompat="@drawable/bluetooth_not_connected_128"
-            android:contentDescription="@string/todo" />
+            tools:srcCompat="@drawable/bluetooth_not_connected_128" />
 
     </android.support.constraint.ConstraintLayout>
 
