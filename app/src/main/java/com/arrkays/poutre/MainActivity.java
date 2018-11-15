@@ -97,12 +97,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Event
-        bluetoothOff.setOnTouchListener(new View.OnTouchListener() {
+        bluetoothOff.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View v) {
                 Log.d(TAG,"touche");
                 blutoothManager.connect();
-                return false;
             }
         });
 
