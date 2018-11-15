@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class WeightFunctions extends Weight{
+public class WeightFunctions {
     String TAG = "debug-bluetooth";
     double bodyWeight = 0;
     boolean bodyWeightAsked = false;
@@ -16,32 +16,35 @@ public class WeightFunctions extends Weight{
     long timeMax = 15000;
     List<Double> weightMeasures = new ArrayList<Double>();
     long timeFirstMeasure = 0;
+    WeightListener weightListenerBody = new WeightListener() {
+        @Override
+        public void onChange(double weight) {
+            if (bodyWeightAsked && (weight > minWeight)){
+                weightMeasures.add(weight);
+                if (weightMeasures.size() == 1){
+                    timeFirstMeasure = Calendar.getInstance().getTimeInMillis();
+                }
+                else if (weightMeasures.size() >= 2 && (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure > timeBetweenMeasures)){ // Si il y au moins 2 valeurs et assez de temps entre les 2
+                    if (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure >= timeMax){
+                        bodyWeightAsked = false;
+                        weightMeasures.clear();
+                        Log.i(TAG, "trop long, mesure poids abandonnée");
+                        // Too long, there must be an error
+                    }
+                    else {
+                        bodyWeightMeasure();
+                    }
+                }
+            }
+        }
+    };
 
     MainActivity ma;
     public WeightFunctions(MainActivity a){
         ma = a;
+        Res.weightNotif.addListener(weightListenerBody);
     }
 
-    @Override
-    public void onWeightChange(double weight) {
-        if (bodyWeightAsked && (weight > minWeight)){
-            weightMeasures.add(weight);
-            if (weightMeasures.size() == 1){
-                timeFirstMeasure = Calendar.getInstance().getTimeInMillis();
-            }
-            else if (weightMeasures.size() >= 2 && (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure > timeBetweenMeasures)){ // Si il y au moins 2 valeurs et assez de temps entre les 2
-                if (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure >= timeMax){
-                    bodyWeightAsked = false;
-                    weightMeasures.clear();
-                    Log.i(TAG, "trop long, mesure poids abandonnée");
-                    // Too long, there must be an error
-                }
-                else {
-                    bodyWeightMeasure();
-                }
-            }
-        }
-    }
 
     public double bodyWeightMeasure(){
         double weightSum = 0;

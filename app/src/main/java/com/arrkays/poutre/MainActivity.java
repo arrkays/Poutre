@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     String TAG = "debug-bluetooth";
-    BT blutoothManager = null;
+    BT bluetoothManager = null;
     WeightFunctions bodyWeight = null; // class pout mesuré le poids d'un mec ou d'une meuf, nous ne sommes pas sexiste
 
     //VIEW
@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         checkPrehension();
 
-        blutoothManager = new BT(this);
+        bluetoothManager = new BT(this);
         bodyWeight = new WeightFunctions(this);
 
         //instanciation des Views
@@ -88,17 +87,17 @@ public class MainActivity extends AppCompatActivity {
         zeroButton = (Button)findViewById(R.id.zeroButton);
         suspensionsButton = (Button)findViewById(R.id.suspensionsButton);
 
-
         graph.handler = myHandler;
         //Event
+
         BTbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                blutoothManager.connect();
+                bluetoothManager.connect();
             }
         });
 
-        blutoothManager.connect();
+        bluetoothManager.connect();
 
         bodyWeightButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         zeroButton.setOnClickListener(new View.OnClickListener() { // Pour remettre à zero
             @Override
             public void onClick(View v) {
-                blutoothManager.sendMsg("z");
+                bluetoothManager.sendMsg("z");
                 Log.i(TAG, "Remise à zéro");
             }
         });
@@ -144,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
      */
     public void pullUptade(double pull){
         Res.currentWeight = pull;    // actualisation du poids dans ressources
-        bodyWeight.onWeightChange(Res.currentWeight); //
         graph.setPull(pull);
         if(pull>Res.currentPrehension.maxPull) {//verifie si le record est batue
             //TODO Faire annimation est feedback sonnor

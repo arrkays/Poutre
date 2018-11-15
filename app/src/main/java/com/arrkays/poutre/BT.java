@@ -110,7 +110,7 @@ public class BT {
 
                     @Override
                     public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                        Log.i(TAG, "le msg :\""+byteToString(characteristic.getValue())+"\" abien été envoyer");
+                        Log.i(TAG, "le msg :\""+byteToString(characteristic.getValue())+"\" a bien été envoyer");
                     }
 
                     @Override

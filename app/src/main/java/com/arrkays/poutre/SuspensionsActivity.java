@@ -42,7 +42,6 @@ public class SuspensionsActivity extends AppCompatActivity {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         progressBar.setProgress( (int)((duration - (double)(millisUntilFinished-100)) / duration * 100));
-                        //Log.i("timer", "coucou");
                     }
                     @Override
                     public void onFinish() {

@@ -84,14 +84,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Mon poid"
+            android:text="Mon poids"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/monPoid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0 Kg"
+            android:text="0 kg"
             android:textSize="22sp"
             app:layout_constraintStart_toStartOf="@+id/titreMonPoid"
             app:layout_constraintTop_toBottomOf="@+id/titreMonPoid" />
@@ -196,10 +196,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="BodyWeight"
-        app:layout_constraintEnd_toEndOf="@+id/buttonTestBT"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/buttonTestBT"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTestBT" />
+        tools:layout_editor_absoluteX="29dp"
+        tools:layout_editor_absoluteY="128dp" />
 
     <Button
         android:id="@+id/zeroButton"
@@ -221,12 +219,8 @@
         android:id="@+id/suspensionsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginEnd="8dp"
         android:text="Suspensions"
-        app:layout_constraintEnd_toEndOf="@+id/record"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/buttonTestBT"
-        app:layout_constraintTop_toTopOf="@+id/buttonTestBT" />
+        tools:layout_editor_absoluteX="258dp"
+        tools:layout_editor_absoluteY="154dp" />
 
 </android.support.constraint.ConstraintLayout>
