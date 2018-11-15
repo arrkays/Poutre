@@ -127,7 +127,7 @@
         android:indeterminate="false"
         android:max="100"
         android:progress="0"
-        android:progressDrawable="@drawable/circular_progress_bar"
+        android:progressDrawable="@drawable/circular_progress_bar_blue"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/startButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -152,7 +152,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="@+id/progressBar"
         app:layout_constraintStart_toStartOf="@+id/progressBar"
-        app:layout_constraintTop_toTopOf="@+id/progressBar" />
+        app:layout_constraintTop_toTopOf="@+id/progressBar"
+        />
 
     <Button
         android:id="@+id/optionsButton"

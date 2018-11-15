@@ -1,7 +1,9 @@
 package com.arrkays.poutre;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -49,15 +51,20 @@ public class SuspensionsActivity extends AppCompatActivity {
         suspensionsTimeNPsec = (NumberPicker) findViewById(R.id.suspensionTimeNPsec);
         suspensionsTimeNPsec.setMinValue(0);
         suspensionsTimeNPsec.setMaxValue(59);
+        suspensionsTimeNPsec.setValue(10);
         suspensionsTimeNPmin = (NumberPicker) findViewById(R.id.suspensionTimeNPmin);
         suspensionsTimeNPmin.setMinValue(0);
         suspensionsTimeNPmin.setMaxValue(59);
         restTimeNPsec = (NumberPicker) findViewById(R.id.restTimeNPsec);
         restTimeNPsec.setMinValue(0);
         restTimeNPsec.setMaxValue(59);
+        restTimeNPsec.setValue(10);
         restTimeNPmin = (NumberPicker) findViewById(R.id.restTimeNPmin);
         restTimeNPmin.setMinValue(0);
         restTimeNPmin.setMaxValue(59);
+
+        final Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
 
 
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +81,7 @@ public class SuspensionsActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onFinish() {
+                        v.vibrate(400);
                         restTimer = new CountDownTimer(restTime, 100){
                             @Override
                             public void onTick(long millisUntilFinishedRest) {
@@ -81,6 +89,7 @@ public class SuspensionsActivity extends AppCompatActivity {
                             }
                             @Override
                             public void onFinish(){
+                                v.vibrate(400);
                             }
                         };
                         restTimer.start();
