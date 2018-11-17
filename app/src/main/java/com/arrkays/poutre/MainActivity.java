@@ -31,6 +31,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.QuickContactBadge;
 import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.Set;
@@ -54,8 +55,10 @@ public class MainActivity extends AppCompatActivity {
     ImageView bluetoothOff = null;
     Spinner spinnerPrise = null;
     ConstraintLayout popUpMesurepoids = null;
+    ConstraintLayout navigationMenu = null;
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
     Button suspensionsButton = null;
+    Button showMenuButton = null;
     ProgressBar loaderMonPoids = null;
 
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
@@ -89,22 +92,36 @@ public class MainActivity extends AppCompatActivity {
         spinnerPrise = (Spinner) findViewById(R.id.selectPrise);
         graph.handler = myHandler;
         popUpMesurepoids = (ConstraintLayout)findViewById(R.id.popUpMesurePoids);
+        navigationMenu = (ConstraintLayout)findViewById(R.id.navigationMenu);
         cancelWeightMeasurement = (Button)findViewById(R.id.annulerMesurePoid);
         suspensionsButton = (Button)findViewById(R.id.suspensionsButton);
+        showMenuButton = (Button)findViewById(R.id.showMenu);
         loaderMonPoids = (ProgressBar)findViewById(R.id.loaderMesurePoid);
+
 
         //Ajouter prehenssion dans select
         checkPrehension();
         updateSpinner();
         addAddButton();
 
-        //instruction
+        //instruction*************************************
         blutoothManager = new BT(this);
         blutoothManager.connect();
         weightFunctions = new WeightFunctions(this); // instantiation de la classe pour mesurer le poids de corps
 
 
-        //Event
+        //Event*******************************************
+
+            //bouton pour ouvrir le menue
+        showMenuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(navigationMenu.getVisibility()== View.GONE)
+                    navigationMenu.setVisibility(View.VISIBLE);
+                else
+                    navigationMenu.setVisibility(View.GONE);
+            }
+        });
         bluetoothOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

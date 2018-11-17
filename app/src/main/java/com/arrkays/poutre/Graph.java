@@ -19,8 +19,7 @@ import android.view.View;
 public class Graph extends View {
 
     String TAG = "debug-bluetooth";
-    int x=150;
-    int y=150;
+    int marge = 5 ;
     public double poid = 60;
     public double pull = 0;
     public double maxPull = 0;
@@ -86,28 +85,26 @@ public class Graph extends View {
         //ligne tout les 10kg
         double unKiloEnPixel =  (((double)height * ratio) /  poid);
         p.setColor(Color.BLACK);
-        for(double i = 0; i < poid ; i+=10){
-            c.drawLine(0,(float)(unKiloEnPixel*i), width,(float)(unKiloEnPixel*i),p);
+        for(double i = 0; i < poid+11 ; i+=10){
+            //c.drawLine(0,(float)(unKiloEnPixel*i), width,(float)(unKiloEnPixel*i),p);
+            c.drawRect(0,(float)(height-unKiloEnPixel*i)-1,width,(float)(height-unKiloEnPixel*i),p);
         }
 
         //bare max
         int topBar = (int)(((double)height*ratio) * maxPull/poid);
         if(topBar>height-32)
             topBar=height - 32;
-        p.setColor(Color.GREEN);
+        p.setColor(Color.parseColor("007F0E")); //vert
         rec.set(0,height-topBar-4,width,height-topBar);
         c.drawRect(rec, p);
 
         //text
         p.setTextSize(30);
         if(Res.POID == 0)
-            c.drawText(maxPull+" Kg",2,height-topBar-12,p);
+            c.drawText(maxPull+" Kg",marge,height-topBar-14,p);
         else
-            c.drawText(maxPull+" Kg ("+Res.getPour(pull)+"%)",2,height-topBar-12,p);
+            c.drawText(maxPull+" Kg ("+Res.getPour(pull)+"%)",marge,height-topBar-14,p);
 
-        //cadre
-        p.setStyle(Paint.Style.STROKE);
-        c.drawRect(0,0,width,height,p);
     }
 
     @Override
