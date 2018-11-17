@@ -19,8 +19,6 @@ import static java.lang.Integer.valueOf;
 
 public class SuspensionsActivity extends AppCompatActivity {
 
-    EditText suspensionsTimeText = null;
-    EditText suspensionsRestTimeText = null;
     Button startButton = null;
     Button optionsButton = null;
     ProgressBar progressBar = null;
@@ -31,10 +29,10 @@ public class SuspensionsActivity extends AppCompatActivity {
     NumberPicker suspensionsTimeNPsec = null;
     NumberPicker suspensionsTimeNPmin = null;
     NumberPicker restTimeNPsec = null;
-    NumberPicker restTimeNPmin = null;
-    TextView chronoTextView = null;
-    TextView repTextView = null;
-    TextView setTextView = null;
+    NumberPicker restTimeNPmin;
+    TextView chronoTextView;
+    TextView repTextView;
+    TextView setTextView;
 
 
     long suspensionTime = 10;
@@ -74,8 +72,6 @@ public class SuspensionsActivity extends AppCompatActivity {
 
         final Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-
-
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,9 +85,9 @@ public class SuspensionsActivity extends AppCompatActivity {
             }
         });
 
-        optionsButton.setOnTouchListener(new View.OnTouchListener() {
+        optionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public void onClick(View view) {
                 if (optionsLayout.getVisibility() == View.VISIBLE){
                     optionsLayout.setVisibility(View.GONE);
                     suspensionTime = 1000*(suspensionsTimeNPmin.getValue() * 60 + suspensionsTimeNPsec.getValue());
@@ -100,10 +96,9 @@ public class SuspensionsActivity extends AppCompatActivity {
                 else {
                     optionsLayout.setVisibility(View.VISIBLE);
                 }
-
-                return false;
             }
         });
+
         suspensionsTimeNPsec.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
