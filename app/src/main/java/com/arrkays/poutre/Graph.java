@@ -35,6 +35,8 @@ public class Graph extends View {
 
     public Graph(Context c, AttributeSet attrs) {
         super(c, attrs);
+
+
     }
 
     public void setPull(double p){
@@ -81,11 +83,18 @@ public class Graph extends View {
             c.drawRect(rec, p);
         }
 
+        //ligne tout les 10kg
+        double unKiloEnPixel =  (((double)height * ratio) /  poid);
+        p.setColor(Color.BLACK);
+        for(double i = 0; i < poid ; i+=10){
+            c.drawLine(0,(float)(unKiloEnPixel*i), width,(float)(unKiloEnPixel*i),p);
+        }
+
         //bare max
         int topBar = (int)(((double)height*ratio) * maxPull/poid);
         if(topBar>height-32)
             topBar=height - 32;
-        p.setColor(Color.BLACK);
+        p.setColor(Color.GREEN);
         rec.set(0,height-topBar-4,width,height-topBar);
         c.drawRect(rec, p);
 
@@ -95,24 +104,15 @@ public class Graph extends View {
             c.drawText(maxPull+" Kg",2,height-topBar-12,p);
         else
             c.drawText(maxPull+" Kg ("+Res.getPour(pull)+"%)",2,height-topBar-12,p);
+
+        //cadre
+        p.setStyle(Paint.Style.STROKE);
+        c.drawRect(0,0,width,height,p);
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG,"pull"+pull);
-        double p;
-        if(event.getY() > (height/2)){
-            p = -1;
-        }
-        else
-        {
-            p = +1;
-        }
-        Message msg= new Message();
-        msg.arg1=Res.BT_DATA;
-        msg.obj=(pull+p)+"";
-        //handler.sendMessage(msg);
-
-        return super.onTouchEvent(event);
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        maxPull = 0;
+        super.invalidate();
     }
 }
