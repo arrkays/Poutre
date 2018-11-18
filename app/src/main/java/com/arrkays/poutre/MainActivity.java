@@ -68,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
     public Handler myHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-        if(msg.arg1 == Res.BT_STATUS_UPDATE){
-            bluetoothUpdate((boolean) msg.obj);
-        }
+            if(msg.arg1 == Res.BT_STATUS_UPDATE){
+                bluetoothUpdate((boolean) msg.obj);
+            }
         }
     };
 
@@ -87,25 +87,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //instanciation des Views
-        graph = (Graph)findViewById(R.id.graph);
-        monPoid = (TextView)findViewById(R.id.monPoid);
-        record = (TextView)findViewById(R.id.record);
-        currentPull = (TextView)findViewById(R.id.currentPull);
-        recordPullPour = (TextView)findViewById(R.id.recordPullPourcentage);
-        currentPullPour = (TextView)findViewById(R.id.currentPullPoucentage);
-        bluetoothOff = (ImageView) findViewById(R.id.bluetoothNotActiv);
-        bluetoothOn = (ImageView) findViewById(R.id.bluetoothActiv);
-        spinnerPrise = (Spinner) findViewById(R.id.selectPrise);
+        graph = findViewById(R.id.graph);
+        monPoid = findViewById(R.id.monPoid);
+        record = findViewById(R.id.record);
+        currentPull = findViewById(R.id.currentPull);
+        recordPullPour = findViewById(R.id.recordPullPourcentage);
+        currentPullPour = findViewById(R.id.currentPullPoucentage);
+        bluetoothOff =  findViewById(R.id.bluetoothNotActiv);
+        bluetoothOn =  findViewById(R.id.bluetoothActiv);
+        spinnerPrise = findViewById(R.id.selectPrise);
+        popUpMesurepoids = findViewById(R.id.popUpMesurePoids);
+        navigationMenu = findViewById(R.id.navigationMenu);
+        mask = findViewById(R.id.mask);
+        cancelWeightMeasurement = findViewById(R.id.annulerMesurePoid);
+        suspensionsButton = findViewById(R.id.suspensionsButton);
+        showMenuButton = findViewById(R.id.showMenu);
+        buttonTestPlus = findViewById(R.id.buttonTestPlus);
+        buttonTestMoins = findViewById(R.id.buttonTestMoins);
+        loaderMonPoids = findViewById(R.id.loaderMesurePoid);
+
         graph.handler = myHandler;
-        popUpMesurepoids = (ConstraintLayout)findViewById(R.id.popUpMesurePoids);
-        navigationMenu = (ConstraintLayout)findViewById(R.id.navigationMenu);
-        mask = (ConstraintLayout)findViewById(R.id.mask);
-        cancelWeightMeasurement = (Button)findViewById(R.id.annulerMesurePoid);
-        suspensionsButton = (Button)findViewById(R.id.suspensionsButton);
-        showMenuButton = (Button)findViewById(R.id.showMenu);
-        buttonTestPlus = (Button)findViewById(R.id.buttonTestPlus);
-        buttonTestMoins = (Button)findViewById(R.id.buttonTestMoins);
-        loaderMonPoids = (ProgressBar)findViewById(R.id.loaderMesurePoid);
 
 
         //Ajouter prehenssion dans select
