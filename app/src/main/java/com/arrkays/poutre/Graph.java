@@ -28,13 +28,18 @@ public class Graph extends View {
     double ratio = 0.9;//ratio beetween sub weight pull and fuul graph
     double ratio2 = 0.5;//ratio beetween half weight pull and fuul graph
     Rect rec = new Rect();
-    public int max;
     private Paint p = new Paint();
+    private Paint p2 = new Paint();
     public Handler handler = null;
+
+    private int rouge = Color.RED;
+    private int orange = Color.rgb(255,140 ,0);
+    private int vert = Color.rgb(0,190 ,0);
 
     public Graph(Context c, AttributeSet attrs) {
         super(c, attrs);
-
+        p2.setColor(Color.rgb(5,5,5));
+        p2.setStyle(Paint.Style.FILL);
 
     }
 
@@ -54,7 +59,7 @@ public class Graph extends View {
     protected void onDraw(Canvas c) {
         super.onDraw(c);
         getSize();
-        p.setColor(Color.rgb(0,190,0));
+        p.setColor(vert);
         p.setStyle(Paint.Style.FILL);
         if(poid==0)
             poid =60;
@@ -69,32 +74,38 @@ public class Graph extends View {
 
         //bar orange
         if(ratio2 <= pull/poid){
-            Log.d(TAG,"Orange, height:"+height+" , bottom: "+(int)(double)(((height*ratio))*ratio2)+" top: "+(height-top));
             rec.set(0,height-top, width,height-(int)(double)(((height*ratio))*ratio2));
-            p.setColor(Color.rgb(255,140 ,0));
+            p.setColor(orange);
             c.drawRect(rec, p);
         }
 
         //bar rouge si pull depace poid
         if(1 <= pull/poid){
             rec.set(0,height-top, width, (int)(height*(1-ratio)));
-            p.setColor(Color.RED);
+            p.setColor(rouge);
             c.drawRect(rec, p);
         }
 
         //ligne tout les 10kg
         double unKiloEnPixel =  (((double)height * ratio) /  poid);
-        p.setColor(Color.BLACK);
+        //p.setColor(Color.BLACK);
         for(double i = 0; i < poid+11 ; i+=10){
-            //c.drawLine(0,(float)(unKiloEnPixel*i), width,(float)(unKiloEnPixel*i),p);
-            c.drawRect(0,(float)(height-unKiloEnPixel*i)-1,width,(float)(height-unKiloEnPixel*i),p);
+            c.drawRect(0,(float)(height-unKiloEnPixel*i)-1,width,(float)(height-unKiloEnPixel*i),p2);
         }
 
         //bare max
+        int maxTopBar = 50;// bar a x dp avant le top max
         int topBar = (int)(((double)height*ratio) * maxPull/poid);
-        if(topBar>height-32)
-            topBar=height - 32;
-        p.setColor(Color.parseColor("007F0E")); //vert
+        if(topBar>height-maxTopBar)
+            topBar=height - maxTopBar;
+        //choix couleur bar max en fonction du max
+        if(maxPull >= poid*ratio)
+            p.setColor(rouge);
+        else if(maxPull >= poid*ratio2)
+            p.setColor(orange);
+        else
+            //p.setColor(vert);
+            p.setColor(Color.parseColor("#007F0E")); //vert
         rec.set(0,height-topBar-4,width,height-topBar);
         c.drawRect(rec, p);
 
@@ -107,9 +118,11 @@ public class Graph extends View {
 
     }
 
+    //RAZ de max pull qd on touche la bar
     @Override
-    public void setOnClickListener(@Nullable OnClickListener l) {
+    public boolean onTouchEvent(MotionEvent event) {
         maxPull = 0;
         super.invalidate();
+        return super.onTouchEvent(event);
     }
 }

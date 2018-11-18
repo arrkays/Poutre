@@ -28,42 +28,6 @@
         app:layout_constraintTop_toBottomOf="@+id/selectPrise" />
 
     <TextView
-        android:id="@+id/currentPull"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/border"
-        android:text="0 Kg"
-        android:textAlignment="center"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/currentPullPoucentage"
-        app:layout_constraintEnd_toEndOf="@+id/graph"
-        app:layout_constraintStart_toStartOf="@+id/graph" />
-
-    <com.arrkays.poutre.Graph
-        android:id="@+id/graph"
-        android:layout_width="100dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/border"
-        app:layout_constraintBottom_toTopOf="@+id/currentPull"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/menu">
-
-    </com.arrkays.poutre.Graph>
-
-    <TextView
-        android:id="@+id/currentPullPoucentage"
-        android:layout_width="100db"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="50%"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/currentPull"
-        app:layout_constraintStart_toStartOf="@+id/currentPull" />
-
-    <TextView
         android:id="@+id/recordPullPourcentage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,6 +43,60 @@
         android:text="Mon poids"
         app:layout_constraintBottom_toTopOf="@+id/monPoid"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/layoutBarTestPull"
+        android:layout_width="110dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menu">
+
+        <TextView
+            android:id="@+id/currentPull"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="4dp"
+            android:background="#eeeeee"
+            android:drawableLeft="@drawable/border"
+            android:text="0 Kg"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/currentPullPoucentage"
+            app:layout_constraintEnd_toEndOf="@+id/graph"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.arrkays.poutre.Graph
+            android:id="@+id/graph"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            app:layout_constraintBottom_toTopOf="@+id/currentPull"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </com.arrkays.poutre.Graph>
+
+        <TextView
+            android:id="@+id/currentPullPoucentage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="4dp"
+            android:background="#eeeeee"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
     <TextView
         android:id="@+id/monPoid"
@@ -269,6 +287,26 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/buttonTestPlus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="test +"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/record" />
+
+    <Button
+        android:id="@+id/buttonTestMoins"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Test -"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonTestPlus" />
 
 
 </android.support.constraint.ConstraintLayout>

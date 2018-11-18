@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
     Button suspensionsButton = null;
     Button showMenuButton = null;
+    Button buttonTestPlus = null;
+    Button buttonTestMoins = null;
     ProgressBar loaderMonPoids = null;
 
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
@@ -96,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         cancelWeightMeasurement = (Button)findViewById(R.id.annulerMesurePoid);
         suspensionsButton = (Button)findViewById(R.id.suspensionsButton);
         showMenuButton = (Button)findViewById(R.id.showMenu);
+        buttonTestPlus = (Button)findViewById(R.id.buttonTestPlus);
+        buttonTestMoins = (Button)findViewById(R.id.buttonTestMoins);
         loaderMonPoids = (ProgressBar)findViewById(R.id.loaderMesurePoid);
 
 
@@ -111,6 +115,22 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Event*******************************************
+
+            //bouton de test pull
+        buttonTestMoins.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                pullUptade(graph.pull-1);
+                return false;
+            }
+        });
+        buttonTestPlus.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                pullUptade(graph.pull+1);
+                return false;
+            }
+        });
 
             //bouton pour ouvrir le menue
         showMenuButton.setOnClickListener(new View.OnClickListener() {
@@ -183,6 +203,8 @@ public class MainActivity extends AppCompatActivity {
      * @param pull
      */
     public void pullUptade(double pull){
+        if(pull < 0)//pull ne peut pas etre negatif
+            pull=0;
         graph.setPull(pull);
         if(pull>Res.currentPrehension.maxPull) {//verifie si le record est batue
             //TODO Faire annimation est feedback sonnor
