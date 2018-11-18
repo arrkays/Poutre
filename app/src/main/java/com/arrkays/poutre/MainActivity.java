@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     Spinner spinnerPrise = null;
     ConstraintLayout popUpMesurepoids = null;
     ConstraintLayout navigationMenu = null;
+    ConstraintLayout mask = null;
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
     Button suspensionsButton = null;
     Button showMenuButton = null;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         graph.handler = myHandler;
         popUpMesurepoids = (ConstraintLayout)findViewById(R.id.popUpMesurePoids);
         navigationMenu = (ConstraintLayout)findViewById(R.id.navigationMenu);
+        mask = (ConstraintLayout)findViewById(R.id.mask);
         cancelWeightMeasurement = (Button)findViewById(R.id.annulerMesurePoid);
         suspensionsButton = (Button)findViewById(R.id.suspensionsButton);
         showMenuButton = (Button)findViewById(R.id.showMenu);
@@ -119,6 +121,17 @@ public class MainActivity extends AppCompatActivity {
 
         //Event*******************************************
 
+        mask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(weightFunctions.bodyWeightAsked)
+                    weightFunctions.stopBodyWeightMeasurement();
+                if(navigationMenu.getVisibility() == View.VISIBLE)
+                    navigationMenu.setVisibility(View.GONE);
+
+                mask.setVisibility(View.GONE);
+            }
+        });
             //bouton de test pull
         buttonTestMoins.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -139,16 +152,19 @@ public class MainActivity extends AppCompatActivity {
         showMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(navigationMenu.getVisibility()== View.GONE)
+                if(navigationMenu.getVisibility()== View.GONE) {
                     navigationMenu.setVisibility(View.VISIBLE);
-                else
+                    mask.setVisibility(View.VISIBLE);
+                }
+                else {
                     navigationMenu.setVisibility(View.GONE);
+                    mask.setVisibility(View.GONE);
+                }
             }
         });
         bluetoothOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"touche");
                 blutoothManager.connect();
             }
         });
@@ -160,15 +176,19 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(myIntent);
             }
         });
+        //mesure poid
         monPoid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //afficher le masque derier le popup
+                mask.setVisibility(View.VISIBLE);
                 weightFunctions.startBodyWeightMeasurement();
             }
         });
         cancelWeightMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mask.setVisibility(View.GONE);
                 weightFunctions.stopBodyWeightMeasurement();
             }
         });
