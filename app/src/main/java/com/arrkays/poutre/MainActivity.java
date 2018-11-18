@@ -67,13 +67,9 @@ public class MainActivity extends AppCompatActivity {
     public Handler myHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.arg1 == Res.BT_DATA){// données en provenance du module blutoooth
-                //pullUptade((double) msg.obj);
-                //Res.weightNotif.updateWeight((double) msg.obj);
-            }
-            else if(msg.arg1 == Res.BT_STATUS_UPDATE){
-                bluetoothUpdate((boolean) msg.obj);
-            }
+        if(msg.arg1 == Res.BT_STATUS_UPDATE){
+            bluetoothUpdate((boolean) msg.obj);
+        }
         }
     };
 
