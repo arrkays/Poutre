@@ -56,7 +56,7 @@ public class WeightFunctions {
                     for (int i = 0; i < weightMeasures.size(); i++) {
                         weightSum += weightMeasures.get(i);
                     }
-                    bodyWeight = Math.floor(weightSum / weightMeasures.size() * 10) / 10; // fait la moyenne et garde un seul chiffre après la virgule
+                    bodyWeight = Math.floor((double)weightSum / (double)weightMeasures.size() * 10.0) / 10.0; // fait la moyenne et garde un seul chiffre après la virgule
                     ma.monPoid.setText(bodyWeight + " kg"); // affichage dans le textView
                     weightMeasures.clear();
                     stopBodyWeightMeasurement();
@@ -71,14 +71,15 @@ public class WeightFunctions {
 
 
     public void startBodyWeightMeasurement(){
-        Res.weightNotif.addListener(weightListenerBody);
         bodyWeightAsked = true;
-        Log.d(TAG, "pop up visible");
+        Res.weightNotif.addListener(weightListenerBody);
+        Log.d(TAG, "pop up visible" + ma.popUpMesurepoids.getVisibility());
         ma.popUpMesurepoids.setVisibility(View.VISIBLE);
     }
     public void stopBodyWeightMeasurement(){
-        Res.weightNotif.removeListener(weightListenerBody);
         bodyWeightAsked = false;
+        Res.weightNotif.removeListener(weightListenerBody);
+        Log.d(TAG, "pop up gone");
         ma.popUpMesurepoids.setVisibility(View.GONE);
         ma.mask.setVisibility(View.GONE);
     }

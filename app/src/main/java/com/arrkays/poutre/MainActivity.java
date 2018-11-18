@@ -130,8 +130,10 @@ public class MainActivity extends AppCompatActivity {
         mask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(weightFunctions.bodyWeightAsked)
+                if(weightFunctions.bodyWeightAsked) {
+                    Log.d(TAG, "stop bodyweight mask");
                     weightFunctions.stopBodyWeightMeasurement();
+                }
                 if(navigationMenu.getVisibility() == View.VISIBLE)
                     navigationMenu.setVisibility(View.GONE);
 
