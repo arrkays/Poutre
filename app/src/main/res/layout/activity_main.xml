@@ -11,8 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="0 Kg"
-        android:textAlignment="textEnd"
+        android:text="0 kg"
+        android:textAlignment="center"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titreMaxForce" />
@@ -104,6 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="0 kg"
+        android:textAlignment="center"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/titreMonPoid" />
@@ -122,7 +123,7 @@
         android:id="@+id/mask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#55ff0000"
+        android:background="#3333ffff"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -132,7 +133,9 @@
     </android.support.constraint.ConstraintLayout>
 
     <include layout="@layout/menu" />
-    <include layout="@layout/navigation_menu"/>
+
+    <include
+        layout="@layout/navigation_menu" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/popUpMesurePoids"
@@ -148,7 +151,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/menu">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
             android:id="@+id/loaderMesurePoid"

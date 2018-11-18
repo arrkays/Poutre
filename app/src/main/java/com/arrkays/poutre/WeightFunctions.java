@@ -39,13 +39,13 @@ public class WeightFunctions {
             timeFirstMeasure = Calendar.getInstance().getTimeInMillis();
         }
         else if (Calendar.getInstance().getTimeInMillis() - timeFirstMeasure > timeMax){
-            //stopBodyWeightMeasurement();
+            stopBodyWeightMeasurement();
         }
         else if (weightMeasures.size() >= 2) {
             double weightSum = 0;
             double min = Collections.min(weightMeasures);
             double max = Collections.max(weightMeasures);
-            if ((max - min) / min < 1.0) {
+            if ((max - min) / min < 0.05) {
                 //ma.myHandler.sendMessage(Res.msg(Res.MESURE_POID, 50)); //
                 double diff = (double) Calendar.getInstance().getTimeInMillis() - (double) timeFirstMeasure;
                 double prog = (100.0 * diff / timeBetweenMeasures);
@@ -59,11 +59,12 @@ public class WeightFunctions {
                     bodyWeight = Math.floor(weightSum / weightMeasures.size() * 10) / 10; // fait la moyenne et garde un seul chiffre après la virgule
                     ma.monPoid.setText(bodyWeight + " kg"); // affichage dans le textView
                     weightMeasures.clear();
-                    //stopBodyWeightMeasurement();
+                    stopBodyWeightMeasurement();
                 }
             }
             else {
-                    timeFirstMeasure = Calendar.getInstance().getTimeInMillis();
+                timeFirstMeasure = Calendar.getInstance().getTimeInMillis();
+                weightMeasures.clear();
             }
         }
     }
@@ -72,6 +73,7 @@ public class WeightFunctions {
     public void startBodyWeightMeasurement(){
         Res.weightNotif.addListener(weightListenerBody);
         bodyWeightAsked = true;
+        Log.d(TAG, "pop up visible");
         ma.popUpMesurepoids.setVisibility(View.VISIBLE);
     }
     public void stopBodyWeightMeasurement(){

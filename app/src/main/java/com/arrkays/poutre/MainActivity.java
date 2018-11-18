@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
         if(pull>Res.currentPrehension.maxPull) {//verifie si le record est batue
             //TODO Faire annimation est feedback sonnor
             Res.currentPrehension.setRecordPull(pull);
-            record.setText(pull+" Kg");
+            record.setText(pull+" kg");
             recordPullPour.setText(Res.currentPrehension.pourcentage+"%");
             recordPullPour.setText(Res.getPour(pull)+"%");
         }
