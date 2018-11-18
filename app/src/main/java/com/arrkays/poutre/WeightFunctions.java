@@ -78,6 +78,7 @@ public class WeightFunctions {
         Res.weightNotif.removeListener(weightListenerBody);
         bodyWeightAsked = false;
         ma.popUpMesurepoids.setVisibility(View.GONE);
+        ma.mask.setVisibility(View.GONE);
     }
 
 

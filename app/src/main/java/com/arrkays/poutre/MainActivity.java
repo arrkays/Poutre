@@ -39,13 +39,14 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    String titreActivity = "Mesurer force";
     String TAG = "debug-bluetooth";
     BT blutoothManager = null;
     WeightFunctions weightFunctions = null;
 
     //VIEW
     Graph graph = null;
+    TextView titleActivity = null;
     TextView monPoid = null;
     TextView currentPull = null;
     TextView record = null;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         //instanciation des Views
         graph = findViewById(R.id.graph);
         monPoid = findViewById(R.id.monPoid);
+        titleActivity = findViewById(R.id.titreActivite);
         record = findViewById(R.id.record);
         currentPull = findViewById(R.id.currentPull);
         recordPullPour = findViewById(R.id.recordPullPourcentage);
@@ -119,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
         blutoothManager.connect();
         weightFunctions = new WeightFunctions(this); // instantiation de la classe pour mesurer le poids de corps
         startPullUpdate();
+
+        //set title up
+        titleActivity.setText(titreActivity);
 
         //Event*******************************************
 
@@ -189,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         cancelWeightMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mask.setVisibility(View.GONE);
+
                 weightFunctions.stopBodyWeightMeasurement();
             }
         });
