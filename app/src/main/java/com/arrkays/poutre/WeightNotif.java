@@ -11,8 +11,15 @@ public class WeightNotif {
     private List<WeightListener> listeners = new ArrayList<WeightListener>();//liste des methode qui vont etre notifier
     private Iterator<WeightListener> it = null; //pour eviter exeption si on enlève un objet (removeListener )de la liste pendant qu'on la parcour (updateWeight)
 
+    //les listenner doivent etre unique
     public void addListener(WeightListener toAdd) {
-        listeners.add(toAdd);
+        boolean exist = false;
+        for(WeightListener wl : listeners){
+            if(wl == toAdd)
+                exist =true;
+        }
+        if(!exist)
+            listeners.add(toAdd);
     }
 
     public void removeListener(WeightListener toRemove){

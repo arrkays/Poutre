@@ -122,10 +122,10 @@ public class BT {
                         catch(NumberFormatException e){
                             weight = 0;
                         }
-                        Message msg= new Message();
+                        /*Message msg= new Message();
                         msg.arg1=Res.BT_DATA;
                         msg.obj=weight;
-                        ma.myHandler.sendMessage(msg);
+                        ma.myHandler.sendMessage(msg);*/
                         Res.weightNotif.updateWeight(weight);
                     }
                 };

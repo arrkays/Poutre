@@ -68,12 +68,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.arg1 == Res.BT_DATA){// données en provenance du module blutoooth
-                pullUptade((double) msg.obj);
-                Res.weightNotif.updateWeight((double) msg.obj);
+                //pullUptade((double) msg.obj);
+                //Res.weightNotif.updateWeight((double) msg.obj);
             }
             else if(msg.arg1 == Res.BT_STATUS_UPDATE){
                 bluetoothUpdate((boolean) msg.obj);
             }
+        }
+    };
+
+    WeightListener weightListener = new WeightListener() {
+        @Override
+        public void onChange(double w) {
+            pullUptade(w);
         }
     };
 
@@ -112,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         blutoothManager = new BT(this);
         blutoothManager.connect();
         weightFunctions = new WeightFunctions(this); // instantiation de la classe pour mesurer le poids de corps
-
+        startPullUpdate();
 
         //Event*******************************************
 
@@ -120,14 +127,14 @@ public class MainActivity extends AppCompatActivity {
         buttonTestMoins.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                pullUptade(graph.pull-1);
+                Res.weightNotif.updateWeight(graph.pull-1);
                 return false;
             }
         });
         buttonTestPlus.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                pullUptade(graph.pull+1);
+                Res.weightNotif.updateWeight(graph.pull+1);
                 return false;
             }
         });
@@ -198,6 +205,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    void startPullUpdate(){
+        Res.weightNotif.addListener(weightListener);
+    }
+
+    void stopPullUpdate(){
+        Res.weightNotif.removeListener(weightListener);
+    }
     /**
      * updatePullexercice
      * @param pull
