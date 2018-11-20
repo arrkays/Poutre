@@ -8,12 +8,15 @@
 
     <TextView
         android:id="@+id/record"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="0 kg"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textSize="30sp"
+        app:layout_constraintEnd_toStartOf="@+id/layoutBarTestPull"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titreMaxForce" />
 
@@ -64,7 +67,7 @@
             android:layout_marginEnd="4dp"
             android:background="#eeeeee"
             android:drawableLeft="@drawable/border"
-            android:text="0 Kg"
+            android:text="0 kg"
             android:textAlignment="center"
             android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/currentPullPoucentage"
@@ -100,13 +103,16 @@
 
     <TextView
         android:id="@+id/monPoid"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="0 kg"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/layoutBarTestPull"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/titreMonPoid" />
 
     <Spinner
@@ -121,23 +127,22 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/mask"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#3333ffff"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/menu">
 
     </android.support.constraint.ConstraintLayout>
 
-    <android.support.constraint.ConstraintLayout
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.constraint.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/menu"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/colorPrimary"
+        android:background="@android:color/holo_blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -205,7 +210,7 @@
         android:id="@+id/navigationMenu"
         android:layout_width="227dp"
         android:layout_height="200dp"
-        android:background="@drawable/shape_navigation_menu"
+        android:background="@android:color/holo_blue_dark"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menu">
@@ -233,14 +238,13 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/popUpMesurePoids"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/shape"
-        android:minHeight="138dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -264,23 +268,22 @@
             app:layout_constraintBottom_toTopOf="@+id/annulerMesurePoid"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/descriptionMesurePoids" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptionMesurePoids"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/poidPopUp"
             android:layout_width="17dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:text="0"
             android:textColor="@android:color/white"
             android:textSize="30sp"
-            app:layout_constraintBottom_toTopOf="@+id/annulerMesurePoid"
+            app:layout_constraintBottom_toBottomOf="@+id/loaderMesurePoid"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/descriptionMesurePoids" />
+            app:layout_constraintTop_toTopOf="@+id/loaderMesurePoid" />
 
         <Button
             android:id="@+id/annulerMesurePoid"
@@ -314,7 +317,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
-        android:text="test +"
+        android:text="Test +"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/record" />
 

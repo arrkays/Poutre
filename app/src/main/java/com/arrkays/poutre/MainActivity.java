@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "stop bodyweight mask");
                     weightFunctions.stopBodyWeightMeasurement();
                 }
-                if(navigationMenu.getVisibility() == View.VISIBLE)
+                if(navigationMenu.getVisibility() == View.VISIBLE){}
                     navigationMenu.setVisibility(View.GONE);
 
                 mask.setVisibility(View.GONE);
@@ -156,16 +156,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-            //bouton pour ouvrir le menue
+            //bouton pour ouvrir le menu
         showMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(navigationMenu.getVisibility()== View.GONE) {
+                if(navigationMenu.getVisibility() == View.GONE) {
                     navigationMenu.setVisibility(View.VISIBLE);
+                    //navigationMenu.requestLayout();
                     mask.setVisibility(View.VISIBLE);
                 }
                 else {
                     navigationMenu.setVisibility(View.GONE);
+                    navigationMenu.requestLayout();
                     mask.setVisibility(View.GONE);
                 }
             }
@@ -179,24 +181,25 @@ public class MainActivity extends AppCompatActivity {
         suspensionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                navigationMenu.setVisibility(View.GONE);
+                mask.setVisibility(View.GONE);
                 Intent myIntent = new Intent(MainActivity.this, SuspensionsActivity.class);
                 //myIntent.putExtra("key", value); //Optional parameters
                 MainActivity.this.startActivity(myIntent);
             }
         });
-        //mesure poid
+        //mesure poids
         monPoid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //afficher le masque derier le popup
-                mask.setVisibility(View.VISIBLE);
+                //mask.setVisibility(View.VISIBLE);
                 weightFunctions.startBodyWeightMeasurement();
             }
         });
         cancelWeightMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 weightFunctions.stopBodyWeightMeasurement();
             }
         });
@@ -242,22 +245,23 @@ public class MainActivity extends AppCompatActivity {
      * @param pull
      */
     public void pullUptade(double pull){
-        if(pull < 0)//pull ne peut pas etre negatif
-            pull=0;
-        graph.setPull(pull);
+        if(pull < 0.0)//pull ne peut pas etre negatif
+            pull=0.0;
+
         if(pull>Res.currentPrehension.maxPull) {//verifie si le record est batue
             //TODO Faire annimation est feedback sonnor
             Res.currentPrehension.setRecordPull(pull);
-            record.setText(pull+" kg");
+            record.setText(String.valueOf(pull)+" kg");
             recordPullPour.setText(Res.currentPrehension.pourcentage+"%");
             recordPullPour.setText(Res.getPour(pull)+"%");
         }
-        currentPull.setText(pull+" Kg");
-        if(Res.getPour(pull) == 0)
+        currentPull.setText(pull+" kg");
+        if(Res.getPour(pull) == 0.0)
             currentPullPour.setText("");
         else
             currentPullPour.setText(Res.getPour(pull)+"%");
 
+        graph.setPull(pull);
     }
 
     /**

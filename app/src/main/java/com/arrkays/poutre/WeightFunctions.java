@@ -57,7 +57,7 @@ public class WeightFunctions {
                         weightSum += weightMeasures.get(i);
                     }
                     bodyWeight = Math.floor((double)weightSum / (double)weightMeasures.size() * 10.0) / 10.0; // fait la moyenne et garde un seul chiffre après la virgule
-                    ma.monPoid.setText(bodyWeight + " kg"); // affichage dans le textView
+                    ma.monPoid.setText(String.valueOf(bodyWeight) + " kg"); // affichage dans le textView
                     weightMeasures.clear();
                     stopBodyWeightMeasurement();
                 }
@@ -72,18 +72,23 @@ public class WeightFunctions {
 
     public void startBodyWeightMeasurement(){
         bodyWeightAsked = true;
-        Res.weightNotif.addListener(weightListenerBody);
-        Log.d(TAG, "pop up visible" + ma.popUpMesurepoids.getVisibility());
         ma.popUpMesurepoids.setVisibility(View.VISIBLE);
+        //ma.popUpMesurepoids.requestLayout();
+        //ma.popUpMesurepoids.setAlpha(1);
+        ma.mask.setVisibility(View.VISIBLE);
+        Res.weightNotif.addListener(weightListenerBody);
+        Log.d(TAG, "pop up visible " + ma.popUpMesurepoids.getVisibility());
     }
     public void stopBodyWeightMeasurement(){
         bodyWeightAsked = false;
-        Res.weightNotif.removeListener(weightListenerBody);
-        Log.d(TAG, "pop up gone");
         ma.popUpMesurepoids.setVisibility(View.GONE);
+        //ma.popUpMesurepoids.requestLayout();
         ma.mask.setVisibility(View.GONE);
-    }
+        Res.weightNotif.removeListener(weightListenerBody);
+        Log.d(TAG, "pop up gone " + ma.popUpMesurepoids.getVisibility());
+        weightMeasures.clear();
 
+    }
 
 
 

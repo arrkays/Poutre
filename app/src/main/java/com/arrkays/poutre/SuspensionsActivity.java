@@ -21,9 +21,10 @@ public class SuspensionsActivity extends AppCompatActivity {
 
     Button startButton = null;
     Button optionsButton = null;
+    Button timerStopButton;
     ProgressBar progressBar = null;
     ProgressBar progressBar2 = null;
-    CountDownTimer timer = null;
+    CountDownTimerPausable timerE = null;
     CountDownTimer restTimer = null;
     ConstraintLayout optionsLayout = null;
     NumberPicker suspensionsTimeNPsec = null;
@@ -33,12 +34,21 @@ public class SuspensionsActivity extends AppCompatActivity {
     TextView chronoTextView;
     TextView repTextView;
     TextView setTextView;
+    ConstraintLayout mask;
+
+    Vibrator v;
 
 
     long suspensionTime = 10;
     long restTime = 10;
+    long timerDuration = suspensionTime;
     int nbrSet = 5;
     int nbrRep = 5;
+    int setRealises = 0;
+    int repRealises = 0;
+    boolean timerStarted = false;
+    boolean rest = true;
+    String etatTimer = "Stop";
 
 
     @Override
@@ -48,6 +58,7 @@ public class SuspensionsActivity extends AppCompatActivity {
 
         startButton = (Button) findViewById(R.id.startButton);
         optionsButton = (Button) findViewById(R.id.optionsButton);
+        timerStopButton = findViewById(R.id.timerStopButton);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
         optionsLayout = (ConstraintLayout) findViewById(R.id.optionsLayout) ;
@@ -68,20 +79,39 @@ public class SuspensionsActivity extends AppCompatActivity {
         chronoTextView = (TextView) findViewById(R.id.chronoTextView);
         setTextView = (TextView) findViewById(R.id.setTextView);
         repTextView = (TextView) findViewById(R.id.repTextView);
+        mask = findViewById(R.id.mask);
 
-
-        final Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Thread threadExercice = new Thread() {
-                    @Override
-                    public void run() {
-                        exercice();
-                    }
-                };
-                threadExercice.start();
+                if (etatTimer == "Stop") {
+                    startButton.setText("Pause");
+                    timerStarted = true;
+                    repRealises = 0;
+                    setRealises = 0;
+                    progressBar.setProgress(0);
+                    progressBar2.setProgress(0);
+                    repTextView.setText(repRealises + " / " + nbrRep);
+                    setTextView.setText(setRealises + " / " + nbrSet);
+                    etatTimer = "Start";
+                    exercice();
+                }
+                else if (etatTimer == "Start"){
+                    startButton.setText("Resume");
+                    timerStopButton.setVisibility(View.VISIBLE);
+                    etatTimer = "Pause";
+                    timerE.pause();
+                }
+                else if (etatTimer == "Pause"){
+                    startButton.setText("Start");
+                    etatTimer = "Start";
+                    timerStopButton.setVisibility(View.GONE);
+                    //timerStarted = false;
+                    timerE.start();
+                }
+
             }
         });
 
@@ -90,12 +120,28 @@ public class SuspensionsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (optionsLayout.getVisibility() == View.VISIBLE){
                     optionsLayout.setVisibility(View.GONE);
+                    mask.setVisibility(View.GONE);
                     suspensionTime = 1000*(suspensionsTimeNPmin.getValue() * 60 + suspensionsTimeNPsec.getValue());
                     restTime = 1000*(restTimeNPmin.getValue() * 60 + restTimeNPsec.getValue());
                 }
                 else {
                     optionsLayout.setVisibility(View.VISIBLE);
+                    mask.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+        timerStopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                timerE.cancel();
+                timerStopButton.setVisibility(View.GONE);
+                etatTimer = "Stop";
+                startButton.setText("Start");
+                progressBar.setProgress(0);
+                progressBar2.setProgress(0);
+                repTextView.setText("  ");
+                setTextView.setText("  ");
+                chronoTextView.setText(0+"");
             }
         });
 
@@ -106,37 +152,67 @@ public class SuspensionsActivity extends AppCompatActivity {
             }
         });
 
+        mask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (optionsButton.getVisibility() == View.VISIBLE) {
+                    optionsLayout.setVisibility(View.GONE);
+                    mask.setVisibility(View.GONE);
+                    suspensionTime = 1000*(suspensionsTimeNPmin.getValue() * 60 + suspensionsTimeNPsec.getValue());
+                    restTime = 1000*(restTimeNPmin.getValue() * 60 + restTimeNPsec.getValue());
+                }
+            }
+        });
+
 
     }
-    public void exercice(){
-        progressBar.setProgress(0);
-        progressBar2.setProgress(0);
-        timer = new CountDownTimer(suspensionTime, 100) {
+    public void exercice() {
+        timerE = new CountDownTimerPausable(timerDuration, 10) {
+
             @Override
             public void onTick(long millisUntilFinished) {
-                progressBar.setProgress( (int)((suspensionTime - (double)(millisUntilFinished-100)) / suspensionTime * 100));
-                chronoTextView.setText((int) (1+(millisUntilFinished-100)/1000) + "");
+                if (!rest) {
+                    progressBar.setProgress((int) (1 + (suspensionTime - (double) (millisUntilFinished - 10)) / suspensionTime * 100));
+                    chronoTextView.setText((int) (1 + (millisUntilFinished - 10) / 1000) + "");
+                }
+                else {
+                    progressBar2.setProgress((int) (1 + (restTime - (double) (millisUntilFinished - 10)) / restTime * 100));
+                    chronoTextView.setText((int) (1 + (millisUntilFinished - 10) / 1000) + "");
+                }
             }
+
             @Override
             public void onFinish() {
-                //v.vibrate(400);
-                chronoTextView.setText(0+"");
-                restTimer = new CountDownTimer(restTime, 100){
-                    @Override
-                    public void onTick(long millisUntilFinishedRest) {
-                        progressBar2.setProgress( (int)((restTime - (double)(millisUntilFinishedRest-100)) / restTime * 100));
-                        chronoTextView.setText((int) (1+(millisUntilFinishedRest-100)/1000) + "");
-
-                    }
-                    @Override
-                    public void onFinish(){
-                        //v.vibrate(400);
-                        chronoTextView.setText(0+"");
-                    }
-                };
-                restTimer.start();
+                //v.vibrate(100);
+                chronoTextView.setText(0 + "");
+                if (rest){
+                    timerDuration = suspensionTime;
+                    repRealises++;
+                    progressBar.setProgress(0);
+                    progressBar2.setProgress(0);
+                }
+                else {
+                    timerDuration = restTime;
+                }
+                rest = !rest;
+                exercice();
             }
         };
-        timer.start();
+
+        if (!rest){
+            timerE.start();
+        }
+        else if (setRealises < nbrSet) {
+            if (repRealises >= nbrRep){
+                repRealises = 0;
+                setRealises ++;
+            }
+            repTextView.setText(repRealises + " / " + nbrRep);
+            setTextView.setText(setRealises + " / " + nbrSet);
+            timerE.start();
+
+        }
+
     }
+
 }
