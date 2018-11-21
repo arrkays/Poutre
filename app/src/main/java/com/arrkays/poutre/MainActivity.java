@@ -1,12 +1,14 @@
 package com.arrkays.poutre;
 
 import android.app.Notification;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +16,9 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -317,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
     /**************************************************************************************************LISTE PRISE***************************************************************************************************************/
     /****************************************************************************************************************************************************************************************************************************/
     int widthNom = 400;
-    int heightNom = 50;
+    int heightNom = 150;
 
     void buildListHold(){
         int i = 0;
@@ -331,13 +335,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private LinearLayout creatLine(final Prehension p){
+        final LinearLayout ligne = new LinearLayout(this);
+
+        //edit text
+        LinearLayout.LayoutParams paramsEdit = new LinearLayout.LayoutParams(widthNom,LinearLayout.LayoutParams.WRAP_CONTENT);
+        //paramsEdit.setMargins(10,10,10,10);
+
+        //icons
         LinearLayout.LayoutParams paramsIcon = new LinearLayout.LayoutParams(80,80);
         paramsIcon.setMargins(10,10,10,10);
 
-        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        //layout
+        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,heightNom);
 
+        //text view NOM
         LinearLayout.LayoutParams paramsTextView = new LinearLayout.LayoutParams(widthNom,LinearLayout.LayoutParams.MATCH_PARENT);
         //paramsTextView.setMargins(50,-50,0,0);
+
+        //bouton vlider modif
+        LinearLayout.LayoutParams validModif = new LinearLayout.LayoutParams(80,80);
+        validModif.setMargins(60,10,60,10);
+        validModif.gravity = Gravity.CENTER_VERTICAL;
 
         //text view
         TextView nom = new TextView(this);
@@ -357,12 +375,10 @@ public class MainActivity extends AppCompatActivity {
         Button edit = new Button(this);
         edit.setBackground(ContextCompat.getDrawable(this,R.drawable.edit_list_prise));
         edit.setLayoutParams(paramsIcon);
-
-        //edit.setWidth(40);
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setPrehenssion(p);
+                setPrehenssion(ligne, p);
             }
         });
 
@@ -377,18 +393,52 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Edit Texte
+        EditText editNom = new EditText(this);
+        editNom.setText(p.nom);
+        editNom.setLayoutParams(paramsEdit);
+        editNom.setSingleLine(true);
+        editNom.setImeActionLabel("Valider", EditorInfo.IME_ACTION_DONE);
+        editNom.setSelectAllOnFocus(true);
+        editNom.setVisibility(View.GONE);
+        editNom.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                validerModif(ligne, p);
+                return false;
+            }
+        });
+
+        //boutton valider modification
+        Button validerButton = new Button(this);
+        validerButton.setLayoutParams(validModif);
+        validerButton.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_ok));
+        validerButton.setVisibility(View.GONE);
+        validerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validerModif(ligne, p);
+            }
+        });
+
         //la ligne
-        LinearLayout ligne = new LinearLayout(this);
+
         ligne.setOrientation(LinearLayout.HORIZONTAL);
-        ligne.setBackground(ContextCompat.getDrawable(this,R.drawable.border));
+        //ligne.setBackground(ContextCompat.getDrawable(this,R.drawable.border));
         ligne.setPadding(10,10,10,10);
         ligne.setLayoutParams(paramsLine);
         ligne.setBaselineAligned(false);
         ligne.setGravity(Gravity.CENTER_VERTICAL);
+        if(p == Res.currentPrehension)
+            ligne.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_gris));
+        else
+            ligne.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_blanc));
 
-        ligne.addView(nom);
-        ligne.addView(edit);
-        ligne.addView(del);
+        ligne.addView(nom);//0
+        ligne.addView(edit);//1
+        ligne.addView(del);//2
+        ligne.addView(editNom);//3 gone
+        ligne.addView(validerButton);//4 gone
 
         return ligne;
     }
@@ -398,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
         //parametre
         //edit Text
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(widthNom,LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(10,10,10,10);
+        //params.setMargins(10,10,10,10);
 
         //bouton
         LinearLayout.LayoutParams paramsButton = new LinearLayout.LayoutParams(80,80);
@@ -411,7 +461,8 @@ public class MainActivity extends AppCompatActivity {
         final EditText edit = new EditText(this);
         edit.setLayoutParams(params);
         edit.setSingleLine(true);
-        edit.setImeActionLabel("Valider", EditorInfo.IME_ACTION_DONE);
+        edit.setImeActionLabel("Ajouter", EditorInfo.IME_ACTION_DONE);
+        edit.setHint("Ajouter prise");
         edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -421,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
         });
         Button add = new Button(this);
         add.setLayoutParams(paramsButton);
-        add.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_ok));
+        add.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_plus_blanc_256));
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -431,7 +482,8 @@ public class MainActivity extends AppCompatActivity {
 
         LinearLayout line = new LinearLayout(this);
         line.setOrientation(LinearLayout.HORIZONTAL);
-        line.setBackground(ContextCompat.getDrawable(this,R.drawable.border));
+        line.setPadding(10,10,10,10);
+        line.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_blanc));
         line.setLayoutParams(paramsLine);
         line.setBaselineAligned(false);
         line.addView(edit);
@@ -440,22 +492,69 @@ public class MainActivity extends AppCompatActivity {
         return line;
     }
 
+    private void validerModif(LinearLayout l, Prehension p){
+        //hide keyboard
+        Res.hideKeyboard(this);
+
+        //verification
+        EditText nom = (EditText)l.getChildAt(3);
+        TextView text = (TextView)l.getChildAt(0);
+        if(!nom.getText().toString().equals("")){
+            p.nom = nom.getText().toString();
+            text.setText(p.nom);
+        }
+        //validation
+
+        //view
+        l.getChildAt(0).setVisibility(View.VISIBLE);
+        l.getChildAt(1).setVisibility(View.VISIBLE);
+        l.getChildAt(2).setVisibility(View.VISIBLE);
+        l.getChildAt(3).setVisibility(View.GONE);
+        l.getChildAt(4).setVisibility(View.GONE);
+        Log.d(TAG,"modif "+p);
+    }
+
     private void selectPrehenssion(Prehension p) {
+        LinearLayout l;
+        //feedback
+        for(int i = 0; i < listPrise.getChildCount();i++){
+            l = (LinearLayout)listPrise.getChildAt(i);
+            if(i == Res.prehensions.indexOf(p))
+                l.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_gris));
+            else
+                l.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_blanc));
+        }
+
+        //select
+        Res.currentPrehension = p;
+
+        //show
+        displayRecord();
         Log.d(TAG,"select "+p);
     }
 
     private void deletPrehenssion(Prehension p) {
-
-        listPrise.removeViewAt(Res.prehensions.indexOf(p));
-        Res.prehensions.remove(p);
-        Log.d(TAG,"remove "+p.nom);
+        //veriffier que ce n'est pas la dernier prise
+        if(Res.prehensions.size() > 1){
+            listPrise.removeViewAt(Res.prehensions.indexOf(p));
+            Res.prehensions.remove(p);
+            Log.d(TAG,"remove "+p.nom);
+        }
     }
 
-    private void setPrehenssion(Prehension p){
+    private void setPrehenssion(LinearLayout l, Prehension p){
+
+        l.getChildAt(0).setVisibility(View.GONE);
+        l.getChildAt(1).setVisibility(View.GONE);
+        l.getChildAt(2).setVisibility(View.GONE);
+        l.getChildAt(3).setVisibility(View.VISIBLE);
+        l.getChildAt(4).setVisibility(View.VISIBLE);
+
         Log.d(TAG,"modif "+p);
     }
 
     public void addPrehenssion(EditText nom){
+        Res.hideKeyboard(this);
         Prehension p = new Prehension(nom.getText().toString());
         Res.prehensions.add(p);
         listPrise.addView(creatLine(p), listPrise.getChildCount()-1);
