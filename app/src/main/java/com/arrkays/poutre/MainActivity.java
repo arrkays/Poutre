@@ -1,5 +1,6 @@
 package com.arrkays.poutre;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -10,8 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -319,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
     void buildListHold(){
         int i = 0;
         for(Prehension p : Res.prehensions){
-            listPrise.addView(creatLine(i));
+            listPrise.addView(creatLine(p));
             i++;
         }
 
@@ -327,8 +330,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private LinearLayout creatLine(final int i){
-        Prehension p = Res.prehensions.get(i);
+    private LinearLayout creatLine(final Prehension p){
         LinearLayout.LayoutParams paramsIcon = new LinearLayout.LayoutParams(80,80);
         paramsIcon.setMargins(10,10,10,10);
 
@@ -345,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
         nom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectPrehenssion(i);
+                selectPrehenssion(p);
             }
         });
         nom.setTextColor(Color.BLACK);
@@ -360,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setPrehenssion(i);
+                setPrehenssion(p);
             }
         });
 
@@ -371,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
         del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deletPrehenssion(i);
+                deletPrehenssion(p);
             }
         });
 
@@ -408,16 +410,22 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText edit = new EditText(this);
         edit.setLayoutParams(params);
-        //edit.setTextSize(20);
-        //edit.setGravity(Gravity.CENTER_VERTICAL);
-
+        edit.setSingleLine(true);
+        edit.setImeActionLabel("Valider", EditorInfo.IME_ACTION_DONE);
+        edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                addPrehenssion(edit);
+                return false;
+            }
+        });
         Button add = new Button(this);
         add.setLayoutParams(paramsButton);
         add.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_ok));
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addPrehenssion(edit.getText().toString());
+                addPrehenssion(edit);
             }
         });
 
@@ -432,19 +440,27 @@ public class MainActivity extends AppCompatActivity {
         return line;
     }
 
-    private void selectPrehenssion(int i) {
-        Log.d(TAG,"select "+Res.prehensions.get(i));
+    private void selectPrehenssion(Prehension p) {
+        Log.d(TAG,"select "+p);
     }
 
-    private void deletPrehenssion(int i) {
-        Log.d(TAG,"remove "+Res.prehensions.get(i));
+    private void deletPrehenssion(Prehension p) {
+
+        listPrise.removeViewAt(Res.prehensions.indexOf(p));
+        Res.prehensions.remove(p);
+        Log.d(TAG,"remove "+p.nom);
     }
 
-    private void setPrehenssion(int i){
-        Log.d(TAG,"modif "+Res.prehensions.get(i));
+    private void setPrehenssion(Prehension p){
+        Log.d(TAG,"modif "+p);
     }
 
-    public void addPrehenssion(String nom){
+    public void addPrehenssion(EditText nom){
+        Prehension p = new Prehension(nom.getText().toString());
+        Res.prehensions.add(p);
+        listPrise.addView(creatLine(p), listPrise.getChildCount()-1);
+        nom.setText("");
+
         Log.d(TAG,"ajout "+nom);
     }
 
