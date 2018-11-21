@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#ffbb5b"/>
+        </shape>
+    </item>
+    <item
+        android:drawable="@drawable/remove_red_128"
+        android:height="12dp"
+        android:width="12dp"
+        android:gravity="center"
+       />
+
+
+</layer-list>

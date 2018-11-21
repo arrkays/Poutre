@@ -1,41 +1,26 @@
 package com.arrkays.poutre;
 
-import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothProfile;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.QuickContactBadge;
 import android.widget.Spinner;
 import android.widget.TextView;
-import java.util.Set;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     ConstraintLayout popUpMesurepoids = null;
     ConstraintLayout navigationMenu = null;
     ConstraintLayout mask = null;
+    LinearLayout listPrise = null;
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
     Button suspensionsButton = null;
     Button showMenuButton = null;
@@ -107,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         buttonTestPlus = findViewById(R.id.buttonTestPlus);
         buttonTestMoins = findViewById(R.id.buttonTestMoins);
         loaderMonPoids = findViewById(R.id.loaderMesurePoid);
+        listPrise = findViewById(R.id.listPrise);
 
         graph.handler = myHandler;
 
@@ -115,11 +102,14 @@ public class MainActivity extends AppCompatActivity {
         checkPrehension();
         updateSpinner();
         addAddButton();
+        buildListHold();
 
         //instruction*************************************
         blutoothManager = new BT(this);
         blutoothManager.connect();
         weightFunctions = new WeightFunctions(this); // instantiation de la classe pour mesurer le poids de corps
+        record.setText(Res.currentPrehension.maxPull+" kg");
+        recordPullPour.setText(Res.currentPrehension.pourcentage+"%");
         startPullUpdate();
 
         //set title up
@@ -212,6 +202,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        findViewById(R.id.titreActivite).requestFocus();
     }
 
     /**
@@ -220,11 +212,15 @@ public class MainActivity extends AppCompatActivity {
     private void checkPrehension() {
         if(Res.currentPrehension == null){
             if(Res.prehensions.size() == 0){
-                Res.currentPrehension = new Prehension("Default");
+                Res.currentPrehension = new Prehension("Prise 1");
                 Res.prehensions.add(Res.currentPrehension);
+                Res.prehensions.add(new Prehension("Prise 2"));
+                Res.prehensions.add(new Prehension("Prise 3"));
+                Res.prehensions.add(new Prehension("Prise 4"));
+                Res.prehensions.add(new Prehension("Prise 5"));
             }
             else{
-                Res.prehensions.get(0);
+                Res.currentPrehension = Res.prehensions.get(0);
             }
         }
     }
@@ -244,20 +240,39 @@ public class MainActivity extends AppCompatActivity {
     public void pullUptade(double pull){
         if(pull < 0)//pull ne peut pas etre negatif
             pull=0;
+
+        updateRecord(pull);
+        displayRecord();
+        displayCurrentPull(pull);
+
+
         graph.setPull(pull);
-        if(pull>Res.currentPrehension.maxPull) {//verifie si le record est batue
-            //TODO Faire annimation est feedback sonnor
-            Res.currentPrehension.setRecordPull(pull);
-            record.setText(pull+" kg");
-            recordPullPour.setText(Res.currentPrehension.pourcentage+"%");
-            recordPullPour.setText(Res.getPour(pull)+"%");
-        }
+    }
+
+    void displayCurrentPull(double pull){
         currentPull.setText(pull+" Kg");
         if(Res.getPour(pull) == 0)
             currentPullPour.setText("");
         else
             currentPullPour.setText(Res.getPour(pull)+"%");
+    }
 
+    void displayRecord(){
+        record.setText(Res.currentPrehension.maxPull+" kg");
+        if(Res.currentPrehension.pourcentage != 0)
+            recordPullPour.setText(Res.currentPrehension.pourcentage+"%");
+    }
+
+    void updateRecord(double pull){
+        if(pull>Res.currentPrehension.maxPull) {//verifie si le record absolue est batue
+            //TODO Faire annimation est feedback sonnor
+            Res.currentPrehension.setRecordPull(pull);
+            recordPullPour.setText(Res.getPour(pull)+"%");
+        }
+
+        if(Res.getPour(pull) > Res.currentPrehension.pourcentage){//verifie si le record relatif est batue
+            Res.currentPrehension.pourcentage = Res.getPour(pull);
+        }
     }
 
     /**
@@ -294,5 +309,144 @@ public class MainActivity extends AppCompatActivity {
      */
     private void addAddButton() {
     }
+
+    /****************************************************************************************************************************************************************************************************************************/
+    /**************************************************************************************************LISTE PRISE***************************************************************************************************************/
+    /****************************************************************************************************************************************************************************************************************************/
+    int widthNom = 400;
+    int heightNom = 50;
+
+    void buildListHold(){
+        int i = 0;
+        for(Prehension p : Res.prehensions){
+            listPrise.addView(creatLine(i));
+            i++;
+        }
+
+        listPrise.addView(ligneAdd());
+
+    }
+
+    private LinearLayout creatLine(final int i){
+        Prehension p = Res.prehensions.get(i);
+        LinearLayout.LayoutParams paramsIcon = new LinearLayout.LayoutParams(80,80);
+        paramsIcon.setMargins(10,10,10,10);
+
+        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        LinearLayout.LayoutParams paramsTextView = new LinearLayout.LayoutParams(widthNom,LinearLayout.LayoutParams.MATCH_PARENT);
+        //paramsTextView.setMargins(50,-50,0,0);
+
+        //text view
+        TextView nom = new TextView(this);
+        nom.setText(p.nom);
+        nom.setLayoutParams(paramsTextView);
+        nom.setGravity(Gravity.CENTER_VERTICAL);
+        nom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectPrehenssion(i);
+            }
+        });
+        nom.setTextColor(Color.BLACK);
+        //nom.setTextSize(20);
+
+        //edit
+        Button edit = new Button(this);
+        edit.setBackground(ContextCompat.getDrawable(this,R.drawable.edit_list_prise));
+        edit.setLayoutParams(paramsIcon);
+
+        //edit.setWidth(40);
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPrehenssion(i);
+            }
+        });
+
+        //delet
+        Button del = new Button(this);
+        del.setLayoutParams(paramsIcon);
+        del.setBackground(ContextCompat.getDrawable(this,R.drawable.remove_list_prise));
+        del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletPrehenssion(i);
+            }
+        });
+
+        //la ligne
+        LinearLayout ligne = new LinearLayout(this);
+        ligne.setOrientation(LinearLayout.HORIZONTAL);
+        ligne.setBackground(ContextCompat.getDrawable(this,R.drawable.border));
+        ligne.setPadding(10,10,10,10);
+        ligne.setLayoutParams(paramsLine);
+        ligne.setBaselineAligned(false);
+        ligne.setGravity(Gravity.CENTER_VERTICAL);
+
+        ligne.addView(nom);
+        ligne.addView(edit);
+        ligne.addView(del);
+
+        return ligne;
+    }
+
+    private LinearLayout ligneAdd(){
+
+        //parametre
+        //edit Text
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(widthNom,LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(10,10,10,10);
+
+        //bouton
+        LinearLayout.LayoutParams paramsButton = new LinearLayout.LayoutParams(80,80);
+        paramsButton.setMargins(60,10,60,10);
+        paramsButton.gravity = Gravity.CENTER_VERTICAL;
+
+        //Layout
+        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        final EditText edit = new EditText(this);
+        edit.setLayoutParams(params);
+        //edit.setTextSize(20);
+        //edit.setGravity(Gravity.CENTER_VERTICAL);
+
+        Button add = new Button(this);
+        add.setLayoutParams(paramsButton);
+        add.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_ok));
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addPrehenssion(edit.getText().toString());
+            }
+        });
+
+        LinearLayout line = new LinearLayout(this);
+        line.setOrientation(LinearLayout.HORIZONTAL);
+        line.setBackground(ContextCompat.getDrawable(this,R.drawable.border));
+        line.setLayoutParams(paramsLine);
+        line.setBaselineAligned(false);
+        line.addView(edit);
+        line.addView(add);
+
+        return line;
+    }
+
+    private void selectPrehenssion(int i) {
+        Log.d(TAG,"select "+Res.prehensions.get(i));
+    }
+
+    private void deletPrehenssion(int i) {
+        Log.d(TAG,"remove "+Res.prehensions.get(i));
+    }
+
+    private void setPrehenssion(int i){
+        Log.d(TAG,"modif "+Res.prehensions.get(i));
+    }
+
+    public void addPrehenssion(String nom){
+        Log.d(TAG,"ajout "+nom);
+    }
+
 }
 
