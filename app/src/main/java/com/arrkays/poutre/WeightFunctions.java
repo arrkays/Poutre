@@ -73,8 +73,6 @@ public class WeightFunctions {
     public void startBodyWeightMeasurement(){
         bodyWeightAsked = true;
         ma.popUpMesurepoids.setVisibility(View.VISIBLE);
-        //ma.popUpMesurepoids.requestLayout();
-        //ma.popUpMesurepoids.setAlpha(1);
         ma.mask.setVisibility(View.VISIBLE);
         Res.weightNotif.addListener(weightListenerBody);
         Log.d(TAG, "pop up visible " + ma.popUpMesurepoids.getVisibility());
@@ -82,7 +80,6 @@ public class WeightFunctions {
     public void stopBodyWeightMeasurement(){
         bodyWeightAsked = false;
         ma.popUpMesurepoids.setVisibility(View.GONE);
-        //ma.popUpMesurepoids.requestLayout();
         ma.mask.setVisibility(View.GONE);
         Res.weightNotif.removeListener(weightListenerBody);
         Log.d(TAG, "pop up gone " + ma.popUpMesurepoids.getVisibility());
