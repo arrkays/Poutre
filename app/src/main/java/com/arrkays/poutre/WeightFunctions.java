@@ -95,6 +95,8 @@ public class WeightFunctions {
         }
     };
 
+
+
     void starComportement(){
         Res.weightNotif.addListener(comportement);
     }
