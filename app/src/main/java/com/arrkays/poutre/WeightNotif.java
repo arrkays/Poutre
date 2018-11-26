@@ -29,12 +29,12 @@ public class WeightNotif {
             it.remove();
     }
 
-    public void updateWeight(double w) {
+    public void updateWeight(double w, boolean[] evolutionPoid) {
         try {
             // Notify everybody that may be interested.
             for (it = listeners.iterator(); it.hasNext(); ) {
                 WeightListener hl = it.next();
-                hl.onChange(w);
+                hl.onChange(w, evolutionPoid);
             }
             it = null;
         }
@@ -45,5 +45,5 @@ public class WeightNotif {
 }
 
 interface WeightListener {
-    void onChange(double w);
+    void onChange(double w, boolean[] evolutionPoid);
 }

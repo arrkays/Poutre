@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     WeightListener weightListener = new WeightListener() {
         @Override
-        public void onChange(double w) {
+        public void onChange(double w, boolean[] evo) {
             pullUptade(w);
         }
     };
@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         buildListHold();
 
         //instruction*************************************
+
         blutoothManager = new BT(this);
         blutoothManager.connect();
         weightFunctions = new WeightFunctions(this); // instantiation de la classe pour mesurer le poids de corps
@@ -145,14 +146,14 @@ public class MainActivity extends AppCompatActivity {
         buttonTestMoins.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Res.weightNotif.updateWeight(graph.pull-1);
+                Res.weightNotif.updateWeight(graph.pull-1, WeightFunctions.comportement(graph.pull-1) );
                 return false;
             }
         });
         buttonTestPlus.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Res.weightNotif.updateWeight(graph.pull+1);
+                Res.weightNotif.updateWeight(graph.pull+1, WeightFunctions.comportement(graph.pull+1));
                 return false;
             }
         });

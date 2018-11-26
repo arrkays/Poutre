@@ -131,8 +131,13 @@ public class BT {
                         msg.arg1=Res.BT_DATA;
                         msg.obj=weight;
                         ma.myHandler.sendMessage(msg);*/
-                        Res.weightNotif.updateWeight(weight);
-                        Res.currentWeight = weight;
+                        if(weight < 0){
+                            //TODO ERROR?
+                        }
+                        else{
+                            Res.weightNotif.updateWeight(weight, WeightFunctions.comportement(weight));
+                            Res.currentWeight = weight;
+                        }
                     }
                 };
 

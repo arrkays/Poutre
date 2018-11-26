@@ -26,7 +26,7 @@ public class WeightFunctions {
 
     WeightListener weightListenerBody = new WeightListener() {
         @Override
-        public void onChange(double weight) {
+        public void onChange(double weight, boolean[] evo) {
             if (weight > minWeight){
                 weightMeasures.add(weight);
                 bodyWeightMeasure();
@@ -87,11 +87,11 @@ public class WeightFunctions {
     //********************************************************************************************************************
     //******************************************************eVOLUTION du poid*************************************************
     //********************************************************************************************************************
-    String TAG2 = "comportement";
+    static String TAG2 = "comportement";
     WeightListener comportement = new WeightListener() {
         @Override
-        public void onChange(double w) {
-            Log.d(TAG2, "\ncomportement : \n"+showComportement(comportement(w)));
+        public void onChange(double w, boolean[] evo) {
+            Log.d(TAG2, "\ncomportement : \n"+showComportement(evo));
         }
     };
 
@@ -107,7 +107,7 @@ public class WeightFunctions {
      * la valeur la plus récente étant en position 0 la plus vielle en n
      * /!\la taille du tableau va définire l'intervale des mesure du coeff
      */
-    double[] mesures = buildTab(0,4);
+    static double[] mesures = buildTab(0,4);
 
     /**
      *
@@ -120,7 +120,7 @@ public class WeightFunctions {
      * [4] = poid baisse
      * [5] = dé-suspenssion : Le poid baisse violement
      */
-    boolean[] comportement(double w){
+    static boolean[] comportement(double w){
         addWeight(mesures,w);
 
         //diff = nouvelle mesure - ancienne mesure
@@ -180,9 +180,4 @@ public class WeightFunctions {
 
         return s;
     }
-
-    public static final int POID_AUGMENTE = 2;
-    public static final int POID_STABLE = 1;
-    public static final int POID_DIMINUE = 0;
-
 }
