@@ -69,26 +69,26 @@
         android:id="@+id/startButton"
         android:layout_width="wrap_content"
         android:layout_height="39dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="10dp"
         android:text="Start"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/timerStopButton"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="262dp"
-        android:layout_height="262dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="20dp"
         android:background="@drawable/circle_shape"
         android:indeterminate="false"
-        android:max="100"
+        android:max="10000"
         android:progress="0"
         android:progressDrawable="@drawable/circular_progress_bar_blue"
         android:visibility="visible"
@@ -100,15 +100,15 @@
     <ProgressBar
         android:id="@+id/progressBar2"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="242dp"
-        android:layout_height="242dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/circle_shape"
         android:indeterminate="false"
-        android:max="100"
+        android:max="10000"
         android:progress="0"
         android:progressDrawable="@drawable/circular_progress_bar"
         android:visibility="visible"
@@ -127,12 +127,44 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menu" />
 
+    <TextView
+        android:id="@+id/chronoTextView"
+        android:layout_width="97dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="0"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_orange_dark"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBar2"
+        app:layout_constraintEnd_toEndOf="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
+        app:layout_constraintTop_toTopOf="@+id/progressBar" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/mask"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/menu">
+
+    </android.support.constraint.ConstraintLayout>
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/optionsLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@android:color/holo_blue_dark"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/shape_options_menu_suspensionsactvity"
         android:minHeight="138dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -145,101 +177,201 @@
 ]]>
         <NumberPicker
             android:id="@+id/suspensionTimeNPsec"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/restTimeNPmin"
+            app:layout_constraintEnd_toEndOf="@+id/textView2"
             app:layout_constraintStart_toEndOf="@+id/suspensionTimeNPmin"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
         <NumberPicker
             android:id="@+id/suspensionTimeNPmin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="4dp"
             app:layout_constraintBottom_toBottomOf="@+id/suspensionTimeNPsec"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/suspensionTimeNPsec"
+            app:layout_constraintStart_toStartOf="@+id/textView2"
             app:layout_constraintTop_toTopOf="@+id/suspensionTimeNPsec" />
 
         <NumberPicker
             android:id="@+id/restTimeNPmin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="4dp"
             app:layout_constraintBottom_toBottomOf="@+id/restTimeNPsec"
             app:layout_constraintEnd_toStartOf="@+id/restTimeNPsec"
+            app:layout_constraintStart_toStartOf="@+id/textView3"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
             app:layout_constraintTop_toTopOf="@+id/restTimeNPsec"
             app:layout_constraintVertical_bias="0.0" />
 
         <NumberPicker
             android:id="@+id/restTimeNPsec"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="99dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintEnd_toEndOf="@+id/textView3"
+            app:layout_constraintStart_toEndOf="@+id/restTimeNPmin"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <NumberPicker
+            android:id="@+id/restTimeBtSetNPsec"
+            android:layout_width="0dp"
+            android:layout_height="99dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/textView5"
+            app:layout_constraintStart_toEndOf="@+id/restTimeBtSetNPmin"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <NumberPicker
+            android:id="@+id/restTimeBtSetNPmin"
+            android:layout_width="0dp"
+            android:layout_height="99dp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/restTimeBtSetNPsec"
+            app:layout_constraintEnd_toStartOf="@+id/restTimeBtSetNPsec"
+            app:layout_constraintStart_toStartOf="@+id/textView5"
+            app:layout_constraintTop_toTopOf="@+id/restTimeBtSetNPsec" />
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="wrap_content"
+            android:layout_width="109dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Temps de suspension"
-            app:layout_constraintEnd_toEndOf="@+id/suspensionTimeNPsec"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/suspensionTimeNPmin"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toStartOf="@+id/textView3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView3"
+            android:layout_width="109dp"
+            android:layout_height="wrap_content"
+            android:text="Temps de repos"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="@+id/textView2"
+            app:layout_constraintEnd_toStartOf="@+id/textView5"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toTopOf="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:text="Temps de repos entre sets"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="@+id/textView3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textView3"
+            app:layout_constraintTop_toTopOf="@+id/textView3" />
+
+        <CheckBox
+            android:id="@+id/maxHangsCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
+            android:text="max hangs"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/setSeekBar" />
+
+        <SeekBar
+            android:id="@+id/repSeekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:max="10"
+            android:progress="5"
+            app:layout_constraintBottom_toTopOf="@+id/setSeekBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/repChooseTextView"
+            app:layout_constraintTop_toBottomOf="@+id/restTimeNPmin" />
+
+        <SeekBar
+            android:id="@+id/setSeekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:max="10"
+            android:progress="5"
+            app:layout_constraintEnd_toEndOf="@+id/repSeekBar"
+            app:layout_constraintStart_toStartOf="@+id/repSeekBar"
+            app:layout_constraintTop_toBottomOf="@+id/repSeekBar" />
+
+        <TextView
+            android:id="@+id/repChooseTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Temps de repos"
-            app:layout_constraintEnd_toEndOf="@+id/restTimeNPsec"
-            app:layout_constraintStart_toStartOf="@+id/restTimeNPmin"
-            app:layout_constraintTop_toTopOf="@+id/textView2" />
+            android:text="5"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/suspensionTimeNPmin"
+            app:layout_constraintStart_toStartOf="@+id/suspensionTimeNPmin"
+            app:layout_constraintTop_toTopOf="@+id/repSeekBar" />
+
+        <TextView
+            android:id="@+id/setChooseTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:text="5"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/setSeekBar"
+            app:layout_constraintEnd_toEndOf="@+id/repChooseTextView"
+            app:layout_constraintStart_toStartOf="@+id/repChooseTextView"
+            app:layout_constraintTop_toTopOf="@+id/setSeekBar" />
 
     </android.support.constraint.ConstraintLayout>
 
     <TextView
-        android:id="@+id/chronoTextView"
-        android:layout_width="97dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="8dp"
+        android:id="@+id/repTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:textColor="@android:color/holo_orange_dark"
-        android:textSize="30sp"
+        android:text="  "
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/progressBar2"
-        app:layout_constraintEnd_toEndOf="@+id/progressBar"
-        app:layout_constraintStart_toStartOf="@+id/progressBar"
-        app:layout_constraintTop_toTopOf="@+id/progressBar" />
-
-    <TextView
-        android:id="@+id/repTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toStartOf="@+id/setTextView"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="129dp" />
+        app:layout_constraintStart_toStartOf="@+id/progressBar2"
+        app:layout_constraintTop_toBottomOf="@+id/chronoTextView"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/setTextView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="30sp"
+        android:layout_marginEnd="80dp"
+        android:text="  "
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/repTextView"
+        app:layout_constraintEnd_toEndOf="@+id/progressBar2"
+        app:layout_constraintTop_toTopOf="@+id/repTextView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/timerStopButton"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="39dp"
+        android:text="Stop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/startButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/repTextView"
-        tools:layout_editor_absoluteY="129dp" />
+        app:layout_constraintStart_toEndOf="@+id/startButton"
+        app:layout_constraintTop_toTopOf="@+id/startButton" />
 
 </android.support.constraint.ConstraintLayout>

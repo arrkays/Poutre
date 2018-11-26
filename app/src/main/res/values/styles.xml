@@ -12,4 +12,17 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="Widget.AppCompat.SeekBar.rep_set_choose">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:max">10</item>
+        <item name="android:progress">5</item>
+        <item name="android:requiresFadingEdge">none</item>
+        <item name="android:scrollbarAlwaysDrawHorizontalTrack">false</item>
+        <item name="android:scrollbarAlwaysDrawVerticalTrack">false</item>
+    </style>
 </resources>
