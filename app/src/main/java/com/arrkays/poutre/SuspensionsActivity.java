@@ -7,7 +7,6 @@ import android.os.Vibrator;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -17,7 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import static java.lang.Integer.valueOf;
+import java.util.Calendar;
+import static java.lang.Math.floor;
 
 public class SuspensionsActivity extends AppCompatActivity {
 
@@ -26,8 +26,6 @@ public class SuspensionsActivity extends AppCompatActivity {
     Button timerStopButton;
     ProgressBar progressBar = null;
     ProgressBar progressBar2 = null;
-    CountDownTimerPausable timerE = null;
-    CountDownTimerPausable timerRest = null;
     ConstraintLayout optionsLayout = null;
     NumberPicker suspensionsTimeNPsec = null;
     NumberPicker suspensionsTimeNPmin = null;
@@ -45,13 +43,17 @@ public class SuspensionsActivity extends AppCompatActivity {
     SeekBar repSeekBar;
     SeekBar setSeekBar;
 
-    Vibrator v;
+    CountDownTimerPausable timerE;
+    CountDownTimerPausable timerRest;
+    CountDownTimerPausable timerHangs;
 
+    Vibrator v;
 
     long suspensionTime = 10;
     long restTime = 10;
     long restTimeBtSets = 60;
     long timerDuration = suspensionTime;
+    long timeStart = 0;
     int nbrSet = 5;
     int nbrRep = 5;
     int setRealises = 0;
@@ -120,18 +122,23 @@ public class SuspensionsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (etatTimer == "Stop") {
                     startButton.setText("Pause");
-                    timerStarted = true;
                     repRealises = 0;
                     setRealises = 0;
-                    timerDuration = suspensionTime;
                     progressBar.setProgress(0);
                     progressBar2.setProgress(0);
                     repTextView.setText(repRealises + " / " + nbrRep);
                     setTextView.setText(setRealises + " / " + nbrSet);
                     etatTimer = "Start";
-                    endSet = false;
-                    rest = false;
-                    exercice();
+                    if (maxHangsCheckBox.isChecked()){
+                        Res.weightNotif.addListener(weightListenerHangs);
+                    }
+                    else {
+                        timerStarted = true;
+                        timerDuration = suspensionTime;
+                        endSet = false;
+                        rest = false;
+                        exercice();
+                    }
                 }
                 else if (etatTimer == "Start"){
                     startButton.setText("Resume");
@@ -178,8 +185,7 @@ public class SuspensionsActivity extends AppCompatActivity {
         timerStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timerE.cancel();
-                timerRest.cancel();
+
                 timerStopButton.setVisibility(View.GONE);
                 etatTimer = "Stop";
                 startButton.setText("Start");
@@ -188,8 +194,16 @@ public class SuspensionsActivity extends AppCompatActivity {
                 repTextView.setText("  ");
                 setTextView.setText("  ");
                 chronoTextView.setText(0+"");
-                rest = false;
-                endSet = false;
+
+                if (maxHangsCheckBox.isChecked()) {
+                    Res.weightNotif.removeListener(weightListenerHangs);
+                }
+                else {
+                    timerE.cancel();
+                    timerRest.cancel();
+                    rest = false;
+                    endSet = false;
+                }
             }
         });
 
@@ -242,9 +256,11 @@ public class SuspensionsActivity extends AppCompatActivity {
 
 
     }
+    /*
+        Fonction pour faire des excercices de types rési
+     */
     public void exercice() {
         timerE = new CountDownTimerPausable(timerDuration, 10) {
-
             @Override
             public void onTick(long millisUntilFinished) {
                 if (!rest) {
@@ -315,7 +331,48 @@ public class SuspensionsActivity extends AppCompatActivity {
                 setTextView.setText(setRealises + " / " + nbrSet);
                 timerE.start();
             }
+        }
+    }
 
+
+    /*
+        Fonction pour faire des suspension max. Lance un chrono lorsque l'utilisateur se met dessus et lance un temps de repos lorsqu'il tombe.
+     */
+    WeightListener weightListenerHangs = new WeightListener() {
+        @Override
+        public void onChange(double weight, boolean comp[]) {
+            if (weight > 20.0 && timeStart == 0) {
+                timeStart = Calendar.getInstance().getTimeInMillis();
+                chronoTextView.setText(0);
+                excerciceMaxHangs(weight);
+            }
+            else if (weight >= 20.0 && timeStart != 0) {
+                chronoTextView.setText(floor(((double) Calendar.getInstance().getTimeInMillis() - (double) timeStart) / 100.0) / 10.0 + "");
+            }
+            else if (weight < 20.0 && timeStart != 0) {
+                excerciceMaxHangs(weight);
+            }
+        }
+    };
+    public void excerciceMaxHangs(double weight) {
+        timerHangs = new CountDownTimerPausable(restTime, 10) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.d(Res.TAG, "tick");
+                progressBar.setProgress((int) (1 + (restTime - (double) (millisUntilFinished - 10)) / restTime * 10000));
+                progressBar2.setProgress((int) (1 + (restTime - (double) (millisUntilFinished - 10)) / restTime * 10000));
+                chronoTextView.setText((int) (1 + (millisUntilFinished - 10) / 1000) + "");
+            }
+            @Override
+            public void onFinish() {
+                Res.weightNotif.addListener(weightListenerHangs);
+            }
+        };
+
+        if (weight < 20.0 && timeStart != 0){
+            Log.d(Res.TAG, "fin");
+            //Res.weightNotif.removeListener(weightListenerHangs);
+            timerHangs.start();
         }
     }
 }
