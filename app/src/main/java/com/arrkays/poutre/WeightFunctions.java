@@ -84,8 +84,105 @@ public class WeightFunctions {
         ma.mask.setVisibility(View.GONE);
     }
 
+    //********************************************************************************************************************
+    //******************************************************eVOLUTION du poid*************************************************
+    //********************************************************************************************************************
+    String TAG2 = "comportement";
+    WeightListener comportement = new WeightListener() {
+        @Override
+        public void onChange(double w) {
+            Log.d(TAG2, "\ncomportement : \n"+showComportement(comportement(w)));
+        }
+    };
 
+    void starComportement(){
+        Res.weightNotif.addListener(comportement);
+    }
+    void stopComportement(){
+        Res.weightNotif.removeListener(comportement);
+    }
 
+    /**
+     * tableau dans lequel sont stocker les n derniers valeurs
+     * la valeur la plus récente étant en position 0 la plus vielle en n
+     * /!\la taille du tableau va définire l'intervale des mesure du coeff
+     */
+    double[] mesures = buildTab(0,4);
 
+    /**
+     *
+     * @param w
+     * @return un tableau de bool indiquant quell comportement on été relever:
+     * [0] = evolution a peu près stable (pas de changement)
+     * [1] = evolution très stable (pas de changement)
+     * [2] = poid augmente
+     * [3] = suspension : Le poid augmente violement
+     * [4] = poid baisse
+     * [5] = dé-suspenssion : Le poid baisse violement
+     */
+    boolean[] comportement(double w){
+        addWeight(mesures,w);
+
+        //diff = nouvelle mesure - ancienne mesure
+        double diff = mesures[0] - mesures[mesures.length-1];
+        Log.d(TAG2,"diff: "+diff);
+        boolean resultat[] = {false,false,false,false,false,false};
+
+        if(diff < 3 && diff > -3) //stable
+            resultat[0] = true;
+        if(diff < 1 && diff > -1) //très stable
+            resultat[1] = true;
+        if(diff >= 3) //augmente
+            resultat[2] = true;
+        if(diff > 15) //augmente très vite
+            resultat[3] = true;
+        if(diff <= -3) //baisse
+            resultat[4] = true;
+        if(diff < -15)//baisse très vite
+            resultat[5] = true;
+        return resultat;
+    }
+
+    static void addWeight(double tab[], double weight){
+        for(int i = tab.length-1; i > 0; i--){
+            tab[i]=tab[i-1];
+        }
+        tab[0] = weight;
+    }
+    static double[] buildTab(int initValue, int length){
+        double tab[] = new double[length];
+        for(int i = 0; i<tab.length; i++)
+            tab[i]=initValue;
+        return tab;
+    }
+
+    static String showTab(double[] tab){
+        String rez = "";
+        for(double d : tab)
+            rez += "["+d+"]";
+        return rez;
+    }
+
+    static String showComportement(boolean tab[]){
+        String s = "";
+
+        s += (tab[0])?"true : => poid stable":"false : => poid stable";
+        s += "\n";
+        s += (tab[1])?"true : ==> poid très stable":"false : ==> poid très stable";
+        s += "\n";
+        s += (tab[2])?"true : ↗ poid augmente":"false : ↗ poid augmente";
+        s += "\n";
+        s += (tab[3])?"true : ↑ poid augmente vite":"false : ↑ poid augmente vite";
+        s += "\n";
+        s += (tab[4])?"true : ↘ poid baisse":"false : ↘ poid baisse";
+        s += "\n";
+        s += (tab[5])?"true : ↓ poid baisse vitte":"false : ↓ poid baisse vitte";
+
+        return s;
+    }
+
+    public static final int POID_AUGMENTE = 2;
+    public static final int POID_STABLE = 1;
+    public static final int POID_DIMINUE = 0;
 
 }

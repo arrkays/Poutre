@@ -44,18 +44,21 @@ public class MainActivity extends AppCompatActivity {
     TextView record = null;
     TextView recordPullPour = null;
     TextView currentPullPour = null;
+    TextView priseSelected = null;
     ImageView bluetoothOn = null;
     ImageView bluetoothOff = null;
-    Spinner spinnerPrise = null;
+    ConstraintLayout selectPrise = null;
     ConstraintLayout popUpMesurepoids = null;
     ConstraintLayout navigationMenu = null;
     ConstraintLayout mask = null;
     LinearLayout listPrise = null;
+    ConstraintLayout titreSelect = null;
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
     Button suspensionsButton = null;
     Button showMenuButton = null;
     Button buttonTestPlus = null;
     Button buttonTestMoins = null;
+    Button toggleSelectPrise = null;
     ProgressBar loaderMonPoids = null;
 
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
@@ -90,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
         currentPullPour = findViewById(R.id.currentPullPoucentage);
         bluetoothOff =  findViewById(R.id.bluetoothNotActiv);
         bluetoothOn =  findViewById(R.id.bluetoothActiv);
-        spinnerPrise = findViewById(R.id.selectPrise);
+        selectPrise = findViewById(R.id.selectPrise);
+        priseSelected = findViewById(R.id.priseSelected);
         popUpMesurepoids = findViewById(R.id.popUpMesurePoids);
         navigationMenu = findViewById(R.id.navigationMenu);
         mask = findViewById(R.id.mask);
@@ -101,14 +105,14 @@ public class MainActivity extends AppCompatActivity {
         buttonTestMoins = findViewById(R.id.buttonTestMoins);
         loaderMonPoids = findViewById(R.id.loaderMesurePoid);
         listPrise = findViewById(R.id.listPrise);
+        toggleSelectPrise = findViewById(R.id.toggleSelectPrise);
+        titreSelect = findViewById(R.id.titreSelect);
 
         graph.handler = myHandler;
 
 
         //Ajouter prehenssion dans select
-        checkPrehension();
-        updateSpinner();
-        addAddButton();
+        updatePrehension();
         buildListHold();
 
         //instruction*************************************
@@ -118,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         record.setText(Res.currentPrehension.maxPull+" kg");
         recordPullPour.setText(Res.currentPrehension.pourcentage+"%");
         startPullUpdate();
-
+        weightFunctions.starComportement();
         //set title up
         titleActivity.setText(titreActivity);
 
@@ -198,25 +202,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        spinnerPrise.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        toggleSelectPrise.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, parent.getItemAtPosition(position).toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                toggleSelectPrise();
             }
         });
+    }
 
-        findViewById(R.id.titreActivite).requestFocus();
+    //Select prise stuff******************
+    private void toggleSelectPrise(){
+        if(listPrise.getVisibility() == View.VISIBLE){
+            replierSelectPrise();
+        }
+        else{
+            deplierSelectPrise();
+        }
+    }
+
+    private void deplierSelectPrise(){
+        listPrise.setVisibility(View.VISIBLE);
+        toggleSelectPrise.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_chevron_haut));
+    }
+
+    private void replierSelectPrise(){
+        listPrise.setVisibility(View.GONE);
+        toggleSelectPrise.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_chevron_bas));
     }
 
     /**
      * vérifie si aucune préhension existe. si c'est le cas en créée une
      */
-    private void checkPrehension() {
+    private void updatePrehension() {
         if(Res.currentPrehension == null){
             if(Res.prehensions.size() == 0){
                 Res.currentPrehension = new Prehension("Prise 1");
@@ -230,8 +247,18 @@ public class MainActivity extends AppCompatActivity {
                 Res.currentPrehension = Res.prehensions.get(0);
             }
         }
-    }
 
+        priseSelected.setText(Res.currentPrehension.nom);
+
+        //si deplier
+        if(false){
+            deplierSelectPrise();
+        }
+        else{
+            replierSelectPrise();
+        }
+
+    }
 
     void startPullUpdate(){
         Res.weightNotif.addListener(weightListener);
@@ -296,32 +323,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * affiche feedback graphique dans le popupMesurPoid
-     * @param w
-     */
-    private void mesurePoid(double w) {
-    }
-
-    public void updateSpinner(){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, Res.getListPrehenssionString());
-        adapter.add("ajouter †");
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinnerPrise.setAdapter(adapter);
-    }
-
-    /**
-     * ajout du bouton ajout prenssion
-     */
-    private void addAddButton() {
-    }
 
     /****************************************************************************************************************************************************************************************************************************/
     /**************************************************************************************************LISTE PRISE***************************************************************************************************************/
     /****************************************************************************************************************************************************************************************************************************/
     int widthNom = 400;
-    int heightNom = 150;
+    int heightNom = 120;
 
     void buildListHold(){
         int i = 0;
@@ -337,20 +344,25 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout creatLine(final Prehension p){
         final LinearLayout ligne = new LinearLayout(this);
 
-        //edit text
-        LinearLayout.LayoutParams paramsEdit = new LinearLayout.LayoutParams(widthNom,LinearLayout.LayoutParams.WRAP_CONTENT);
+
         //paramsEdit.setMargins(10,10,10,10);
 
         //icons
         LinearLayout.LayoutParams paramsIcon = new LinearLayout.LayoutParams(80,80);
         paramsIcon.setMargins(10,10,10,10);
 
+        int nomSize = (titreSelect.getChildAt(0).getWidth() + titreSelect.getChildAt(1).getWidth() )- (paramsIcon.width + paramsIcon.leftMargin+ paramsIcon.rightMargin)*2;
+
+        Log.d(TAG, "nomsize"+ nomSize);
         //layout
-        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,heightNom);
+        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,heightNom);
 
         //text view NOM
         LinearLayout.LayoutParams paramsTextView = new LinearLayout.LayoutParams(widthNom,LinearLayout.LayoutParams.MATCH_PARENT);
         //paramsTextView.setMargins(50,-50,0,0);
+
+        //edit text
+        LinearLayout.LayoutParams paramsEdit = new LinearLayout.LayoutParams(widthNom,LinearLayout.LayoutParams.WRAP_CONTENT);
 
         //bouton vlider modif
         LinearLayout.LayoutParams validModif = new LinearLayout.LayoutParams(80,80);
@@ -529,6 +541,7 @@ public class MainActivity extends AppCompatActivity {
         Res.currentPrehension = p;
 
         //show
+        priseSelected.setText(p.nom);
         displayRecord();
         Log.d(TAG,"select "+p);
     }

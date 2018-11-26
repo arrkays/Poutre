@@ -40,6 +40,9 @@ public class BT {
         if(!connected && mBluetoothAdapter != null){
             ble();
         }
+        else{
+            Log.d(TAG,"bluetooth inactif");
+        }
     }
 
     /**
@@ -49,6 +52,7 @@ public class BT {
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             ma.startActivityForResult(enableBtIntent, 0);
+            Log.d(TAG,"bluetooth inactif");
         }
         else {
             boolean isDeviceFound = false;
@@ -56,8 +60,9 @@ public class BT {
             if (pairedDevices.size() > 0) {
                 // There are paired devices. Get the name and address of each paired device.
                 for (BluetoothDevice device : pairedDevices) {
+                    Log.d(TAG,"device bound : "+device.getName());
                     if (device.getName().equals("POUTRE")) {
-                        Log.i(TAG,"POUTRE find");
+                        Log.d(TAG,"POUTRE found");
                         board = device;
                         isDeviceFound = true;
                         break;
@@ -78,7 +83,7 @@ public class BT {
                         //si le BLE est bien connecter
                         if(newState == BluetoothProfile.STATE_CONNECTED){
                             BTconected(true);
-                            Log.i(TAG,"STATE_CONNECTED");
+                            Log.d(TAG,"STATE_CONNECTED");
                             //on lance la recuperation des service / characteristic
                             gatt.discoverServices();
                         }
