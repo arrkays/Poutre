@@ -26,6 +26,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
+import android.widget.Scroller;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView bluetoothOn = null;
     ImageView bluetoothOff = null;
     ConstraintLayout selectPrise = null;
+    ScrollView scrollPrise = null;
     ConstraintLayout popUpMesurepoids = null;
     ConstraintLayout navigationMenu = null;
     ConstraintLayout mask = null;
@@ -105,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         buttonTestMoins = findViewById(R.id.buttonTestMoins);
         loaderMonPoids = findViewById(R.id.loaderMesurePoid);
         listPrise = findViewById(R.id.listPrise);
+        scrollPrise = findViewById(R.id.scrollPrise);
         toggleSelectPrise = findViewById(R.id.toggleSelectPrise);
         titreSelect = findViewById(R.id.titreSelect);
 
@@ -213,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Select prise stuff******************
     private void toggleSelectPrise(){
-        if(listPrise.getVisibility() == View.VISIBLE){
+        if(scrollPrise.getVisibility() == View.VISIBLE){
             replierSelectPrise();
         }
         else{
@@ -222,12 +226,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deplierSelectPrise(){
-        listPrise.setVisibility(View.VISIBLE);
+        //listPrise.setVisibility(View.VISIBLE);
+        scrollPrise.setVisibility(View.VISIBLE);
         toggleSelectPrise.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_chevron_haut));
     }
 
     private void replierSelectPrise(){
-        listPrise.setVisibility(View.GONE);
+        //listPrise.setVisibility(View.GONE);
+        scrollPrise.setVisibility(View.GONE);
         toggleSelectPrise.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_chevron_bas));
     }
 
@@ -329,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
     /**************************************************************************************************LISTE PRISE***************************************************************************************************************/
     /****************************************************************************************************************************************************************************************************************************/
     int widthNom = 400;
-    int heightNom = 120;
+    int heightNom = 150;
 
     void buildListHold(){
         int i = 0;
@@ -382,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         nom.setTextColor(Color.BLACK);
-        //nom.setTextSize(20);
+        nom.setTextSize(18);
 
         //edit
         Button edit = new Button(this);
@@ -469,7 +475,7 @@ public class MainActivity extends AppCompatActivity {
         paramsButton.gravity = Gravity.CENTER_VERTICAL;
 
         //Layout
-        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
 
         final EditText edit = new EditText(this);
         edit.setLayoutParams(params);
@@ -545,6 +551,9 @@ public class MainActivity extends AppCompatActivity {
         priseSelected.setText(p.nom);
         displayRecord();
         Log.d(TAG,"select "+p);
+
+        //fermer select
+        toggleSelectPrise();
     }
 
     private void deletPrehenssion(Prehension p) {
@@ -552,6 +561,11 @@ public class MainActivity extends AppCompatActivity {
         if(Res.prehensions.size() > 1){
             listPrise.removeViewAt(Res.prehensions.indexOf(p));
             Res.prehensions.remove(p);
+            //verifi que c'etait pas la prehenssion selectionné
+            if(p == Res.currentPrehension){
+                selectPrehenssion(Res.prehensions.get(0));
+            }
+
             Log.d(TAG,"remove "+p.nom);
         }
     }

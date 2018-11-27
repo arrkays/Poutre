@@ -55,7 +55,7 @@ public class Res {
             return (int)((pull/POID)*100);
     }
 
-    public static List<String> getListPrehenssionString(){
+    private static List<String> getListPrehenssionString(){
         List<String> list = new ArrayList<>();
         for (Prehension p :prehensions){
             list.add(p.toString());

@@ -6,110 +6,233 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/record"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="0 kg"
-        android:textAlignment="center"
-        android:textSize="30sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titreMaxForce" />
-
-    <TextView
-        android:id="@+id/titreMaxForce"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="300dp"
-        android:text="record"
-        android:textAlignment="textEnd"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/recordPullPourcentage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/record"
-        app:layout_constraintTop_toBottomOf="@+id/record" />
-
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/selectPrise"
+        android:id="@+id/containerInfoPrise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/shape_shadow"
+        android:elevation="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/layoutBarTestPull"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menu">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/titreSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border_1_blanc"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
 
-            <Button
-                android:id="@+id/toggleSelectPrise"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_weight="1"
-                android:background="@drawable/shape_chevron_bas"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/containerAllTimeRecord"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:background="#B50000"
+            app:layout_constraintEnd_toEndOf="@+id/selectPrise"
+            app:layout_constraintStart_toStartOf="@+id/selectPrise"
+            app:layout_constraintTop_toTopOf="@+id/selectPrise">
+
+            <TextView
+                android:id="@+id/titreRecord"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:text="record"
+                android:textAlignment="textEnd"
+                android:textColor="@color/blacn"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/priseSelected"
-                android:layout_width="176dp"
-                android:layout_height="30dp"
-                android:gravity="center_vertical"
-                android:paddingLeft="5dp"
-                android:text="TextView"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/toggleSelectPrise"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:id="@+id/record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 kg"
+                android:textAlignment="center"
+                android:textColor="@color/blacn"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="@+id/titreRecord"
+                app:layout_constraintTop_toBottomOf="@+id/titreRecord" />
+
+            <TextView
+                android:id="@+id/recordPullPourcentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:textColor="@color/blacn"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/record"
+                app:layout_constraintTop_toBottomOf="@+id/record" />
+
         </android.support.constraint.ConstraintLayout>
 
-        <ScrollView
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/containerLastSession"
             android:layout_width="0dp"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
+            android:background="#6200EE"
+            app:layout_constraintEnd_toEndOf="@+id/selectPrise"
+            app:layout_constraintStart_toStartOf="@+id/selectPrise"
+            app:layout_constraintTop_toBottomOf="@id/containerAllTimeRecord">
+
+            <TextView
+                android:id="@+id/titreLastSession"
+                android:layout_width="198dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Derniere Session"
+                android:textColor="@color/blacn"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/lastSessionMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/_0_kg"
+                android:textColor="@color/blacn"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titreLastSession" />
+
+            <TextView
+                android:id="@+id/lastSessionPourc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="2dp"
+                android:textColor="@color/blacn"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lastSessionMax" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/containerThisSession"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/today_record"
+            app:layout_constraintEnd_toEndOf="@+id/selectPrise"
+            app:layout_constraintStart_toStartOf="@+id/selectPrise"
+            app:layout_constraintTop_toBottomOf="@id/containerLastSession">
+
+            <TextView
+                android:id="@+id/titreThisSession"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="record du jour"
+                android:textColor="@color/blacn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/thisSessionRecord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/_0_kg"
+                android:textColor="@color/blacn"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titreThisSession" />
+
+            <TextView
+                android:id="@+id/thisSessionPourc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="2dp"
+                android:textColor="@color/blacn"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/thisSessionRecord" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <Button
+            android:id="@+id/historiquePrise"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:stateListAnimator="@null"
+            android:text="Historique"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titreSelect">
+            app:layout_constraintTop_toBottomOf="@+id/containerThisSession" />
 
-            <LinearLayout
-                android:id="@+id/listPrise"
-                android:layout_width="match_parent"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/selectPrise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/titreSelect"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="313dp"></LinearLayout>
-        </ScrollView>
-    </android.support.constraint.ConstraintLayout>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/titreMonPoid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Mon poids"
-        app:layout_constraintBottom_toTopOf="@+id/monPoid"
-        app:layout_constraintStart_toStartOf="parent" />
+                <Button
+                    android:id="@+id/toggleSelectPrise"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_chevron_bas"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/priseSelected"
+                    android:layout_width="176dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_titre_list_prise"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:text="TextView"
+                    android:textSize="30sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/toggleSelectPrise"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <ScrollView
+                android:id="@+id/scrollPrise"
+                android:layout_width="0dp"
+                android:layout_height="260dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titreSelect">
+
+                <LinearLayout
+                    android:id="@+id/listPrise"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="313dp"></LinearLayout>
+            </ScrollView>
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layoutBarTestPull"
         android:layout_width="110dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/border"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/shape_shadow"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menu">
@@ -118,23 +241,19 @@
             android:id="@+id/currentPull"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="4dp"
-            android:background="#eeeeee"
-            android:drawableLeft="@drawable/border"
+            android:background="@color/today_record"
             android:text="0 Kg"
             android:textAlignment="center"
-            android:textSize="24sp"
+            android:textColor="#ffffff"
+            android:textSize="32sp"
             app:layout_constraintBottom_toTopOf="@+id/currentPullPoucentage"
-            app:layout_constraintEnd_toEndOf="@+id/graph"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <com.arrkays.poutre.Graph
             android:id="@+id/graph"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="2dp"
             app:layout_constraintBottom_toTopOf="@+id/currentPull"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -146,27 +265,52 @@
             android:id="@+id/currentPullPoucentage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginBottom="4dp"
-            android:background="#eeeeee"
+            android:background="@drawable/shape_bottom_radius"
             android:textAlignment="center"
+            android:textColor="#ffffff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/monPoid"
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/containerPoid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="0 kg"
-        android:textAlignment="center"
-        android:textSize="36sp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/shape_shadow"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/titreMonPoid" />
+        app:layout_constraintStart_toStartOf="parent">
 
+        <TextView
+            android:id="@+id/titreMonPoid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Mon poids"
+            app:layout_constraintBottom_toTopOf="@+id/monPoid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/monPoid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="0 kg"
+            android:textAlignment="center"
+            android:textSize="36sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/titreMonPoid" />
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/mask"
@@ -359,21 +503,22 @@
         android:id="@+id/buttonTestPlus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         android:text="test +"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/record" />
+        app:layout_constraintTop_toBottomOf="@+id/containerInfoPrise" />
 
     <Button
         android:id="@+id/buttonTestMoins"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
         android:text="Test -"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonTestPlus" />
+        app:layout_constraintEnd_toStartOf="@+id/layoutBarTestPull"
+        app:layout_constraintStart_toEndOf="@+id/buttonTestPlus"
+        app:layout_constraintTop_toTopOf="@+id/buttonTestPlus" />
 
 
 </android.support.constraint.ConstraintLayout>
