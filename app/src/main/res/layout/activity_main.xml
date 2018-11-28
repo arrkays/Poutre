@@ -25,7 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:background="#B50000"
+            android:background="@color/record"
             app:layout_constraintEnd_toEndOf="@+id/selectPrise"
             app:layout_constraintStart_toStartOf="@+id/selectPrise"
             app:layout_constraintTop_toTopOf="@+id/selectPrise">
@@ -68,7 +68,7 @@
             android:id="@+id/containerLastSession"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="#6200EE"
+            android:background="@color/last_session"
             app:layout_constraintEnd_toEndOf="@+id/selectPrise"
             app:layout_constraintStart_toStartOf="@+id/selectPrise"
             app:layout_constraintTop_toBottomOf="@id/containerAllTimeRecord">
@@ -196,6 +196,7 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="5dp"
                     android:text="TextView"
+                    android:textColor="@color/today_record"
                     android:textSize="30sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/toggleSelectPrise"
@@ -216,6 +217,8 @@
                     android:id="@+id/listPrise"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:background="@drawable/shape_bottom_blanc"
                     android:orientation="vertical"
                     tools:layout_editor_absoluteX="8dp"
                     tools:layout_editor_absoluteY="313dp"></LinearLayout>

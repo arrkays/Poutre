@@ -81,8 +81,18 @@ public class Res {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    public static void showKeyboard(Activity a){
+        InputMethodManager imm = (InputMethodManager) a.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+    }
+
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static int dpToPixel(Activity context, int dp){
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return  (int) (dp * scale + 0.5f);
     }
 }

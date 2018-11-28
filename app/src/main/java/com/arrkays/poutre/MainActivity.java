@@ -1,5 +1,8 @@
 package com.arrkays.poutre;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +34,8 @@ import android.widget.Scroller;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import static android.os.SystemClock.sleep;
+
 public class MainActivity extends AppCompatActivity {
 
     String titreActivity = "Mesurer force";
@@ -52,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     ConstraintLayout selectPrise = null;
     ScrollView scrollPrise = null;
     ConstraintLayout popUpMesurepoids = null;
+    ConstraintLayout containerPoid = null;
     ConstraintLayout navigationMenu = null;
     ConstraintLayout mask = null;
     LinearLayout listPrise = null;
@@ -111,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         scrollPrise = findViewById(R.id.scrollPrise);
         toggleSelectPrise = findViewById(R.id.toggleSelectPrise);
         titreSelect = findViewById(R.id.titreSelect);
+        containerPoid = findViewById(R.id.containerPoid);
 
         graph.handler = myHandler;
 
@@ -130,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         weightFunctions.starComportement();
         //set title up
         titleActivity.setText(titreActivity);
-
+        animateMesurePoid();
         //Event*******************************************
 
         mask.setOnClickListener(new View.OnClickListener() {
@@ -213,6 +220,13 @@ public class MainActivity extends AppCompatActivity {
                 toggleSelectPrise();
             }
         });
+
+        selectPrise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleSelectPrise();
+            }
+        });
     }
 
     //Select prise stuff******************
@@ -226,15 +240,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deplierSelectPrise(){
-        //listPrise.setVisibility(View.VISIBLE);
+        //annimate
+        listPrise.setTranslationY(-Res.dpToPixel(this,260));
         scrollPrise.setVisibility(View.VISIBLE);
-        toggleSelectPrise.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_chevron_haut));
+        listPrise.animate()
+                .translationY(0)
+                .setDuration(260)
+                .setListener(null);
+
+        toggleSelectPrise.animate()
+                .rotation(180)
+                .setDuration(260);
     }
 
     private void replierSelectPrise(){
-        //listPrise.setVisibility(View.GONE);
-        scrollPrise.setVisibility(View.GONE);
-        toggleSelectPrise.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_chevron_bas));
+        listPrise.animate()
+                .translationY(-Res.dpToPixel(this,260))
+                .setDuration(260)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        scrollPrise.setVisibility(View.GONE);
+                    }
+                });
+        toggleSelectPrise.animate()
+                .rotation(0)
+                .setDuration(260);
     }
 
     /**
@@ -256,15 +287,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         priseSelected.setText(Res.currentPrehension.nom);
-
-        //si deplier
-        if(false){
-            deplierSelectPrise();
-        }
-        else{
-            replierSelectPrise();
-        }
-
     }
 
     void startPullUpdate(){
@@ -330,6 +352,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //animation qui fait rebondire le poid tant qu'il est pas mesurer
+    void animateMesurePoid(){
+        if(Res.currentWeight == 0) {
+            containerPoid.animate()
+                    .scaleY(1.1f)
+                    .scaleX(1.1f)
+                    .setDuration(400)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            containerPoid.animate()
+                                    .scaleX(1f)
+                                    .scaleY(1f)
+                                    .setDuration(300)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            animateMesurePoid();
+                                        }
+                                    });
+                        }
+                    });
+        }
+
+    }
 
     /****************************************************************************************************************************************************************************************************************************/
     /**************************************************************************************************LISTE PRISE***************************************************************************************************************/
@@ -384,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
         nom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectPrehenssion(p);
+                selectPrehenssion(p,true);
             }
         });
         nom.setTextColor(Color.BLACK);
@@ -448,10 +495,14 @@ public class MainActivity extends AppCompatActivity {
         ligne.setLayoutParams(paramsLine);
         ligne.setBaselineAligned(false);
         ligne.setGravity(Gravity.CENTER_VERTICAL);
-        if(p == Res.currentPrehension)
+        if(p == Res.currentPrehension) {
             ligne.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_gris));
-        else
+            nom.setTextColor(Color.WHITE);
+        }
+        else {
             ligne.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_blanc));
+            nom.setTextColor(Color.BLACK);
+        }
 
         ligne.addView(nom);//0
         ligne.addView(edit);//1
@@ -462,8 +513,10 @@ public class MainActivity extends AppCompatActivity {
         return ligne;
     }
 
+    //dernier ligne ajouter prise
     private LinearLayout ligneAdd(){
 
+        final LinearLayout line = new LinearLayout(this);
         //parametre
         //edit Text
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(widthNom,LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -474,8 +527,15 @@ public class MainActivity extends AppCompatActivity {
         paramsButton.setMargins(60,10,60,10);
         paramsButton.gravity = Gravity.CENTER_VERTICAL;
 
+        LinearLayout.LayoutParams paramsButton2 = new LinearLayout.LayoutParams(100,100);
+        paramsButton2.setMargins(60,15,60,15);
+        //paramsButton2.gravity = Gravity.CENTER;
+
+        final Button aparaitre = new Button(this);
+        final Button add = new Button(this);
+
         //Layout
-        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,heightNom);
 
         final EditText edit = new EditText(this);
         edit.setLayoutParams(params);
@@ -485,63 +545,77 @@ public class MainActivity extends AppCompatActivity {
         edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                addPrehenssion(edit);
+                addPrehenssion(line);
                 return false;
             }
         });
-        Button add = new Button(this);
+        edit.setVisibility(View.GONE);
+
+
+        //boutton ajouter
         add.setLayoutParams(paramsButton);
         add.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_plus_blanc_256));
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addPrehenssion(edit);
+                addPrehenssion(line);
+            }
+        });
+        add.setVisibility(View.GONE);
+
+
+        //bouton aparaitre
+        aparaitre.setLayoutParams(paramsButton2);
+        aparaitre.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_plus_blanc_256));
+        aparaitre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEdit(line);
             }
         });
 
-        LinearLayout line = new LinearLayout(this);
+        //Layout
+        line.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEdit(line);
+            }
+        });
         line.setOrientation(LinearLayout.HORIZONTAL);
-        line.setPadding(10,10,10,10);
-        line.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_blanc));
+        line.setGravity(Gravity.CENTER);
+        //line.setPadding(10,10,10,10);
+        line.setBackground(ContextCompat.getDrawable(this, R.drawable.shape_bottom_blanc));
         line.setLayoutParams(paramsLine);
         line.setBaselineAligned(false);
+
         line.addView(edit);
         line.addView(add);
+        line.addView(aparaitre);
 
         return line;
     }
 
-    private void validerModif(LinearLayout l, Prehension p){
-        //hide keyboard
-        Res.hideKeyboard(this);
 
-        //verification
-        EditText nom = (EditText)l.getChildAt(3);
-        TextView text = (TextView)l.getChildAt(0);
-        if(!nom.getText().toString().equals("")){
-            p.nom = nom.getText().toString();
-            text.setText(p.nom);
-        }
-        //validation
-
-        //view
-        l.getChildAt(0).setVisibility(View.VISIBLE);
-        l.getChildAt(1).setVisibility(View.VISIBLE);
-        l.getChildAt(2).setVisibility(View.VISIBLE);
-        l.getChildAt(3).setVisibility(View.GONE);
-        l.getChildAt(4).setVisibility(View.GONE);
-        Log.d(TAG,"modif "+p);
-    }
-
-    private void selectPrehenssion(Prehension p) {
+    /**
+     *
+     * @param p prehenssion qui va etre selectioner
+     * @param repli si vrai replie la selection des prise après la selection
+     */
+    private void selectPrehenssion(Prehension p, boolean repli) {
         LinearLayout l;
         //feedback
-        for(int i = 0; i < listPrise.getChildCount();i++){
+        for(int i = 0; i < listPrise.getChildCount()-1;i++){
             l = (LinearLayout)listPrise.getChildAt(i);
-            if(i == Res.prehensions.indexOf(p))
+            if(i == Res.prehensions.indexOf(p)) {
                 l.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_gris));
-            else
+                TextView t = (TextView)(l.getChildAt(0));//textview
+                t.setTextColor(Color.WHITE);
+            }
+            else{
                 l.setBackground(ContextCompat.getDrawable(this, R.drawable.border_1_blanc));
+                TextView t = (TextView)(l.getChildAt(0));//textview
+                t.setTextColor(Color.BLACK);
+            }
         }
 
         //select
@@ -553,43 +627,216 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"select "+p);
 
         //fermer select
-        toggleSelectPrise();
+        if(repli)
+            toggleSelectPrise();
     }
 
     private void deletPrehenssion(Prehension p) {
         //veriffier que ce n'est pas la dernier prise
         if(Res.prehensions.size() > 1){
+            //annimation
             listPrise.removeViewAt(Res.prehensions.indexOf(p));
             Res.prehensions.remove(p);
             //verifi que c'etait pas la prehenssion selectionné
             if(p == Res.currentPrehension){
-                selectPrehenssion(Res.prehensions.get(0));
+                selectPrehenssion(Res.prehensions.get(0), false);
             }
 
             Log.d(TAG,"remove "+p.nom);
         }
     }
 
+    //modifier préhenssion
     private void setPrehenssion(LinearLayout l, Prehension p){
 
-        l.getChildAt(0).setVisibility(View.GONE);
-        l.getChildAt(1).setVisibility(View.GONE);
-        l.getChildAt(2).setVisibility(View.GONE);
-        l.getChildAt(3).setVisibility(View.VISIBLE);
-        l.getChildAt(4).setVisibility(View.VISIBLE);
+        int translation = widthNom+210;
+
+        TextView nom = (TextView)l.getChildAt(0);
+        Button buttonEdit = (Button)l.getChildAt(1);
+        Button buttonDel= (Button)l.getChildAt(2);
+        final EditText edit = (EditText)l.getChildAt(3);
+        final Button valider= (Button)l.getChildAt(4);
+
+        //on met le nom dans edit
+        edit.setText(nom.getText().toString());
+
+        //onrègle la couleur de l'edit text n fontion de la selection
+        if(Res.currentPrehension == p){
+            edit.setTextColor(Color.WHITE);
+        }
+        else{
+            edit.setTextColor(Color.BLACK);
+        }
+
+        //on les affiche
+        edit.setVisibility(View.VISIBLE);
+        valider.setVisibility(View.VISIBLE);
+
+        //on anime tout le monde
+        edit.animate().translationX(-translation).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                edit.setVisibility(View.VISIBLE);
+            }
+        });
+        valider.animate().translationX(-translation).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                valider.setVisibility(View.VISIBLE);
+            }
+        });
+
+        nom.animate().translationX(-translation);
+        buttonEdit.animate().translationX(-translation);
+        buttonDel.animate().translationX(-translation);
+
+        //get FOCUS
+        edit.requestFocus();
+        Res.showKeyboard(this);
 
         Log.d(TAG,"modif "+p);
     }
 
-    public void addPrehenssion(EditText nom){
-        Res.hideKeyboard(this);
-        Prehension p = new Prehension(nom.getText().toString());
-        Res.prehensions.add(p);
-        listPrise.addView(creatLine(p), listPrise.getChildCount()-1);
-        nom.setText("");
 
-        Log.d(TAG,"ajout "+nom);
+    private void validerModif(LinearLayout l, Prehension p){
+        //hide keyboard
+        Res.hideKeyboard(this);
+
+        //verification
+        final EditText edit = (EditText)l.getChildAt(3);
+        TextView nom = (TextView)l.getChildAt(0);
+        if(!edit.getText().toString().equals("")){
+            p.nom = edit.getText().toString();
+            nom.setText(p.nom);
+        }
+        //validation
+
+        //view
+        Button buttonEdit = (Button)l.getChildAt(1);
+        Button buttonDel= (Button)l.getChildAt(2);
+        final Button valider= (Button)l.getChildAt(4);
+        //int translation = widthNom+210;
+
+        //on anime tout le monde
+        edit.animate()
+                .translationX(0)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        edit.setVisibility(View.GONE);
+                    }
+                })
+        ;
+        valider.animate()
+                .translationX(0)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        valider.setVisibility(View.GONE);
+                    }
+        });
+
+        nom.animate().translationX(0);
+        buttonEdit.animate().translationX(0);
+        buttonDel.animate().translationX(0);
+
+        Log.d(TAG,"modif "+p);
     }
 
+    //Ajout d'un Prise
+    public void addPrehenssion(LinearLayout l){
+        EditText nom = (EditText)l.getChildAt(0);
+        if(!nom.getText().toString().equals("")){
+            Res.hideKeyboard(this);
+            Prehension p = new Prehension(nom.getText().toString());
+            Res.prehensions.add(p);
+            listPrise.addView(creatLine(p), listPrise.getChildCount()-1);
+            nom.setText("");
+
+            hideEdit(l);
+
+            Log.d(TAG,"ajout "+nom);
+        }
+        else{
+            hideEdit(l);
+        }
+    }
+
+    private void hideEdit(LinearLayout l){
+        final EditText edit = (EditText) l.getChildAt(0);
+        final Button add = (Button) l.getChildAt(1);
+        final Button apparaitre = (Button) l.getChildAt(2);
+        Res.hideKeyboard(this);
+
+        apparaitre.setTranslationY(-150);
+        edit.animate()
+                .translationY(150)
+                .setDuration(100)
+                .setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                edit.setVisibility(View.GONE);
+                apparaitre.setVisibility(View.VISIBLE);
+                apparaitre.animate().translationY(0).setListener(null);
+
+            }
+        });
+
+        add.animate()
+                .translationY(150)
+                .setDuration(100)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        add.setVisibility(View.GONE);
+                    }
+                });
+
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                sleep(200);
+                scrollPrise.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollPrise.fullScroll(ScrollView.FOCUS_DOWN);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void showEdit(LinearLayout l){
+
+        final EditText edit = (EditText) l.getChildAt(0);
+        final Button add = (Button) l.getChildAt(1);
+        final Button apparaitre = (Button) l.getChildAt(2);
+        final Activity ma = this;
+
+        add.setTranslationY(-150);
+        edit.setTranslationY(-150);
+
+
+
+        apparaitre.animate().translationY(150).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                apparaitre.setVisibility(View.GONE);
+                edit.setVisibility(View.VISIBLE);
+                add.setVisibility(View.VISIBLE);
+
+                edit.animate().translationY(0).setListener(null);
+                add.animate().translationY(0).setListener(null);
+                edit.requestFocus();
+                Res.showKeyboard(ma);
+            }
+        });
+
+
+
+
+    }
 }
 
