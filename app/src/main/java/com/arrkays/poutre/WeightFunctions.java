@@ -1,5 +1,7 @@
 package com.arrkays.poutre;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.util.Log;
 import android.view.View;
 
@@ -12,12 +14,12 @@ import java.util.List;
 public class WeightFunctions {
     String TAG = "debug-bluetooth";
     double bodyWeight = 0;
-    boolean bodyWeightAsked = false;
     double minWeight = 15.0;
     long timeBetweenMeasures = 5000;
     long timeMax = 15000;
     List<Double> weightMeasures = new ArrayList<Double>();
     long timeFirstMeasure = 0;
+    boolean isMesuring = false;
 
     MainActivity ma;
     public WeightFunctions(MainActivity a){
@@ -70,22 +72,117 @@ public class WeightFunctions {
     }
 
 
+
     public void startBodyWeightMeasurement(){
-        bodyWeightAsked = true;
+        isMesuring = true;
         Res.weightNotif.addListener(weightListenerBody);
         Log.d(TAG, "pop up visible" + ma.popUpMesurepoids.getVisibility());
         ma.popUpMesurepoids.setVisibility(View.VISIBLE);
     }
     public void stopBodyWeightMeasurement(){
-        bodyWeightAsked = false;
+        isMesuring = false;
         Res.weightNotif.removeListener(weightListenerBody);
         Log.d(TAG, "pop up gone");
         ma.popUpMesurepoids.setVisibility(View.GONE);
         ma.mask.setVisibility(View.GONE);
     }
 
+
+    //mesure poid bis
+    private int nbMesureStable = 0;
+    private int maxMesureStable = 10;
+    private double bufferWeight = 0;
+
+
+
+    private WeightListener mesurePoidListennerBis =  new WeightListener() {
+            @Override
+            public void onChange(double w, boolean[] evolutionPoid) {
+                //si le poid est stable et superieur a 10kg
+                if(evolutionPoid[0] && w>10){//remetre evolutionPoid[1] la c'est pour tester
+                    nbMesureStable++;
+                    bufferWeight += w;
+                }
+                else{
+                    nbMesureStable = 0;
+                    bufferWeight = 0;
+                }
+                //show feed back on activity
+                ma.poidPopUpMesirePoid.setText(w+" kg");
+                ma.loaderMonPoids.setProgress(nbMesureStable);
+                //si la mesure et fini
+                if(nbMesureStable >= maxMesureStable) {
+                    ma.setPoid(Res.nbChiffreApresVirgule(bufferWeight / maxMesureStable,1));// on garde qu'un chiffre après la virgule //on actualise le nouveau poid
+                    stopMesurePoidBis();
+                }
+            }
+        };
+
+
+    public void startMesurePoidBis(){
+        //on remet les variable a zero
+        nbMesureStable = 0;
+        bufferWeight = 0;
+        ma.loaderMonPoids.setProgress(nbMesureStable);
+
+        //on enlève les listener du graph et des record de poid
+        Res.weightNotif.removeListener(ma.weightListener);
+
+        isMesuring = true;
+        Res.weightNotif.addListener(mesurePoidListennerBis);
+
+        ma.loaderMonPoids.setMax(maxMesureStable);
+
+        //affichage
+        //setup
+        ma.mask.setVisibility(View.VISIBLE);
+        ma.popUpMesurepoids.setAlpha(0f);
+        ma.popUpMesurepoids.setScaleX(0.8f);
+        ma.popUpMesurepoids.setScaleY(0.8f);
+        ma.popUpMesurepoids.setVisibility(View.VISIBLE);
+
+        //animation
+        ma.popUpMesurepoids.animate().
+                alpha(1).
+                scaleX(1).
+                scaleY(1).
+                setDuration(200).
+                setListener(null);
+
+        //event mask
+        ma.mask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopMesurePoidBis();
+            }
+        });
+    }
+
+    public void stopMesurePoidBis(){
+        nbMesureStable = 0;
+        bufferWeight = 0;
+        isMesuring = false;
+        Res.weightNotif.removeListener(mesurePoidListennerBis);
+        Res.weightNotif.addListener(ma.weightListener);
+
+        //affichage
+        ma.popUpMesurepoids.animate().
+                alpha(0).
+                scaleX(0.8f).
+                scaleY(0.8f).
+                setDuration(200).
+                setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        ma.mask.setVisibility(View.GONE);
+                        ma.popUpMesurepoids.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+
     //********************************************************************************************************************
-    //******************************************************eVOLUTION du poid*************************************************
+    //******************************************************eVOLUTION du poid*********************************************
     //********************************************************************************************************************
     static String TAG2 = "comportement";
     WeightListener comportement = new WeightListener() {

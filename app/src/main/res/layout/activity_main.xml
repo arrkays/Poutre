@@ -197,7 +197,8 @@
                     android:paddingLeft="5dp"
                     android:text="TextView"
                     android:textColor="@color/today_record"
-                    android:textSize="30sp"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/toggleSelectPrise"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -319,7 +320,8 @@
         android:id="@+id/mask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#3333ffff"
+        android:background="#30ff0000"
+        android:elevation="30dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -427,13 +429,14 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/popUpMesurePoids"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/shape"
+        android:elevation="30dp"
         android:minHeight="138dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -444,11 +447,10 @@
         <ProgressBar
             android:id="@+id/loaderMesurePoid"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="270dp"
+            android:layout_height="270dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/circle_shape"
             android:indeterminate="false"
@@ -457,24 +459,23 @@
             android:progressDrawable="@drawable/circular_progress_bar"
             app:layout_constraintBottom_toTopOf="@+id/annulerMesurePoid"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/descriptionMesurePoids" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/poidPopUp"
-            android:layout_width="17dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="0"
+            android:text="@string/_0_kg"
             android:textColor="@android:color/white"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toTopOf="@+id/annulerMesurePoid"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/descriptionMesurePoids" />
+            android:textSize="48sp"
+            app:layout_constraintBottom_toBottomOf="@+id/loaderMesurePoid"
+            app:layout_constraintEnd_toEndOf="@+id/loaderMesurePoid"
+            app:layout_constraintStart_toStartOf="@+id/loaderMesurePoid"
+            app:layout_constraintTop_toTopOf="@+id/loaderMesurePoid" />
 
         <Button
             android:id="@+id/annulerMesurePoid"
@@ -483,6 +484,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:elevation="35dp"
             android:text="Annuler"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -495,33 +497,17 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="Suspendez-vous et ne bougez plus"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/loaderMesurePoid"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
-
-    <Button
-        android:id="@+id/buttonTestPlus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:text="test +"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/containerInfoPrise" />
-
-    <Button
-        android:id="@+id/buttonTestMoins"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="32dp"
-        android:text="Test -"
-        app:layout_constraintEnd_toStartOf="@+id/layoutBarTestPull"
-        app:layout_constraintStart_toEndOf="@+id/buttonTestPlus"
-        app:layout_constraintTop_toTopOf="@+id/buttonTestPlus" />
 
 
 </android.support.constraint.ConstraintLayout>

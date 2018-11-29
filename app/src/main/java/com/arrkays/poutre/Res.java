@@ -30,7 +30,7 @@ public class Res {
     /**
      * poid de l'utilisateur
      */
-    public static int POID=0;
+    public static double POID=0;
 
     public static ArrayList<Prehension> prehensions = new ArrayList<Prehension>();
 
@@ -95,4 +95,14 @@ public class Res {
         final float scale = context.getResources().getDisplayMetrics().density;
         return  (int) (dp * scale + 0.5f);
     }
+
+    public static double nbChiffreApresVirgule(double x, int i){
+        double res = x * Math.pow(10,i);
+        res = (int)res;
+        res /= Math.pow(10,i);
+        return res;
+    }
+
 }
+
+//*********************UTIL**************

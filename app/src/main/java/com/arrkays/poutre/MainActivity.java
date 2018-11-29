@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     TextView recordPullPour = null;
     TextView currentPullPour = null;
     TextView priseSelected = null;
+    TextView poidPopUpMesirePoid = null;
     ImageView bluetoothOn = null;
     ImageView bluetoothOff = null;
     ConstraintLayout selectPrise = null;
@@ -65,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
     Button suspensionsButton = null;
     Button showMenuButton = null;
-    Button buttonTestPlus = null;
-    Button buttonTestMoins = null;
     Button toggleSelectPrise = null;
     ProgressBar loaderMonPoids = null;
 
@@ -110,14 +109,13 @@ public class MainActivity extends AppCompatActivity {
         cancelWeightMeasurement = findViewById(R.id.annulerMesurePoid);
         suspensionsButton = findViewById(R.id.suspensionsButton);
         showMenuButton = findViewById(R.id.showMenu);
-        buttonTestPlus = findViewById(R.id.buttonTestPlus);
-        buttonTestMoins = findViewById(R.id.buttonTestMoins);
         loaderMonPoids = findViewById(R.id.loaderMesurePoid);
         listPrise = findViewById(R.id.listPrise);
         scrollPrise = findViewById(R.id.scrollPrise);
         toggleSelectPrise = findViewById(R.id.toggleSelectPrise);
         titreSelect = findViewById(R.id.titreSelect);
         containerPoid = findViewById(R.id.containerPoid);
+        poidPopUpMesirePoid = findViewById(R.id.poidPopUp);
 
         graph.handler = myHandler;
 
@@ -138,9 +136,12 @@ public class MainActivity extends AppCompatActivity {
         //set title up
         titleActivity.setText(titreActivity);
         animateMesurePoid();
+        //afficher poid
+        monPoid.setText(Res.POID+" kg");
+
         //Event*******************************************
 
-        mask.setOnClickListener(new View.OnClickListener() {
+        /*mask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(weightFunctions.bodyWeightAsked) {
@@ -152,43 +153,29 @@ public class MainActivity extends AppCompatActivity {
 
                 mask.setVisibility(View.GONE);
             }
-        });
-            //bouton de test pull
-        buttonTestMoins.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Res.weightNotif.updateWeight(graph.pull-1, WeightFunctions.comportement(graph.pull-1) );
-                return false;
-            }
-        });
-        buttonTestPlus.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Res.weightNotif.updateWeight(graph.pull+1, WeightFunctions.comportement(graph.pull+1));
-                return false;
-            }
-        });
-
-            //bouton pour ouvrir le menue
+        });*/
+        //bouton pour ouvrir le menue
         showMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(navigationMenu.getVisibility()== View.GONE) {
-                    navigationMenu.setVisibility(View.VISIBLE);
-                    mask.setVisibility(View.VISIBLE);
+                    setMenuOn();
                 }
                 else {
                     navigationMenu.setVisibility(View.GONE);
-                    mask.setVisibility(View.GONE);
+                    setMenuOff();
                 }
             }
         });
+
+        //bluetooth
         bluetoothOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 blutoothManager.connect();
             }
         });
+
         suspensionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,20 +184,22 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(myIntent);
             }
         });
+
         //mesure poid
         monPoid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //afficher le masque derier le popup
-                mask.setVisibility(View.VISIBLE);
-                weightFunctions.startBodyWeightMeasurement();
+                //weightFunctions.startBodyWeightMeasurement();
+                if(!weightFunctions.isMesuring){
+                    weightFunctions.startMesurePoidBis();
+                }
             }
         });
         cancelWeightMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                weightFunctions.stopBodyWeightMeasurement();
+                //weightFunctions.stopBodyWeightMeasurement();
+                weightFunctions.stopMesurePoidBis();
             }
         });
 
@@ -229,7 +218,87 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //Select prise stuff******************
+
+
+    //MENU *********************************************************************MENU****************************************************************MENU
+    private void setMenuOn(){
+        //positionement AXE Z elevation
+        navigationMenu.setElevation(35);
+        mask.setElevation(34);
+
+        //Action du mask
+        mask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMenuOff();
+            }
+        });
+
+        mask.setVisibility(View.VISIBLE);
+
+        //TODO animation
+        navigationMenu.setVisibility(View.VISIBLE);
+    }
+
+    private void setMenuOff(){
+        mask.setVisibility(View.GONE);
+
+        //TODO anmiation
+        navigationMenu.setVisibility(View.GONE);
+
+        //positionement AXE Z elevation
+        navigationMenu.setElevation(10);
+    }
+
+    //***********************************************************************************POID**************************************************************************************
+
+    public void setPoid(double w){
+        monPoid.setText(w + " kg");
+        Res.POID = w;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)){
+            Res.currentWeight--;
+            Res.weightNotif.updateWeight(Res.currentWeight, WeightFunctions.comportement(Res.currentWeight) );
+        }
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)){
+            Res.currentWeight++;
+            Res.weightNotif.updateWeight(Res.currentWeight+1, WeightFunctions.comportement(Res.currentWeight+1) );
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+    //animation qui fait rebondire le poid tant qu'il est pas mesurer
+    void animateMesurePoid(){
+        if(Res.POID == 0) {
+            containerPoid.animate()
+                    .scaleY(1.1f)
+                    .scaleX(1.1f)
+                    .setDuration(400)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            containerPoid.animate()
+                                    .scaleX(1f)
+                                    .scaleY(1f)
+                                    .setDuration(300)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            animateMesurePoid();
+                                        }
+                                    });
+                        }
+                    });
+        }
+
+    }
+
+
+    //Select prise stuff**********************************************************************************************************************************************************
     private void toggleSelectPrise(){
         if(scrollPrise.getVisibility() == View.VISIBLE){
             replierSelectPrise();
@@ -352,31 +421,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //animation qui fait rebondire le poid tant qu'il est pas mesurer
-    void animateMesurePoid(){
-        if(Res.currentWeight == 0) {
-            containerPoid.animate()
-                    .scaleY(1.1f)
-                    .scaleX(1.1f)
-                    .setDuration(400)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            containerPoid.animate()
-                                    .scaleX(1f)
-                                    .scaleY(1f)
-                                    .setDuration(300)
-                                    .setListener(new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            animateMesurePoid();
-                                        }
-                                    });
-                        }
-                    });
-        }
-
-    }
 
     /****************************************************************************************************************************************************************************************************************************/
     /**************************************************************************************************LISTE PRISE***************************************************************************************************************/
