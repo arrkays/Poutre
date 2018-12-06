@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
@@ -34,17 +36,21 @@ import android.widget.Scroller;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import static android.os.SystemClock.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
     String titreActivity = "Mesurer force";
     String TAG = "debug-bluetooth";
+    String TAGPB = "PB_pull";
     BT blutoothManager = null;
     WeightFunctions weightFunctions = null;
-
+    boolean actif = true;//ce reactive que pull = 0
     //VIEW
     Graph graph = null;
+
     TextView titleActivity = null;
     TextView monPoid = null;
     TextView currentPull = null;
@@ -53,8 +59,14 @@ public class MainActivity extends AppCompatActivity {
     TextView currentPullPour = null;
     TextView priseSelected = null;
     TextView poidPopUpMesirePoid = null;
+    TextView thisSessionPull = null;
+    TextView thisSessionpourc = null;
+    TextView lastSessionPull = null;
+    TextView lastSessionPourc = null;
+
     ImageView bluetoothOn = null;
     ImageView bluetoothOff = null;
+
     ConstraintLayout selectPrise = null;
     ScrollView scrollPrise = null;
     ConstraintLayout popUpMesurepoids = null;
@@ -63,11 +75,16 @@ public class MainActivity extends AppCompatActivity {
     ConstraintLayout mask = null;
     LinearLayout listPrise = null;
     ConstraintLayout titreSelect = null;
+
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
     Button suspensionsButton = null;
     Button showMenuButton = null;
     Button toggleSelectPrise = null;
+    Button test = null;
+
     ProgressBar loaderMonPoids = null;
+
+    DB dataBase = null;
 
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
@@ -82,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     WeightListener weightListener = new WeightListener() {
         @Override
         public void onChange(double w, boolean[] evo) {
-            pullUptade(w);
+            pullUptade(w, evo);
         }
     };
 
@@ -90,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //on met un reference de this dans les ressource
+        Res.ma = this;
 
         //instanciation des Views
         graph = findViewById(R.id.graph);
@@ -116,44 +136,60 @@ public class MainActivity extends AppCompatActivity {
         titreSelect = findViewById(R.id.titreSelect);
         containerPoid = findViewById(R.id.containerPoid);
         poidPopUpMesirePoid = findViewById(R.id.poidPopUp);
-
+        thisSessionPull = findViewById(R.id.thisSessionRecord);
+        thisSessionpourc = findViewById(R.id.thisSessionPourc);
+        test = findViewById(R.id.test);
+        lastSessionPull = findViewById(R.id.lastSessionMax);
+        lastSessionPourc = findViewById(R.id.lastSessionPourc);
         graph.handler = myHandler;
 
 
+        //Base de donnée**********************************
+        dataBase = new DB(this);
+
         //Ajouter prehenssion dans select
         updatePrehension();
-        buildListHold();
+        displayListHold();
 
         //instruction*************************************
 
+        //bluetooth
         blutoothManager = new BT(this);
         blutoothManager.connect();
-        weightFunctions = new WeightFunctions(this); // instantiation de la classe pour mesurer le poids de corps
-        record.setText(Res.currentPrehension.maxPull+" kg");
-        recordPullPour.setText(Res.currentPrehension.pourcentage+"%");
-        startPullUpdate();
-        weightFunctions.starComportement();
-        //set title up
-        titleActivity.setText(titreActivity);
+
+        // POID :instantiation de la classe pour mesurer le poids de corps
+        weightFunctions = new WeightFunctions(this);
         animateMesurePoid();
-        //afficher poid
         monPoid.setText(Res.POID+" kg");
 
-        //Event*******************************************
+        //setup hold ang record
+        displayRecord();
+        displayLastDay();
+        displayTodayPull();
 
-        /*mask.setOnClickListener(new View.OnClickListener() {
+        //commencer les relever de poid
+        startPullUpdate();
+        weightFunctions.starComportement();
+
+        //set title up
+        titleActivity.setText(titreActivity);
+
+        //Event
+        event();
+    }
+
+
+
+    //*************************************************************************EVENT********************************************************************
+    private void event(){
+        test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(weightFunctions.bodyWeightAsked) {
-                    Log.d(TAG, "stop bodyweight mask");
-                    weightFunctions.stopBodyWeightMeasurement();
-                }
-                if(navigationMenu.getVisibility() == View.VISIBLE)
-                    navigationMenu.setVisibility(View.GONE);
-
-                mask.setVisibility(View.GONE);
+                SQLiteDatabase dbw = dataBase.getWritableDatabase();
+                dbw.execSQL("insert into Hold(name) values('prise_"+(int)(Math.random()*100)+"') ");
             }
-        });*/
+        });
+
         //bouton pour ouvrir le menue
         showMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
                 //weightFunctions.startBodyWeightMeasurement();
                 if(!weightFunctions.isMesuring){
                     weightFunctions.startMesurePoidBis();
+                    actif = false;
                 }
             }
         });
@@ -219,7 +256,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
+    //MENU *********************************************************************MENU****************************************************************MENU
+    //MENU *********************************************************************MENU****************************************************************MENU
     //MENU *********************************************************************MENU****************************************************************MENU
     private void setMenuOn(){
         //positionement AXE Z elevation
@@ -251,16 +289,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //***********************************************************************************POID**************************************************************************************
+    //***********************************************************************************POID**************************************************************************************
+    //***********************************************************************************POID**************************************************************************************
 
     public void setPoid(double w){
         monPoid.setText(w + " kg");
         Res.POID = w;
     }
 
+    //Touche son Pour simuler augmentation poid
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)){
-            Res.currentWeight--;
+            if(Res.currentWeight > 0)
+                Res.currentWeight--;
             Res.weightNotif.updateWeight(Res.currentWeight, WeightFunctions.comportement(Res.currentWeight) );
         }
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)){
@@ -298,7 +340,136 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //Select prise stuff**********************************************************************************************************************************************************
+//***********************************************************************************************************************************
+//********************************************************PULL RECORD GRAPHIQUE******************************************************
+//***********************************************************************************************************************************
+
+    void startPullUpdate(){
+        Res.weightNotif.addListener(weightListener);
+    }
+
+    void stopPullUpdate(){
+        Res.weightNotif.removeListener(weightListener);
+    }
+    /**
+     * updatePullexercice
+     * @param pull
+     * @param evo
+     */
+    public void pullUptade(double pull, boolean[] evo){
+        if(pull < 0)//pull ne peut pas etre negatif
+            pull=0;
+
+        displayCurrentPull(pull);
+        if(actif) {
+            Prehension p = Res.currentPrehension;
+            p.setTodayPull(pull);
+            //updateRecord(pull);
+
+            graph.setPull(pull);
+
+            //si le reccord de pull a été battu
+            if (p.getAllTimeRecordPull() != null) {
+                if (p.isPullPBBrocken()) {
+                    Log.d(TAGPB, "0_PB Pull battue");
+                    //TODO
+                    displayRecord();
+                }
+            }
+
+            //si le reccord de poucentage a été battu
+            if (p.getAllTimeRecordPourc() != null) {
+                if (p.isPourcPBBrocken()) {
+                    Log.d(TAGPB, "2_PB raport poid puissance battue");
+                    //TODO
+                }
+            }
+
+            //denier session pull battu
+            if (p.getLastDay() != null)
+                if (p.getLastDay().pull >= pull) {
+                    Log.d(TAGPB, "dernier session pull batue");
+                    //TODO
+                }
+
+
+            if(p.getToDayPull() != null){
+                if(p.ispullTodayBrocken()){
+                    displayTodayPull();
+                }
+            }
+
+        }
+        else{
+            if(pull == 0)
+                actif = true;
+        }
+
+
+    }
+
+    private void displayTodayPull() {
+        Pull p = Res.currentPrehension.getToDayPull();
+        if(p != null){
+            Log.d(TAGPB, "pull "+p.pull+"  =>  "+p.pourcentage);
+            thisSessionPull.setText(p.pull+" kg");
+            thisSessionpourc.setText(p.pourcentage+"%");
+        }
+        else{
+            thisSessionPull.setText(R.string._0_kg);
+            thisSessionpourc.setText(R.string._0p);
+        }
+    }
+
+    void displayCurrentPull(double pull){
+        currentPull.setText(pull+" Kg");
+        if(Res.getPour(pull) == 0)
+            currentPullPour.setText("");
+        else
+            currentPullPour.setText(Res.getPour(pull)+"%");
+    }
+
+    void displayRecord(){
+        Pull p = Res.currentPrehension.getAllTimeRecordPull();
+        if(p != null){
+            record.setText(p.pull+" kg");
+            recordPullPour.setText(p.pourcentage+"%");
+        }
+        else{
+            record.setText(R.string._0_kg);
+            recordPullPour.setText(R.string._0p);
+        }
+    }
+
+    private void displayLastDay(){
+        Pull p = Res.currentPrehension.getLastDay();
+        if(p != null){
+            lastSessionPull.setText(p.pull+" kg");
+            lastSessionPourc.setText(p.pourcentage+"%");
+        }
+        else{
+            lastSessionPull.setText(R.string._0_kg);
+            lastSessionPourc.setText(R.string._0p);
+        }
+    }
+
+    /**
+     * feedback graphique en fonction de l'etat de la connexion bluetooth*****************************Bluetooth**************
+     */
+    public void bluetoothUpdate(boolean activer){
+        if(activer){
+            bluetoothOff.setVisibility(View.GONE);
+            bluetoothOn.setVisibility(View.VISIBLE);
+        }
+        else{
+            bluetoothOn.setVisibility(View.GONE);
+            bluetoothOff.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    //*************************************************************************Select prise stuff*****************************************************************************************************
+    //*************************************************************************Select prise stuff*****************************************************************************************************
     private void toggleSelectPrise(){
         if(scrollPrise.getVisibility() == View.VISIBLE){
             replierSelectPrise();
@@ -341,100 +512,35 @@ public class MainActivity extends AppCompatActivity {
      * vérifie si aucune préhension existe. si c'est le cas en créée une
      */
     private void updatePrehension() {
-        if(Res.currentPrehension == null){
-            if(Res.prehensions.size() == 0){
-                Res.currentPrehension = new Prehension("Prise 1");
-                Res.prehensions.add(Res.currentPrehension);
-                Res.prehensions.add(new Prehension("Prise 2"));
-                Res.prehensions.add(new Prehension("Prise 3"));
-                Res.prehensions.add(new Prehension("Prise 4"));
-                Res.prehensions.add(new Prehension("Prise 5"));
-            }
-            else{
-                Res.currentPrehension = Res.prehensions.get(0);
-            }
+        //db
+        Log.d(DB.LOG_db,"read DB:");
+        Res.prehensions.addAll(dataBase.getHold());
+
+        //si pas de prise encore enregistrer
+        if(Res.prehensions.size() == 0){
+            Res.addNewHold(this, "prise 1");
         }
+
+        Res.currentPrehension = Res.prehensions.get(0);
 
         priseSelected.setText(Res.currentPrehension.nom);
     }
 
-    void startPullUpdate(){
-        Res.weightNotif.addListener(weightListener);
-    }
-
-    void stopPullUpdate(){
-        Res.weightNotif.removeListener(weightListener);
-    }
-    /**
-     * updatePullexercice
-     * @param pull
-     */
-    public void pullUptade(double pull){
-        if(pull < 0)//pull ne peut pas etre negatif
-            pull=0;
-
-        updateRecord(pull);
-        displayRecord();
-        displayCurrentPull(pull);
-
-
-        graph.setPull(pull);
-    }
-
-    void displayCurrentPull(double pull){
-        currentPull.setText(pull+" Kg");
-        if(Res.getPour(pull) == 0)
-            currentPullPour.setText("");
-        else
-            currentPullPour.setText(Res.getPour(pull)+"%");
-    }
-
-    void displayRecord(){
-        record.setText(Res.currentPrehension.maxPull+" kg");
-        if(Res.currentPrehension.pourcentage != 0)
-            recordPullPour.setText(Res.currentPrehension.pourcentage+"%");
-    }
-
-    void updateRecord(double pull){
-        if(pull>Res.currentPrehension.maxPull) {//verifie si le record absolue est batue
-            //TODO Faire annimation est feedback sonnor
-            Res.currentPrehension.setRecordPull(pull);
-            recordPullPour.setText(Res.getPour(pull)+"%");
-        }
-
-        if(Res.getPour(pull) > Res.currentPrehension.pourcentage){//verifie si le record relatif est batue
-            Res.currentPrehension.pourcentage = Res.getPour(pull);
-        }
-    }
-
-    /**
-     * feedback graphique en fonction de l'etat de la connexion bluetooth
-     */
-    public void bluetoothUpdate(boolean activer){
-        if(activer){
-            bluetoothOff.setVisibility(View.GONE);
-            bluetoothOn.setVisibility(View.VISIBLE);
-        }
-        else{
-            bluetoothOn.setVisibility(View.GONE);
-            bluetoothOff.setVisibility(View.VISIBLE);
-        }
-    }
-
 
     /****************************************************************************************************************************************************************************************************************************/
-    /**************************************************************************************************LISTE PRISE***************************************************************************************************************/
+    /**************************************************************************************************DISPLAY LISTE PRISE***************************************************************************************************************/
     /****************************************************************************************************************************************************************************************************************************/
     int widthNom = 400;
     int heightNom = 150;
 
-    void buildListHold(){
+    void displayListHold(){
         int i = 0;
         for(Prehension p : Res.prehensions){
             listPrise.addView(creatLine(p));
             i++;
         }
 
+        //ligne pour ajouter une nouvelle prise
         listPrise.addView(ligneAdd());
 
     }
@@ -668,7 +774,8 @@ public class MainActivity extends AppCompatActivity {
         //show
         priseSelected.setText(p.nom);
         displayRecord();
-        Log.d(TAG,"select "+p);
+        displayLastDay();
+        displayTodayPull();
 
         //fermer select
         if(repli)
@@ -681,6 +788,7 @@ public class MainActivity extends AppCompatActivity {
             //annimation
             listPrise.removeViewAt(Res.prehensions.indexOf(p));
             Res.prehensions.remove(p);
+            dataBase.removeHold(p);
             //verifi que c'etait pas la prehenssion selectionné
             if(p == Res.currentPrehension){
                 selectPrehenssion(Res.prehensions.get(0), false);
@@ -752,6 +860,7 @@ public class MainActivity extends AppCompatActivity {
         if(!edit.getText().toString().equals("")){
             p.nom = edit.getText().toString();
             nom.setText(p.nom);
+            dataBase.upateHoldName(p);
         }
         //validation
 
@@ -792,8 +901,7 @@ public class MainActivity extends AppCompatActivity {
         EditText nom = (EditText)l.getChildAt(0);
         if(!nom.getText().toString().equals("")){
             Res.hideKeyboard(this);
-            Prehension p = new Prehension(nom.getText().toString());
-            Res.prehensions.add(p);
+            Prehension p = Res.addNewHold(this,nom.getText().toString());
             listPrise.addView(creatLine(p), listPrise.getChildCount()-1);
             nom.setText("");
 

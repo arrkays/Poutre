@@ -11,10 +11,9 @@ import java.util.List;
 
 public class Res {
 
+    public static MainActivity ma;
+
     public static String TAG = "debug-bluetooth";
-
-
-
 
     public static final int MESURE_POID = 3;
 
@@ -39,10 +38,40 @@ public class Res {
 
 
     /**
+     * add hold in list prehensions
+     * add hold in dataBase
+     * @param ma
+     * @param name
+     * @return nouvelle prehenssion
+     */
+
+    public static Prehension addNewHold(MainActivity ma, String name){
+        Prehension newHold = new Prehension(name);
+        ma.dataBase.addHold(newHold);
+        prehensions.add(newHold);
+        return newHold;
+    }
+
+    /**
      * ajouter ou suprimer listener pour etre notifier des changement de poid
      */
     public static WeightNotif weightNotif= new WeightNotif();
 
+    //********************************************************SETTING**********************************************************
+    //********************************************************SETTING**********************************************************
+    //********************************************************SETTING**********************************************************
+
+    /**
+     * mode des reccorde:<br>
+     * 1 : max pull
+     * 2 : max poucentage
+     */
+    public static final int mode = 1;
+
+
+    //*********************UTIL**************//*********************UTIL**************//*********************UTIL**************
+    //*********************UTIL**************//*********************UTIL**************//*********************UTIL**************
+    //*********************UTIL**************//*********************UTIL**************//*********************UTIL**************
     /**
      * @return revoi un int qui est le pourcentage du pull par raport au poid
      * renvoi 0 si poid pas mesuré
@@ -105,4 +134,4 @@ public class Res {
 
 }
 
-//*********************UTIL**************
+

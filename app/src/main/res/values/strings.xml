@@ -2,6 +2,7 @@
     <string name="app_name">Poutre</string>
     <string name="bodyweight">BodyWeight</string>
     <string name="_0_kg">0 Kg</string>
+    <string name="_0p">0%</string>
     <string name="record">record</string>
     <string name="mon_poids">Mon poids</string>
     <string name="_0">0</string>

@@ -1,5 +1,6 @@
 package com.arrkays.poutre;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v13.view.DragStartHelper;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.DragEvent;
@@ -95,19 +97,30 @@ public class Graph extends View {
             c.drawRect(0,(float)(height-unKiloEnPixel*i)-1,width,(float)(height-unKiloEnPixel*i),p2);
         }
 
+
+        //Bar Record
+        p.setColor(color(R.color.record));
+        if(Res.currentPrehension.getAllTimeRecordPull() != null)
+            c.drawRect(barePull(Res.currentPrehension.getAllTimeRecordPull().pull,4), p);
+
+        //Bar last day
+        p.setColor(color(R.color.last_session));
+        if(Res.currentPrehension.getLastDay() != null)
+            c.drawRect(barePull(Res.currentPrehension.getLastDay().pull,4), p);
+
+        //bare toDay
+        p.setColor(color(R.color.today_record));
+        if(Res.currentPrehension.getToDayPull() != null)
+        c.drawRect(barePull(Res.currentPrehension.getToDayPull().pull, 4), p);
+
         //bare max
         int maxTopBar = 50;// bar a x dp avant le top max
         int topBar = (int)(((double)height*ratio) * maxPull/poid);
         if(topBar>height-maxTopBar)
             topBar=height - maxTopBar;
         //choix couleur bar max en fonction du max
-        if(maxPull >= poid*ratio)
-            p.setColor(rouge);
-        else if(maxPull >= poid*ratio2)
-            p.setColor(orange);
-        else
-            //p.setColor(vert);
-            p.setColor(Color.parseColor("#007F0E")); //vert
+        p.setColor(Color.BLACK);
+
         rec.set(0,height-topBar-4,width,height-topBar);
         c.drawRect(rec, p);
 
@@ -126,5 +139,19 @@ public class Graph extends View {
         maxPull = 0;
         super.invalidate();
         return super.onTouchEvent(event);
+    }
+
+    private int color(int R){
+        return ResourcesCompat.getColor(getResources(), R, null);
+    }
+
+    private Rect barePull(double kg, int taille){
+        int top = (int)(((double)height*ratio) * kg/poid);
+        return new Rect(0,height-top,width,height-(top+taille));
+    }
+
+    private Rect barePourc(double kg, int taille){
+        int top = (int)(((double)height*ratio) * kg/poid);
+        return new Rect(0,height-top,width,height-(top+taille));
     }
 }

@@ -45,10 +45,12 @@
                 android:id="@+id/record"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
                 android:text="0 kg"
                 android:textAlignment="center"
                 android:textColor="@color/blacn"
                 android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/titreRecord"
                 app:layout_constraintTop_toBottomOf="@+id/titreRecord" />
 
@@ -56,11 +58,13 @@
                 android:id="@+id/recordPullPourcentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginBottom="2dp"
-                android:textColor="@color/blacn"
+                android:textColor="@color/pourcentage_gris"
+                android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/record"
-                app:layout_constraintTop_toBottomOf="@+id/record" />
+                app:layout_constraintStart_toEndOf="@+id/record"
+                app:layout_constraintTop_toTopOf="@+id/record" />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -89,9 +93,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginBottom="2dp"
                 android:text="@string/_0_kg"
                 android:textColor="@color/blacn"
                 android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/titreLastSession" />
 
@@ -99,12 +105,13 @@
                 android:id="@+id/lastSessionPourc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginBottom="2dp"
-                android:textColor="@color/blacn"
+                android:textColor="@color/pourcentage_gris"
+                android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lastSessionMax" />
+                app:layout_constraintStart_toEndOf="@+id/lastSessionMax"
+                app:layout_constraintTop_toBottomOf="@+id/titreLastSession" />
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
@@ -131,9 +138,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginBottom="2dp"
                 android:text="@string/_0_kg"
                 android:textColor="@color/blacn"
                 android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/titreThisSession" />
 
@@ -141,12 +150,13 @@
                 android:id="@+id/thisSessionPourc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginBottom="2dp"
-                android:textColor="@color/blacn"
+                android:textColor="@color/pourcentage_gris"
+                android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/thisSessionRecord" />
+                app:layout_constraintStart_toEndOf="@+id/thisSessionRecord"
+                app:layout_constraintTop_toBottomOf="@+id/titreThisSession" />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -249,7 +259,7 @@
             android:text="0 Kg"
             android:textAlignment="center"
             android:textColor="#ffffff"
-            android:textSize="32sp"
+            android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@+id/currentPullPoucentage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -508,6 +518,20 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Test"
+        app:layout_constraintBottom_toTopOf="@+id/containerPoid"
+        app:layout_constraintEnd_toStartOf="@+id/layoutBarTestPull"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/containerInfoPrise" />
 
 
 </android.support.constraint.ConstraintLayout>
