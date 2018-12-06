@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar loaderMonPoids = null;
 
     DB dataBase = null;
+    StoreData stor;
 
     //handler sert a faire des modification sur l'UI non initier par l'utilisateur
     public Handler myHandler = new Handler(){
@@ -144,10 +145,13 @@ public class MainActivity extends AppCompatActivity {
         graph.handler = myHandler;
 
 
-        //Base de donnée**********************************
+        //instanciation CLASS**********************************
         dataBase = new DB(this);
+        weightFunctions = new WeightFunctions(this);
+        stor = new StoreData(this);
 
-        //Ajouter prehenssion dans select
+
+        //import prehenssion depuis DATABASE & Ajouter prehenssion dans select
         updatePrehension();
         displayListHold();
 
@@ -158,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         blutoothManager.connect();
 
         // POID :instantiation de la classe pour mesurer le poids de corps
-        weightFunctions = new WeightFunctions(this);
+        Res.POID = stor.getPoid();
         animateMesurePoid();
         monPoid.setText(Res.POID+" kg");
 
@@ -185,8 +189,7 @@ public class MainActivity extends AppCompatActivity {
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SQLiteDatabase dbw = dataBase.getWritableDatabase();
-                dbw.execSQL("insert into Hold(name) values('prise_"+(int)(Math.random()*100)+"') ");
+
             }
         });
 
@@ -232,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         cancelWeightMeasurement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -294,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setPoid(double w){
         monPoid.setText(w + " kg");
+        stor.setPoid(w);
         Res.POID = w;
     }
 
@@ -480,9 +485,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deplierSelectPrise(){
+
         //annimate
         listPrise.setTranslationY(-Res.dpToPixel(this,260));
         scrollPrise.setVisibility(View.VISIBLE);
+
         listPrise.animate()
                 .translationY(0)
                 .setDuration(260)
@@ -521,7 +528,7 @@ public class MainActivity extends AppCompatActivity {
             Res.addNewHold(this, "prise 1");
         }
 
-        Res.currentPrehension = Res.prehensions.get(0);
+        Res.currentPrehension = Res.prehensions.get(stor.getCurrentPrehensionIndex());
 
         priseSelected.setText(Res.currentPrehension.nom);
     }
@@ -770,6 +777,7 @@ public class MainActivity extends AppCompatActivity {
 
         //select
         Res.currentPrehension = p;
+        stor.setCurrentPrehenssionIndex(Res.prehensions.indexOf(p));
 
         //show
         priseSelected.setText(p.nom);

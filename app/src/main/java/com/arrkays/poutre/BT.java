@@ -8,13 +8,19 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.Intent;
 import android.os.Message;
 import android.util.Log;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static android.os.SystemClock.sleep;
 
 public class BT {
     boolean connected = false;
@@ -71,78 +77,128 @@ public class BT {
             }
 
             if(!isDeviceFound){//si le module BT n'est pas déja connecter lancer une rechercher
-                //TODO scann
+                Log.d(TAG,"start le scann");
+                final ScanCallback scannCallback = scanne();
+                final BluetoothLeScanner scanner = mBluetoothAdapter.getBluetoothLeScanner();
+                scanner.startScan(scannCallback);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sleep(15000);
+                        Log.d(TAG,"Stop le scann");
+                        scanner.stopScan(scannCallback);
+                    }
+                }).start();
+            }
+            else{
+                setupComunication();
             }
 
-            if(board != null){
-                //call back
-                BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
 
-                    @Override
-                    public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-                        //si le BLE est bien connecter
-                        if(newState == BluetoothProfile.STATE_CONNECTED){
-                            BTconected(true);
-                            Log.d(TAG,"STATE_CONNECTED");
-                            //on lance la recuperation des service / characteristic
-                            gatt.discoverServices();
-                        }
-                        else{
-                            BTconected(false);
-                        }
+        }
+    }
+
+    ScanCallback scanne(){
+        ScanCallback scanCallback = new ScanCallback() {
+            @Override
+            public void onScanResult(int callbackType, ScanResult result) {
+
+                Log.d(TAG,"divice find : "+result.getDevice().getName());
+                if(result.getDevice().getName().equals("POUTRE")){
+                    board = result.getDevice();
+                    board.setPin(new byte[]{49,50,51,52,53,54});//123456
+                    board.createBond();
+                }
+            }
+
+            @Override
+            public void onBatchScanResults(List<ScanResult> results) {
+                Log.d(TAG,"onBatchScanResults : ");
+            }
+
+            @Override
+            public void onScanFailed(int errorCode) {
+                Log.d(TAG,"onScanFailed : ");
+            }
+        };
+
+
+
+
+
+        return scanCallback;
+    }
+
+    void setupComunication(){
+        if(board != null){
+            //call back
+            BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+
+                @Override
+                public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+                    //si le BLE est bien connecter
+                    if(newState == BluetoothProfile.STATE_CONNECTED){
+                        BTconected(true);
+                        Log.d(TAG,"STATE_CONNECTED");
+                        //on lance la recuperation des service / characteristic
+                        gatt.discoverServices();
                     }
-
-                    @Override
-                    // New services discovered
-                    public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-
-                        //on recupere la bonne characteristic et son descriptor
-                        BluetoothGattCharacteristic characteristic = gatt.getService(serviceUUID).getCharacteristic(charUUID);
-                        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(configCharIn);
-
-                        //on autorise les notif aka INPUT DATA
-                        gatt.setCharacteristicNotification(characteristic, true);
-
-                        //input
-                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                        gatt.writeDescriptor(descriptor);
-
-                        //output
-                        BluetoothGattDescriptor descriptorOut = characteristic.getDescriptor(configCharOut);
-                        descriptorOut.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
-                        gatt.writeDescriptor(descriptorOut);
+                    else{
+                        BTconected(false);
                     }
+                }
 
-                    @Override
-                    public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                        Log.i(TAG, "le msg :\""+byteToString(characteristic.getValue())+"\" a bien été envoyer");
+                @Override
+                // New services discovered
+                public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+
+                    //on recupere la bonne characteristic et son descriptor
+                    BluetoothGattCharacteristic characteristic = gatt.getService(serviceUUID).getCharacteristic(charUUID);
+                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(configCharIn);
+
+                    //on autorise les notif aka INPUT DATA
+                    gatt.setCharacteristicNotification(characteristic, true);
+
+                    //input
+                    descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                    gatt.writeDescriptor(descriptor);
+
+                    //output
+                    BluetoothGattDescriptor descriptorOut = characteristic.getDescriptor(configCharOut);
+                    descriptorOut.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+                    gatt.writeDescriptor(descriptorOut);
+                }
+
+                @Override
+                public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                    Log.i(TAG, "le msg :\""+byteToString(characteristic.getValue())+"\" a bien été envoyer");
+                }
+
+                @Override
+                public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+                    double weight;
+                    try {
+                        weight = Double.parseDouble(byteToString(characteristic.getValue()));
                     }
-
-                    @Override
-                    public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-                        double weight;
-                        try {
-                            weight = Double.parseDouble(byteToString(characteristic.getValue()));
-                        }
-                        catch(NumberFormatException e){
-                            weight = 0;
-                        }
+                    catch(NumberFormatException e){
+                        weight = 0;
+                    }
                         /*Message msg= new Message();
                         msg.arg1=Res.BT_DATA;
                         msg.obj=weight;
                         ma.myHandler.sendMessage(msg);*/
-                        if(weight < 0){
-                            //TODO ERROR?
-                        }
-                        else{
-                            Res.weightNotif.updateWeight(weight, WeightFunctions.comportement(weight));
-                            Res.currentWeight = weight;
-                        }
+                    if(weight < 0){
+                        //TODO ERROR?
                     }
-                };
+                    else{
+                        Res.weightNotif.updateWeight(weight, WeightFunctions.comportement(weight));
+                        Res.currentWeight = weight;
+                    }
+                }
+            };
 
-                bluetoothGatt = board.connectGatt(ma, true, mGattCallback);
-            }
+            bluetoothGatt = board.connectGatt(ma, true, mGattCallback);
         }
     }
 

@@ -94,24 +94,24 @@ public class Graph extends View {
         double unKiloEnPixel =  (((double)height * ratio) /  poid);
         //p.setColor(Color.BLACK);
         for(double i = 0; i < poid+11 ; i+=10){
-            c.drawRect(0,(float)(height-unKiloEnPixel*i)-1,width,(float)(height-unKiloEnPixel*i),p2);
+            c.drawRect(4,(float)(height-unKiloEnPixel*i)-1,width-4,(float)(height-unKiloEnPixel*i),p2);
         }
 
 
         //Bar Record
         p.setColor(color(R.color.record));
         if(Res.currentPrehension.getAllTimeRecordPull() != null)
-            c.drawRect(barePull(Res.currentPrehension.getAllTimeRecordPull().pull,4), p);
+            c.drawRect(barePull(Res.currentPrehension.getAllTimeRecordPull().pull,5), p);
 
         //Bar last day
         p.setColor(color(R.color.last_session));
         if(Res.currentPrehension.getLastDay() != null)
-            c.drawRect(barePull(Res.currentPrehension.getLastDay().pull,4), p);
+            c.drawRect(barePull(Res.currentPrehension.getLastDay().pull,5), p);
 
         //bare toDay
         p.setColor(color(R.color.today_record));
         if(Res.currentPrehension.getToDayPull() != null)
-        c.drawRect(barePull(Res.currentPrehension.getToDayPull().pull, 4), p);
+            c.drawRect(barePull(Res.currentPrehension.getToDayPull().pull, 5), p);
 
         //bare max
         int maxTopBar = 50;// bar a x dp avant le top max
@@ -147,11 +147,11 @@ public class Graph extends View {
 
     private Rect barePull(double kg, int taille){
         int top = (int)(((double)height*ratio) * kg/poid);
-        return new Rect(0,height-top,width,height-(top+taille));
+        return new Rect(0,height-top,width,height-top+taille);
     }
 
     private Rect barePourc(double kg, int taille){
         int top = (int)(((double)height*ratio) * kg/poid);
-        return new Rect(0,height-top,width,height-(top+taille));
+        return new Rect(0,height-top,width,height-top+taille);
     }
 }

@@ -43,11 +43,11 @@
 
             <TextView
                 android:id="@+id/record"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
-                android:text="0 kg"
-                android:textAlignment="center"
+                android:text="@string/_0_kg"
+                android:textAlignment="textStart"
                 android:textColor="@color/blacn"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -90,7 +90,7 @@
 
             <TextView
                 android:id="@+id/lastSessionMax"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="2dp"
@@ -135,7 +135,7 @@
 
             <TextView
                 android:id="@+id/thisSessionRecord"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="2dp"
@@ -171,7 +171,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/containerThisSession" />
+            app:layout_constraintTop_toBottomOf="@+id/containerThisSession"
+            app:layout_constraintVertical_bias="0.0" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/selectPrise"
@@ -217,7 +218,7 @@
             <ScrollView
                 android:id="@+id/scrollPrise"
                 android:layout_width="0dp"
-                android:layout_height="260dp"
+                android:layout_height="206dp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
