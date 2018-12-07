@@ -10,4 +10,7 @@
     <string name="zero">Zero</string>
     <string name="suspensions">Suspensions</string>
     <string name="todo">TODO</string>
+    <string name="yes">oui</string>
+    <string name="no">non</string>
+    <string name="msg_del_hold">Etes-vous sure de vouloir suprimer cet prise, toute les données associés disparaitront.</string>
 </resources>

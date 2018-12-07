@@ -153,19 +153,27 @@ public class Prehension {
             allTimeRecordPull = p;
         else
         {
-            if(allTimeRecordPull.pull >= p.pull)
+            if(allTimeRecordPull.pull <= p.pull) {//si recor PULL est battue
                 allTimeRecordPull = p;
+                pullPBBrocken = true;
+            }
+            else{
+                pullPBBrocken = false;
+            }
         }
 
         if(allTimeRecordPourc == null)
             allTimeRecordPourc = p;
         else
         {
-            if(allTimeRecordPourc.pull >= p.pull)
+            if(allTimeRecordPourc.pourcentage <= p.pourcentage){//si recor Pouircentage est battue
                 allTimeRecordPourc = p;
+                pourcPBBrocken = true;
+            }
+            else{
+                pourcPBBrocken = false;
+            }
         }
-        pullPBBrocken = p == allTimeRecordPull;
-        pourcPBBrocken = p == allTimeRecordPourc;
     }
 
     //Update DB TOUDAY Drecord

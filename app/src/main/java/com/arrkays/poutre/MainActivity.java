@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -87,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
     Button toggleSelectPrise = null;
     Button test = null;
     Button buttonHistoric = null;
+    Button buttonRazTodayPull = null;
+
     ProgressBar loaderMonPoids = null;
 
     DB dataBase = null;
@@ -150,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
         buttonHistoric = findViewById(R.id.historiquePrise);
         charts = findViewById(R.id.charts);
         containerCharts = findViewById(R.id.containerChart);
+        buttonRazTodayPull = findViewById(R.id.buttonRazTodayPull);
+
         graph.handler = myHandler;
 
 
@@ -264,6 +269,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //remove today pull
+        buttonRazTodayPull.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Pull p = Res.currentPrehension.getToDayPull();
+
+                if(p != null){
+                    Res.currentPrehension.historic.remove(p);
+                    dataBase.removePull(p);
+
+                    //on met a jour le reccord au cas ou on vien de le supprimer
+                    Res.currentPrehension.setUpAllTimeRecord();
+                    displayRecord();
+                    displayTodayPull();
+                    graph.invalidate();
+                }
+            }
+        });
+
+        //display historic chart of pull
         buttonHistoric.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -821,19 +846,38 @@ public class MainActivity extends AppCompatActivity {
             toggleSelectPrise();
     }
 
-    private void deletPrehenssion(Prehension p) {
+    private void deletPrehenssion(final Prehension p) {
         //veriffier que ce n'est pas la dernier prise
         if(Res.prehensions.size() > 1){
-            //annimation
-            listPrise.removeViewAt(Res.prehensions.indexOf(p));
-            Res.prehensions.remove(p);
-            dataBase.removeHold(p);
-            //verifi que c'etait pas la prehenssion selectionné
-            if(p == Res.currentPrehension){
-                selectPrehenssion(Res.prehensions.get(0), false);
-            }
 
-            Log.d(TAG,"remove "+p.nom);
+            //Alert confirmation
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.msg_del_hold);
+
+            // Add the buttons
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                    //annimation
+                    listPrise.removeViewAt(Res.prehensions.indexOf(p));
+                    Res.prehensions.remove(p);
+                    dataBase.removeHold(p);
+                    //verifi que c'etait pas la prehenssion selectionné
+                    if(p == Res.currentPrehension){
+                        selectPrehenssion(Res.prehensions.get(0), false);
+                    }
+
+                    Log.d(TAG,"remove "+p.nom);
+                }
+            });
+            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 

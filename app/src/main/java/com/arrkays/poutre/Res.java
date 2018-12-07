@@ -44,7 +44,6 @@ public class Res {
      * @param name
      * @return nouvelle prehenssion
      */
-
     public static Prehension addNewHold(MainActivity ma, String name){
         Prehension newHold = new Prehension(name);
         ma.dataBase.addHold(newHold);
@@ -52,7 +51,7 @@ public class Res {
         return newHold;
     }
 
-    /**
+   /**
      * ajouter ou suprimer listener pour etre notifier des changement de poid
      */
     public static WeightNotif weightNotif= new WeightNotif();
