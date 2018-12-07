@@ -56,10 +56,14 @@ public class Prehension {
         double maxPull = 0;
         int maxPourc = 0;
         for(Pull p : historic){
-            if(p.pull >= maxPull)
-                allTimeRecordPull=p;
-            if(p.pourcentage >= maxPourc)
-                allTimeRecordPourc=p;
+            if(p.pull >= maxPull) {
+                allTimeRecordPull = p;
+                maxPull = p.pull;
+            }
+            if(p.pourcentage >= maxPourc) {
+                allTimeRecordPourc = p;
+                maxPourc = p.pourcentage;
+            }
         }
     }
 
@@ -195,7 +199,7 @@ public class Prehension {
      * @param time timestamp
      * @return date au format: DD-MM-AAAA
      */
-    private String getDate(long time){
+    static String getDate(long time){
         Date date = new Date();
         date.setTime(time);
         Calendar calendar = new GregorianCalendar();
@@ -212,7 +216,7 @@ public class Prehension {
      *
      * @return dd-mm-yyyy of today
      */
-    private String getDate(){
+    static String getDate(){
         Date date = new Date();
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
@@ -250,6 +254,9 @@ class Pull{
         this.date = date;
         this.pull = pull;
         this.pourcentage = pourcentage;
+    }
+    String getDateFormat(){
+        return Prehension.getDate(date);
     }
 }
 

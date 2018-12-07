@@ -131,7 +131,6 @@ public class Res {
         res /= Math.pow(10,i);
         return res;
     }
-
 }
 
 

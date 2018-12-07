@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -24,12 +25,14 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Scroller;
@@ -75,13 +78,15 @@ public class MainActivity extends AppCompatActivity {
     ConstraintLayout mask = null;
     LinearLayout listPrise = null;
     ConstraintLayout titreSelect = null;
+    ConstraintLayout containerCharts = null;
+    ChartsHold charts = null;
 
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
     Button suspensionsButton = null;
     Button showMenuButton = null;
     Button toggleSelectPrise = null;
     Button test = null;
-
+    Button buttonHistoric = null;
     ProgressBar loaderMonPoids = null;
 
     DB dataBase = null;
@@ -142,6 +147,9 @@ public class MainActivity extends AppCompatActivity {
         test = findViewById(R.id.test);
         lastSessionPull = findViewById(R.id.lastSessionMax);
         lastSessionPourc = findViewById(R.id.lastSessionPourc);
+        buttonHistoric = findViewById(R.id.historiquePrise);
+        charts = findViewById(R.id.charts);
+        containerCharts = findViewById(R.id.containerChart);
         graph.handler = myHandler;
 
 
@@ -181,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
         //Event
         event();
     }
-
-
 
     //*************************************************************************EVENT********************************************************************
     private void event(){
@@ -255,6 +261,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 toggleSelectPrise();
+            }
+        });
+
+        buttonHistoric.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                charts.updateData();
+
+                containerCharts.setAlpha(0);
+                containerCharts.setVisibility(View.VISIBLE);
+                containerCharts.animate().alpha(1).setListener(null);
+
+                mask.setVisibility(View.VISIBLE);
+                mask.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mask.setVisibility(View.GONE);
+                        containerCharts.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                containerCharts.setVisibility(View.GONE);
+                            }
+                        });
+
+                    }
+                });
             }
         });
     }
@@ -564,7 +596,6 @@ public class MainActivity extends AppCompatActivity {
 
         int nomSize = (titreSelect.getChildAt(0).getWidth() + titreSelect.getChildAt(1).getWidth() )- (paramsIcon.width + paramsIcon.leftMargin+ paramsIcon.rightMargin)*2;
 
-        Log.d(TAG, "nomsize"+ nomSize);
         //layout
         LinearLayout.LayoutParams paramsLine = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,heightNom);
 
@@ -993,10 +1024,6 @@ public class MainActivity extends AppCompatActivity {
                 Res.showKeyboard(ma);
             }
         });
-
-
-
-
     }
 }
 

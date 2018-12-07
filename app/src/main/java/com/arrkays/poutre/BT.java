@@ -10,12 +10,16 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Message;
 import android.util.Log;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -80,14 +84,21 @@ public class BT {
                 Log.d(TAG,"start le scann");
                 final ScanCallback scannCallback = scanne();
                 final BluetoothLeScanner scanner = mBluetoothAdapter.getBluetoothLeScanner();
-                scanner.startScan(scannCallback);
 
+                scanner.startScan(scannCallback );
+
+                //Stop scann dans 15s
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         sleep(15000);
                         Log.d(TAG,"Stop le scann");
-                        scanner.stopScan(scannCallback);
+                        scanner.stopScan(new ScanCallback() {
+                            @Override
+                            public void onScanResult(int callbackType, ScanResult result) {
+
+                            }
+                        });
                     }
                 }).start();
             }
@@ -110,16 +121,6 @@ public class BT {
                     board.setPin(new byte[]{49,50,51,52,53,54});//123456
                     board.createBond();
                 }
-            }
-
-            @Override
-            public void onBatchScanResults(List<ScanResult> results) {
-                Log.d(TAG,"onBatchScanResults : ");
-            }
-
-            @Override
-            public void onScanFailed(int errorCode) {
-                Log.d(TAG,"onScanFailed : ");
             }
         };
 
