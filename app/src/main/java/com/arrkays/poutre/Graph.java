@@ -109,7 +109,7 @@ public class Graph extends View {
         double unKiloEnPixel =  (((double)height * ratio) /  poid);
         //p.setColor(Color.BLACK);
         for(double i = 0; i < poid+11 ; i+=10){
-            c.drawRect(4,(float)(height-unKiloEnPixel*i)-1,width-4,(float)(height-unKiloEnPixel*i),p2);
+            c.drawRect(10,(float)(height-unKiloEnPixel*i)-1,width-10,(float)(height-unKiloEnPixel*i),p2);
         }
 
 
@@ -164,5 +164,10 @@ public class Graph extends View {
     private Rect barePourc(double kg, int taille){
         int top = (int)(((double)height*ratio) * kg/poid);
         return new Rect(0,height-top,width,height-top+taille);
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
     }
 }

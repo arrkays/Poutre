@@ -74,7 +74,7 @@
 
             <TextView
                 android:id="@+id/record"
-                android:layout_width="85dp"
+                android:layout_width="91dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
                 android:text="@string/_0_kg"
@@ -89,8 +89,9 @@
                 android:id="@+id/recordPullPourcentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginBottom="2dp"
+                android:text="@string/_0p"
                 android:textColor="@color/pourcentage_gris"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -121,7 +122,7 @@
 
             <TextView
                 android:id="@+id/lastSessionMax"
-                android:layout_width="85dp"
+                android:layout_width="91dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="2dp"
@@ -136,8 +137,9 @@
                 android:id="@+id/lastSessionPourc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginBottom="2dp"
+                android:text="@string/_0p"
                 android:textColor="@color/pourcentage_gris"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -166,7 +168,7 @@
 
             <TextView
                 android:id="@+id/thisSessionRecord"
-                android:layout_width="85dp"
+                android:layout_width="91dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="2dp"
@@ -181,8 +183,9 @@
                 android:id="@+id/thisSessionPourc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginBottom="2dp"
+                android:text="@string/_0p"
                 android:textColor="@color/pourcentage_gris"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -332,14 +335,14 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/containerPoid"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/shape_shadow"
         android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintEnd_toEndOf="@+id/containerInfoPrise"
+        app:layout_constraintStart_toStartOf="@+id/containerInfoPrise">
 
         <TextView
             android:id="@+id/titreMonPoid"
@@ -562,19 +565,59 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <Button
-        android:id="@+id/test"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/containerLastPull"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Test"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/shape_shadow"
+        android:elevation="10dp"
         app:layout_constraintBottom_toTopOf="@+id/containerPoid"
-        app:layout_constraintEnd_toStartOf="@+id/layoutBarTestPull"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/containerInfoPrise" />
+        app:layout_constraintEnd_toEndOf="@+id/containerInfoPrise"
+        app:layout_constraintStart_toStartOf="@+id/containerInfoPrise"
+        app:layout_constraintTop_toBottomOf="@+id/containerInfoPrise">
+
+        <TextView
+            android:id="@+id/lastPullPull"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="83dp"
+            android:layout_marginEnd="85dp"
+            android:text="@string/_0_kg"
+            android:textColor="#000"
+            android:textSize="50sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.484"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titreLastPull" />
+
+        <TextView
+            android:id="@+id/titreLastPull"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/titreLastPull"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lastPullPourc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/_0p"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lastPullPull"
+            app:layout_constraintVertical_bias="0.0" />
+    </android.support.constraint.ConstraintLayout>
 
 
 </android.support.constraint.ConstraintLayout>

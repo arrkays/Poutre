@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     TextView thisSessionpourc = null;
     TextView lastSessionPull = null;
     TextView lastSessionPourc = null;
+    TextView lastPullPull = null;
+    TextView lastPullPourc = null;
 
     ImageView bluetoothOn = null;
     ImageView bluetoothOff = null;
@@ -82,13 +84,13 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout listPrise = null;
     ConstraintLayout titreSelect = null;
     ConstraintLayout containerCharts = null;
+    ConstraintLayout containerInfoPrise = null;
     ChartsHold charts = null;
 
     Button cancelWeightMeasurement = null; // bouton du popup mesure du poids
     Button suspensionsButton = null;
     Button showMenuButton = null;
     Button toggleSelectPrise = null;
-    Button test = null;
     Button buttonHistoric = null;
     Button buttonRazTodayPull = null;
 
@@ -149,13 +151,15 @@ public class MainActivity extends AppCompatActivity {
         poidPopUpMesirePoid = findViewById(R.id.poidPopUp);
         thisSessionPull = findViewById(R.id.thisSessionRecord);
         thisSessionpourc = findViewById(R.id.thisSessionPourc);
-        test = findViewById(R.id.test);
         lastSessionPull = findViewById(R.id.lastSessionMax);
         lastSessionPourc = findViewById(R.id.lastSessionPourc);
         buttonHistoric = findViewById(R.id.historiquePrise);
         charts = findViewById(R.id.charts);
         containerCharts = findViewById(R.id.containerChart);
         buttonRazTodayPull = findViewById(R.id.buttonRazTodayPull);
+        lastPullPull = findViewById(R.id.lastPullPull);
+        lastPullPourc = findViewById(R.id.lastPullPourc);
+        containerInfoPrise = findViewById(R.id.containerInfoPrise);
 
         graph.handler = myHandler;
 
@@ -227,12 +231,6 @@ public class MainActivity extends AppCompatActivity {
 
     //*************************************************************************EVENT********************************************************************
     private void event(){
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         //bouton pour ouvrir le menue
         showMenuButton.setOnClickListener(new View.OnClickListener() {
@@ -483,9 +481,9 @@ public class MainActivity extends AppCompatActivity {
         if(actif) {
             Prehension p = Res.currentPrehension;
             p.setTodayPull(pull);
-            //updateRecord(pull);
 
             graph.setPull(pull);
+            displayLastPull();
 
             //si le reccord de pull a été battu
             if (p.getAllTimeRecordPull() != null) {
@@ -572,6 +570,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    void displayLastPull(){
+        lastPullPull.setText(graph.maxPull+" kg" );
+        lastPullPourc.setText(graph.maxPourcentage+" %" );
+    }
+
     /**
      * feedback graphique en fonction de l'etat de la connexion bluetooth*****************************Bluetooth**************
      */
@@ -603,6 +606,18 @@ public class MainActivity extends AppCompatActivity {
         //annimate
         listPrise.setTranslationY(-Res.dpToPixel(this,260));
         scrollPrise.setVisibility(View.VISIBLE);
+
+        containerInfoPrise.setElevation(35);
+        mask.setElevation(30);
+        mask.setVisibility(View.VISIBLE);
+        mask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replierSelectPrise();
+                containerInfoPrise.setElevation(10);
+                mask.setVisibility(View.GONE);
+            }
+        });
 
         listPrise.animate()
                 .translationY(0)
@@ -903,6 +918,7 @@ public class MainActivity extends AppCompatActivity {
         displayLastDay();
         displayTodayPull();
         graph.resetMaxPull();
+        displayLastPull();
 
         //fermer select
         if(repli)
