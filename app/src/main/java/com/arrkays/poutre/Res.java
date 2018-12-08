@@ -83,6 +83,16 @@ public class Res {
             return (int)((pull/POID)*100);
     }
 
+    /**
+     *
+     * @param x nombre a arrondir
+     * @param i arrondi a i chiffre après la virgule
+     * @return
+     */
+    public static double round(double x, int i){
+        return (double)Math.round(x*Math.pow(10,i)) / Math.pow(10,i);
+    }
+
     private static List<String> getListPrehenssionString(){
         List<String> list = new ArrayList<>();
         for (Prehension p :prehensions){

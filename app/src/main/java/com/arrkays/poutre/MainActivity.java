@@ -19,6 +19,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -195,6 +197,34 @@ public class MainActivity extends AppCompatActivity {
         event();
     }
 
+
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopPullUpdate();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopPullUpdate();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startPullUpdate();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startPullUpdate();
+    }
+
     //*************************************************************************EVENT********************************************************************
     private void event(){
         test.setOnClickListener(new View.OnClickListener() {
@@ -314,7 +344,32 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+
+        //test de pull simulation du pull
+        graph.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getRawY() > Y){ //decent
+                    if(Res.currentWeight > 0)
+                        Res.currentWeight-=0.2;
+                    else
+                        Res.currentWeight=0;
+                    Res.weightNotif.updateWeight(Res.currentWeight, WeightFunctions.comportement(Res.currentWeight) );
+                }
+                else if(event.getRawY() < Y){//monte
+                    Res.currentWeight += 0.2;
+                    Res.weightNotif.updateWeight(Res.currentWeight+1, WeightFunctions.comportement(Res.currentWeight+1) );
+                }
+                Y = event.getRawY();
+                return true;
+            }
+        });
     }
+
+    //pour test pull a sup
+    private float Y =0;
+
+
 
 
     //MENU *********************************************************************MENU****************************************************************MENU
@@ -365,6 +420,8 @@ public class MainActivity extends AppCompatActivity {
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)){
             if(Res.currentWeight > 0)
                 Res.currentWeight--;
+            else
+                Res.currentWeight = 0;
             Res.weightNotif.updateWeight(Res.currentWeight, WeightFunctions.comportement(Res.currentWeight) );
         }
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)){
@@ -576,18 +633,23 @@ public class MainActivity extends AppCompatActivity {
      * vérifie si aucune préhension existe. si c'est le cas en créée une
      */
     private void updatePrehension() {
-        //db
-        Log.d(DB.LOG_db,"read DB:");
-        Res.prehensions.addAll(dataBase.getHold());
+        if(Res.prehensions.size() == 0) {
+            //db
+            Log.d(DB.LOG_db, "read DB:");
+            Res.prehensions.addAll(dataBase.getHold());
 
-        //si pas de prise encore enregistrer
-        if(Res.prehensions.size() == 0){
-            Res.addNewHold(this, "prise 1");
+            //si pas de prise encore enregistrer
+            if (Res.prehensions.size() == 0) {
+                Res.addNewHold(this, "prise 1");
+            }
+
+            if (stor.getCurrentPrehensionIndex() >= Res.prehensions.size())//si la prise selectioner n'existe plus
+                Res.currentPrehension = Res.prehensions.get(0);
+            else
+                Res.currentPrehension = Res.prehensions.get(stor.getCurrentPrehensionIndex());
+
+            priseSelected.setText(Res.currentPrehension.nom);
         }
-
-        Res.currentPrehension = Res.prehensions.get(stor.getCurrentPrehensionIndex());
-
-        priseSelected.setText(Res.currentPrehension.nom);
     }
 
 
@@ -840,6 +902,7 @@ public class MainActivity extends AppCompatActivity {
         displayRecord();
         displayLastDay();
         displayTodayPull();
+        graph.resetMaxPull();
 
         //fermer select
         if(repli)

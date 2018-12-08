@@ -84,6 +84,7 @@ public class DB extends SQLiteOpenHelper {
         Log.d(LOG_db, "update pull DB : "+p.pull);
         ContentValues v = new ContentValues();
         v.put("pull", p.pull);
+        v.put("pourcentage", p.pourcentage);
         getWritableDatabase().update("Pull",v, "id=?",new String[]{p.id+""});
     }
 

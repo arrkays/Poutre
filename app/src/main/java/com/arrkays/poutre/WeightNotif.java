@@ -32,6 +32,7 @@ public class WeightNotif {
     }
 
     public void updateWeight(double w, boolean[] evolutionPoid) {
+        w = Res.round(w,1);
         try {
             // Notify everybody that may be interested.
             for (it = listeners.iterator(); it.hasNext(); ) {

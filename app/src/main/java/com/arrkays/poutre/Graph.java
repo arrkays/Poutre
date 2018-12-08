@@ -20,11 +20,12 @@ import android.view.View;
 
 public class Graph extends View {
 
-    String TAG = "debug-bluetooth";
+    String TAG = "graph";
     int marge = 5 ;
     public double poid = 60;
     public double pull = 0;
     public double maxPull = 0;
+    public int maxPourcentage = 0;
     int width;
     int height;
     double ratio = 0.9;//ratio beetween sub weight pull and fuul graph
@@ -47,9 +48,23 @@ public class Graph extends View {
 
     public void setPull(double p){
         pull = p;
-        if(pull>maxPull)
-            maxPull=pull;
+
+        //si on commence ou recommence a pull on remet maxPull a 0
+        if(isStartPulling()){
+            resetMaxPull();
+        }
+
+        if(pull>maxPull) {
+            maxPull = pull;
+            maxPourcentage = Res.getPour(pull);
+        }
+
         super.invalidate();
+    }
+
+    private boolean isStartPulling() {
+        Log.d(TAG, WeightFunctions.mesures[0]+"+"+WeightFunctions.mesures[1]);
+        return (WeightFunctions.mesures[0]>0 && WeightFunctions.mesures[1]==0);
     }
 
     private void getSize(){
@@ -125,20 +140,16 @@ public class Graph extends View {
         c.drawRect(rec, p);
 
         //text
-        p.setTextSize(30);
-        if(Res.POID == 0)
-            c.drawText(maxPull+" Kg",marge,height-topBar-14,p);
-        else
-            c.drawText(maxPull+" Kg ("+Res.getPour(pull)+"%)",marge,height-topBar-14,p);
+        p.setTextSize(40);
+        c.drawText(maxPull+" Kg ("+maxPourcentage+"%)",marge,height-topBar-14,p);
 
     }
 
-    //RAZ de max pull qd on touche la bar
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
+
+    void resetMaxPull(){
         maxPull = 0;
+        maxPourcentage = 0;
         super.invalidate();
-        return super.onTouchEvent(event);
     }
 
     private int color(int R){

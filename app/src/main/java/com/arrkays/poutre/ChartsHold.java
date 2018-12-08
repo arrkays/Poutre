@@ -49,7 +49,7 @@ public class ChartsHold extends LineChart {
         getAxisLeft().setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return value+" kg";
+                return Res.round(value,1)+" kg";
             }
         });
 
