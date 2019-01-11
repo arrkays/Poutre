@@ -177,25 +177,32 @@ public class BT {
                 }
 
                 @Override
-                public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-                    double weight;
-                    try {
-                        weight = Double.parseDouble(byteToString(characteristic.getValue()));
-                    }
-                    catch(NumberFormatException e){
-                        weight = 0;
-                    }
+                public void onCharacteristicChanged(BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            double weight;
+                            try {
+                                weight = Double.parseDouble(byteToString(characteristic.getValue()));
+                            }
+                            catch(NumberFormatException e){
+                                weight = 0;
+                            }
                         /*Message msg= new Message();
                         msg.arg1=Res.BT_DATA;
                         msg.obj=weight;
                         ma.myHandler.sendMessage(msg);*/
-                    if(weight < 0){
-                        //TODO ERROR?
-                    }
-                    else{
-                        Res.weightNotif.updateWeight(weight, WeightFunctions.comportement(weight));
-                        Res.currentWeight = weight;
-                    }
+                            if(weight < 0){
+                                //TODO ERROR?
+                            }
+                            else{
+                                Message msg = new Message();
+                                msg.arg1 = Res.BT_DATA;
+                                msg.obj = weight;
+                                ma.myHandler.sendMessage(msg);
+                            }
+                        }
+                    }).start();
                 }
             };
 

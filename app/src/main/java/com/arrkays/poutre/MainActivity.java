@@ -99,12 +99,16 @@ public class MainActivity extends AppCompatActivity {
     DB dataBase = null;
     StoreData stor;
 
-    //handler sert a faire des modification sur l'UI non initier par l'utilisateur
+    //handler sert a faire des modification sur l'UI a l'exterieur du thread principal
     public Handler myHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             if(msg.arg1 == Res.BT_STATUS_UPDATE){
                 bluetoothUpdate((boolean) msg.obj);
+            }
+            else if(msg.arg1 == Res.BT_DATA){
+                Res.weightNotif.updateWeight((Double) msg.obj, WeightFunctions.comportement((Double) msg.obj));
+                Res.currentWeight = (double) msg.obj;
             }
         }
     };
@@ -489,7 +493,6 @@ public class MainActivity extends AppCompatActivity {
             if (p.getAllTimeRecordPull() != null) {
                 if (p.isPullPBBrocken()) {
                     Log.d(TAGPB, "0_PB Pull battue");
-                    //TODO
                     displayRecord();
                 }
             }
@@ -525,6 +528,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //display methode***********************PULL*****************************display methode
     private void displayTodayPull() {
         Pull p = Res.currentPrehension.getToDayPull();
         if(p != null){
@@ -574,6 +578,9 @@ public class MainActivity extends AppCompatActivity {
         lastPullPull.setText(graph.maxPull+" kg" );
         lastPullPourc.setText(graph.maxPourcentage+" %" );
     }
+
+    //display methode***********************PULL*****************************display methode
+
 
     /**
      * feedback graphique en fonction de l'etat de la connexion bluetooth*****************************Bluetooth**************
