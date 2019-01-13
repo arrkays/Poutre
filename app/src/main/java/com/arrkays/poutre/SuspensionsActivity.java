@@ -1,8 +1,11 @@
 package com.arrkays.poutre;
 
+import android.content.AsyncQueryHandler;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Looper;
 import android.os.Vibrator;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +41,8 @@ public class SuspensionsActivity extends AppCompatActivity {
     TextView setTextView;
     TextView repChooseTextView;
     TextView setChooseTextView;
+    TextView lastPullTextView;
+    TextView suspensionTimeTextView;
     ConstraintLayout mask;
     CheckBox maxHangsCheckBox;
     SeekBar repSeekBar;
@@ -54,6 +59,7 @@ public class SuspensionsActivity extends AppCompatActivity {
     long restTimeBtSets = 60;
     long timerDuration = suspensionTime;
     long timeStart = 0;
+    long lastPullDuaration = 0;
     int nbrSet = 5;
     int nbrRep = 5;
     int setRealises = 0;
@@ -86,6 +92,8 @@ public class SuspensionsActivity extends AppCompatActivity {
         repTextView = (TextView) findViewById(R.id.repTextView);
         repChooseTextView = findViewById(R.id.repChooseTextView);
         setChooseTextView = findViewById(R.id.setChooseTextView);
+        lastPullTextView = findViewById(R.id.lastPullTextView);
+        suspensionTimeTextView = findViewById(R.id.suspensionTimeTextView);
         mask = findViewById(R.id.mask);
         maxHangsCheckBox = findViewById(R.id.maxHangsCheckBox);
         setSeekBar = findViewById(R.id.setSeekBar);
@@ -115,6 +123,10 @@ public class SuspensionsActivity extends AppCompatActivity {
         restTimeBtSetNPsec.setMaxValue(59);
         restTimeBtSetNPsec.setValue(0);
 
+        suspensionTime = 1000*(suspensionsTimeNPmin.getValue() * 60 + suspensionsTimeNPsec.getValue());
+        restTime = 1000*(restTimeNPmin.getValue() * 60 + restTimeNPsec.getValue());
+        restTimeBtSets = 1000*(restTimeBtSetNPmin.getValue() * 60 + restTimeBtSetNPsec.getValue());
+
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +142,8 @@ public class SuspensionsActivity extends AppCompatActivity {
                     setTextView.setText(setRealises + " / " + nbrSet);
                     etatTimer = "Start";
                     if (maxHangsCheckBox.isChecked()){
+                        lastPullTextView.setVisibility(View.VISIBLE);
+                        chronoTextView.setText("GO");
                         Res.weightNotif.addListener(weightListenerHangs);
                     }
                     else {
@@ -144,22 +158,34 @@ public class SuspensionsActivity extends AppCompatActivity {
                     startButton.setText("Resume");
                     timerStopButton.setVisibility(View.VISIBLE);
                     etatTimer = "Pause";
-                    if (!endSet) {
-                        timerE.pause();
+                    if (maxHangsCheckBox.isChecked()){
+                        if (timerHangs!=null){
+                            timerHangs.pause();
+                        }
                     }
                     else {
-                        timerRest.pause();
+                        if (!endSet) {
+                            timerE.pause();
+                        } else {
+                            timerRest.pause();
+                        }
                     }
                 }
                 else if (etatTimer == "Pause"){
                     startButton.setText("Start");
                     etatTimer = "Start";
                     timerStopButton.setVisibility(View.GONE);
-                    if (!endSet) {
-                        timerE.start();
+                    if (maxHangsCheckBox.isChecked()) {
+                        if (timerHangs!=null) {
+                            timerHangs.start();
+                        }
                     }
                     else {
-                        timerRest.start();
+                        if (!endSet) {
+                            timerE.start();
+                        } else {
+                            timerRest.start();
+                        }
                     }
                 }
 
@@ -182,6 +208,22 @@ public class SuspensionsActivity extends AppCompatActivity {
                 }
             }
         });
+        // Enleve la possibilité de choisir le temps de suspension si on choisi de faire de la force max
+        maxHangsCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (maxHangsCheckBox.isChecked()){
+                    suspensionTimeTextView.setVisibility(View.GONE);
+                    suspensionsTimeNPmin.setVisibility(View.GONE);
+                    suspensionsTimeNPsec.setVisibility(View.GONE);
+                }
+                else {
+                    suspensionTimeTextView.setVisibility(View.VISIBLE);
+                    suspensionsTimeNPmin.setVisibility(View.VISIBLE);
+                    suspensionsTimeNPsec.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         timerStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -196,6 +238,7 @@ public class SuspensionsActivity extends AppCompatActivity {
                 chronoTextView.setText(0+"");
 
                 if (maxHangsCheckBox.isChecked()) {
+                    lastPullTextView.setVisibility(View.VISIBLE);
                     Res.weightNotif.removeListener(weightListenerHangs);
                 }
                 else {
@@ -289,7 +332,7 @@ public class SuspensionsActivity extends AppCompatActivity {
                 if (repRealises == 0){
                     repRealises++;
                 }
-                else if (repRealises == nbrRep){
+                else if (repRealises == nbrRep) {
                     timerDuration = suspensionTime;
                 }
                 exercice();
@@ -341,38 +384,64 @@ public class SuspensionsActivity extends AppCompatActivity {
     WeightListener weightListenerHangs = new WeightListener() {
         @Override
         public void onChange(double weight, boolean comp[]) {
-            if (weight > 20.0 && timeStart == 0) {
+            if (weight > 5.0 && timeStart == 0) {
                 timeStart = Calendar.getInstance().getTimeInMillis();
-                chronoTextView.setText(0);
-                excerciceMaxHangs(weight);
+                chronoTextView.setText(String.valueOf(0));
+                //excerciceMaxHangs(weight);
             }
-            else if (weight >= 20.0 && timeStart != 0) {
-                chronoTextView.setText(floor(((double) Calendar.getInstance().getTimeInMillis() - (double) timeStart) / 100.0) / 10.0 + "");
+            else if (weight >= 5.0 && timeStart != 0) {
+                chronoTextView.setText(String.valueOf(floor(((double) Calendar.getInstance().getTimeInMillis() - (double) timeStart) / 100.0) / 10.0));
             }
-            else if (weight < 20.0 && timeStart != 0) {
+            else if (weight < 5.0 && timeStart != 0) {
+                lastPullDuaration = timeStart;
+                timeStart = 0;
+                Res.weightNotif.removeListener(weightListenerHangs);
+                new updateNumbers().execute((Void[])null);
                 excerciceMaxHangs(weight);
+
             }
         }
     };
     public void excerciceMaxHangs(double weight) {
+        Looper.prepare();
         timerHangs = new CountDownTimerPausable(restTime, 10) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.d(Res.TAG, "tick");
-                progressBar.setProgress((int) (1 + (restTime - (double) (millisUntilFinished - 10)) / restTime * 10000));
-                progressBar2.setProgress((int) (1 + (restTime - (double) (millisUntilFinished - 10)) / restTime * 10000));
-                chronoTextView.setText((int) (1 + (millisUntilFinished - 10) / 1000) + "");
+                //progressBar.setProgress((int) (1 + (restTime - (double) (millisUntilFinished - 10)) / restTime * 10000));
+                //progressBar2.setProgress((int) (1 + (restTime - (double) (millisUntilFinished - 10)) / restTime * 10000));
+                chronoTextView.setText(String.valueOf( (int) (1 + (millisUntilFinished - 10) / 1000) ));
             }
             @Override
             public void onFinish() {
+                progressBar.setProgress( 10000 );
+                progressBar2.setProgress(  10000 );
+                chronoTextView.setText("GO");
                 Res.weightNotif.addListener(weightListenerHangs);
             }
-        };
+        }.start();
+        Looper.loop();
+    }
+    private class updateNumbers extends AsyncTask<Void,Void,Void> {
+        protected Void doInBackground(Void...param){
+            repRealises ++;
+            if (repRealises >= nbrRep){
+                if (setRealises < nbrSet) {
+                    setRealises++;
+                    repRealises = 0;
+                }
+                else {
+                    setRealises ++;
+                }
+            }
+            return null;
+        }
 
-        if (weight < 20.0 && timeStart != 0){
-            Log.d(Res.TAG, "fin");
-            //Res.weightNotif.removeListener(weightListenerHangs);
-            timerHangs.start();
+        protected void onPostExecute(Void param) {
+            lastPullTextView.setText(String.valueOf(floor(((double) Calendar.getInstance().getTimeInMillis() - (double) lastPullDuaration) / 100.0) / 10.0)); // affiche la durée de la dernière suspension
+            repTextView.setText(repRealises + " / " + nbrRep);
+            setTextView.setText(setRealises + " / " + nbrSet);
         }
     }
 }
+

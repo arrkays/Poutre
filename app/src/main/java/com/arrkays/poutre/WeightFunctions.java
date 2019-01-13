@@ -112,7 +112,7 @@ public class WeightFunctions {
                 ma.loaderMonPoids.setProgress(nbMesureStable);
                 //si la mesure et fini
                 if(nbMesureStable >= maxMesureStable) {
-                    ma.setPoid(Res.nbChiffreApresVirgule(bufferWeight / maxMesureStable,1));// on garde qu'un chiffre après la virgule //on actualise le nouveau poid
+                    ma.setPoid(Res.round(bufferWeight / maxMesureStable,1));// on garde qu'un chiffre après la virgule //on actualise le nouveau poid
                     stopMesurePoidBis();
                 }
             }
@@ -120,12 +120,12 @@ public class WeightFunctions {
 
 
     public void startMesurePoidBis(){
-        //on remet les variable a zero
+        //on remet les variables a zero
         nbMesureStable = 0;
         bufferWeight = 0;
         ma.loaderMonPoids.setProgress(nbMesureStable);
 
-        //on enlève les listener du graph et des record de poid
+        //on enlève les listener du graph et des record de poids
         Res.weightNotif.removeListener(ma.weightListener);
 
         isMesuring = true;
@@ -239,6 +239,8 @@ public class WeightFunctions {
             resultat[4] = true;
         if(diff < -15)//baisse très vite
             resultat[5] = true;
+
+        Log.d(TAG2,showComportement(resultat));
         return resultat;
     }
 
@@ -275,7 +277,7 @@ public class WeightFunctions {
         s += "\n";
         s += (tab[4])?"true : ↘ poid baisse":"false : ↘ poid baisse";
         s += "\n";
-        s += (tab[5])?"true : ↓ poid baisse vitte":"false : ↓ poid baisse vitte";
+        s += (tab[5])?"true : ↓ poid baisse vitte":"false : ↓ poid baisse vite";
 
         return s;
     }

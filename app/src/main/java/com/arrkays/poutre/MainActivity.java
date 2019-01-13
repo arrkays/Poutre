@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent myIntent = new Intent(MainActivity.this, SuspensionsActivity.class);
                 //myIntent.putExtra("key", value); //Optional parameters
                 MainActivity.this.startActivity(myIntent);
+                navigationMenu.setVisibility(View.GONE);
             }
         });
 
