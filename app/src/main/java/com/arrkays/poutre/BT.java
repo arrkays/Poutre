@@ -196,10 +196,8 @@ public class BT {
                                 //TODO ERROR?
                             }
                             else{
-                                Message msg = new Message();
-                                msg.arg1 = Res.BT_DATA;
-                                msg.obj = weight;
-                                ma.myHandler.sendMessage(msg);
+                                Res.weightNotif.updateWeight(weight, WeightFunctions.comportement(weight));
+                                Res.currentWeight = weight;
                             }
                         }
                     }).start();

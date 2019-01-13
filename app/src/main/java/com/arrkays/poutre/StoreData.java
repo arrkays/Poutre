@@ -21,7 +21,7 @@ public class StoreData {
     }
 
     public double getPoid(){
-        return store.getFloat("poid",0);
+        return Res.round(store.getFloat("poid",0),1);
     }
 
     public void setCurrentPrehenssionIndex(int i){

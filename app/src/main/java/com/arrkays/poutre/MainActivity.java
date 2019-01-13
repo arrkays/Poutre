@@ -107,8 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 bluetoothUpdate((boolean) msg.obj);
             }
             else if(msg.arg1 == Res.BT_DATA){
-                Res.weightNotif.updateWeight((Double) msg.obj, WeightFunctions.comportement((Double) msg.obj));
-                Res.currentWeight = (double) msg.obj;
+                pullUptade((Double) msg.obj);
             }
         }
     };
@@ -116,7 +115,10 @@ public class MainActivity extends AppCompatActivity {
     WeightListener weightListener = new WeightListener() {
         @Override
         public void onChange(double w, boolean[] evo) {
-            pullUptade(w, evo);
+            Message msg = new Message();
+            msg.arg1 = Res.BT_DATA;
+            msg.obj = w;
+            myHandler.sendMessage(msg);
         }
     };
 
@@ -187,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         // POID :instantiation de la classe pour mesurer le poids de corps
         Res.POID = stor.getPoid();
         animateMesurePoid();
-        monPoid.setText(Res.POID+" kg");
+        monPoid.setText(Res.round(Res.POID, 1)+" kg");
 
         //setup hold ang record
         displayRecord();
@@ -475,9 +477,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * updatePullexercice
      * @param pull
-     * @param evo
      */
-    public void pullUptade(double pull, boolean[] evo){
+    public void pullUptade(double pull){
         if(pull < 0)//pull ne peut pas etre negatif
             pull=0;
 

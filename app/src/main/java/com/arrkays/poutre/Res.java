@@ -26,6 +26,7 @@ public class Res {
      * update le statu du bluetooth: connecter ou non
      */
     public static int BT_STATUS_UPDATE = 2;
+    
     /**
      * poid de l'utilisateur
      */
@@ -84,7 +85,6 @@ public class Res {
     }
 
     /**
-     *
      * @param x nombre a arrondir
      * @param i arrondi a i chiffre après la virgule
      * @return
@@ -136,7 +136,7 @@ public class Res {
 
     public static double nbChiffreApresVirgule(double x, int i){
         double res = x * Math.pow(10,i);
-        res = (int)res;
+        res = Math.round(res);
         res /= Math.pow(10,i);
         return res;
     }
