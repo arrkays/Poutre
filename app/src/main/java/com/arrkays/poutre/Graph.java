@@ -31,13 +31,13 @@ public class Graph extends View {
     double ratio = 0.9;//ratio beetween sub weight pull and fuul graph
     double ratio2 = 0.5;//ratio beetween half weight pull and fuul graph
     Rect rec = new Rect();
-    private Paint p = new Paint();
-    private Paint p2 = new Paint();
+    protected Paint p = new Paint();
+    protected Paint p2 = new Paint();
     public Handler handler = null;
 
-    private int rouge = Color.RED;
-    private int orange = Color.rgb(255,140 ,0);
-    private int vert = Color.rgb(0,190 ,0);
+    protected int rouge = Color.RED;
+    protected int orange = Color.rgb(255,140 ,0);
+    protected int vert = Color.rgb(0,190 ,0);
 
     public Graph(Context c, AttributeSet attrs) {
         super(c, attrs);
@@ -62,20 +62,20 @@ public class Graph extends View {
         super.invalidate();
     }
 
-    private boolean isStartPulling() {
+    protected boolean isStartPulling() {
         Log.d(TAG, WeightFunctions.mesures[0]+"+"+WeightFunctions.mesures[1]);
         return (WeightFunctions.mesures[0]>0 && WeightFunctions.mesures[1]==0);
     }
 
-    private void getSize(){
-        width = this.getWidth();
+    protected void updateSize(){
+        width = getWidth();
         height = getHeight();
     }
 
     @Override
     protected void onDraw(Canvas c) {
         super.onDraw(c);
-        getSize();
+        updateSize();
         p.setColor(vert);
         p.setStyle(Paint.Style.FILL);
         if(Res.POID==0)
@@ -152,16 +152,16 @@ public class Graph extends View {
         super.invalidate();
     }
 
-    private int color(int R){
+    protected int color(int R){
         return ResourcesCompat.getColor(getResources(), R, null);
     }
 
-    private Rect barePull(double kg, int taille){
+    protected Rect barePull(double kg, int taille){
         int top = (int)(((double)height*ratio) * kg/poid);
         return new Rect(0,height-top,width,height-top+taille);
     }
 
-    private Rect barePourc(double kg, int taille){
+    protected Rect barePourc(double kg, int taille){
         int top = (int)(((double)height*ratio) * kg/poid);
         return new Rect(0,height-top,width,height-top+taille);
     }
