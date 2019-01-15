@@ -78,10 +78,10 @@ public class Graph extends View {
         updateSize();
         p.setColor(vert);
         p.setStyle(Paint.Style.FILL);
-        if(Res.POID==0)
+        if(Res.poids==0)
             poid =60;
         else
-            poid = Res.POID;
+            poid = Res.poids;
 
         //bare vert
         int top = (int)(((double)height*ratio) * pull/poid);

@@ -108,11 +108,11 @@ public class WeightFunctions {
                     bufferWeight = 0;
                 }
                 //show feed back on activity
-                ma.poidPopUpMesirePoid.setText(w+" kg");
-                ma.loaderMonPoids.setProgress(nbMesureStable);
+                ma.myHandler.sendMessage(Res.msg(Res.POPUP_MESURE_POIDS, w));
+                ma.myHandler.sendMessage(Res.msg(Res.POPUP_STATUT_MESURE_POIDS,nbMesureStable));
                 //si la mesure et fini
                 if(nbMesureStable >= maxMesureStable) {
-                    ma.setPoid(Res.round(bufferWeight / maxMesureStable,1));// on garde qu'un chiffre après la virgule //on actualise le nouveau poid
+                    ma.myHandler.sendMessage(Res.msg(Res.MESURE_POIDS, Res.round(bufferWeight / maxMesureStable,1)));// on garde qu'un chiffre après la virgule //on actualise le nouveau poid
                     stopMesurePoidBis();
                 }
             }

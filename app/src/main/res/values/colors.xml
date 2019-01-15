@@ -9,4 +9,6 @@
     <color name="record">#B50000</color>
     <color name="last_session">#6200EE</color>
     <color name="pourcentage_gris">#d5d5d5</color>
+    <color name="couleur_menu">#384fff</color>
+
 </resources>

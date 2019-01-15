@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar loaderMonPoids = null;
 
     DB dataBase = null;
-    StoreData stor;
+    StoreData store;
 
     //handler sert a faire des modification sur l'UI a l'exterieur du thread principal
     public Handler myHandler = new Handler(){
@@ -110,6 +110,15 @@ public class MainActivity extends AppCompatActivity {
             }
             else if(msg.arg1 == Res.BT_DATA){
                 pullUptade((Double) msg.obj);
+            }
+            else if (msg.arg1 == Res.MESURE_POIDS){
+                setPoid((double)msg.obj);
+            }
+            else if (msg.arg1 == Res.POPUP_STATUT_MESURE_POIDS){
+                loaderMonPoids.setProgress((int)msg.obj);
+            }
+            else if (msg.arg1 == Res.POPUP_MESURE_POIDS){
+                poidPopUpMesirePoid.setText(msg.obj+" kg");
             }
         }
     };
@@ -178,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         //instanciation CLASS**********************************
         dataBase = new DB(this);
         weightFunctions = new WeightFunctions(this);
-        stor = new StoreData(this);
+        store = new StoreData(this);
 
 
         //import prehenssion depuis DATABASE & Ajouter prehenssion dans select
@@ -192,10 +201,10 @@ public class MainActivity extends AppCompatActivity {
         blutoothManager = new BT(this);
         blutoothManager.connect();
 
-        // POID :instantiation de la classe pour mesurer le poids de corps
-        Res.POID = stor.getPoid();
+        // poids :instantiation de la classe pour mesurer le poids de corps
+        Res.poids = store.getPoid();
         animateMesurePoid();
-        monPoid.setText(Res.round(Res.POID, 1)+" kg");
+        monPoid.setText(Res.round(Res.poids, 1)+" kg");
 
         //setup hold ang record
         displayRecord();
@@ -415,14 +424,14 @@ public class MainActivity extends AppCompatActivity {
         navigationMenu.setElevation(10);
     }
 
-    //***********************************************************************************POID**************************************************************************************
-    //***********************************************************************************POID**************************************************************************************
-    //***********************************************************************************POID**************************************************************************************
+    //***********************************************************************************poids**************************************************************************************
+    //***********************************************************************************poids**************************************************************************************
+    //***********************************************************************************poids**************************************************************************************
 
     public void setPoid(double w){
-        monPoid.setText(w + " kg");
-        stor.setPoid(w);
-        Res.POID = w;
+        monPoid.setText(Res.round(w, 1) + " kg");
+        store.setPoid(w);
+        Res.poids = w;
     }
 
     //Touche son Pour simuler augmentation poid
@@ -445,7 +454,7 @@ public class MainActivity extends AppCompatActivity {
 
     //animation qui fait rebondire le poid tant qu'il est pas mesurer
     void animateMesurePoid(){
-        if(Res.POID == 0) {
+        if(Res.poids == 0) {
             containerPoid.animate()
                     .scaleY(1.1f)
                     .scaleX(1.1f)
@@ -673,10 +682,10 @@ public class MainActivity extends AppCompatActivity {
                 Res.addNewHold(this, "prise 1");
             }
 
-            if (stor.getCurrentPrehensionIndex() >= Res.prehensions.size())//si la prise selectioner n'existe plus
+            if (store.getCurrentPrehensionIndex() >= Res.prehensions.size())//si la prise selectioner n'existe plus
                 Res.currentPrehension = Res.prehensions.get(0);
             else
-                Res.currentPrehension = Res.prehensions.get(stor.getCurrentPrehensionIndex());
+                Res.currentPrehension = Res.prehensions.get(store.getCurrentPrehensionIndex());
 
             priseSelected.setText(Res.currentPrehension.nom);
         }
@@ -925,7 +934,7 @@ public class MainActivity extends AppCompatActivity {
 
         //select
         Res.currentPrehension = p;
-        stor.setCurrentPrehenssionIndex(Res.prehensions.indexOf(p));
+        store.setCurrentPrehenssionIndex(Res.prehensions.indexOf(p));
 
         //show
         priseSelected.setText(p.nom);

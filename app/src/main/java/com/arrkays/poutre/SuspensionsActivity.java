@@ -398,7 +398,6 @@ public class SuspensionsActivity extends AppCompatActivity {
                 Res.weightNotif.removeListener(weightListenerHangs);
                 new updateNumbers().execute((Void[])null);
                 excerciceMaxHangs(weight);
-
             }
         }
     };
@@ -422,6 +421,7 @@ public class SuspensionsActivity extends AppCompatActivity {
         }.start();
         Looper.loop();
     }
+
     private class updateNumbers extends AsyncTask<Void,Void,Void> {
         protected Void doInBackground(Void...param){
             repRealises ++;
@@ -436,7 +436,6 @@ public class SuspensionsActivity extends AppCompatActivity {
             }
             return null;
         }
-
         protected void onPostExecute(Void param) {
             lastPullTextView.setText(String.valueOf(floor(((double) Calendar.getInstance().getTimeInMillis() - (double) lastPullDuaration) / 100.0) / 10.0)); // affiche la durée de la dernière suspension
             repTextView.setText(repRealises + " / " + nbrRep);

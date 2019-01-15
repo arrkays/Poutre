@@ -8,6 +8,8 @@ import java.util.List;
 
 public class WeightNotif {
 
+    public static String TAG = "weigth_listener";
+
     private List<WeightListener> listeners = new ArrayList<WeightListener>();//liste des methode qui vont etre notifier
     private Iterator<WeightListener> it = null; //pour eviter exeption si on enlève un objet (removeListener )de la liste pendant qu'on la parcour (updateWeight)
 
@@ -32,6 +34,7 @@ public class WeightNotif {
     }
 
     public void updateWeight(double w, boolean[] evolutionPoid) {
+        //Log.d(TAG, "taille de la liste : " +listeners.toString());
         w = Res.round(w,1);
         try {
             // Notify everybody that may be interested.

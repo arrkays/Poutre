@@ -2,6 +2,7 @@ package com.arrkays.poutre;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,7 +16,20 @@ public class Res {
 
     public static String TAG = "debug-bluetooth";
 
-    public static final int MESURE_POID = 3;
+    /**
+     * modifie la mesuer du poids de l'utilisateur et sauvegarde la mesure
+      */
+    public static final int MESURE_POIDS = 3;
+
+    /**
+     * Actualise l'avancement de la mesure dans le pop up
+     */
+    public static final int POPUP_STATUT_MESURE_POIDS = 4;
+
+    /**
+     * Affiche le poids dans le pop up pendant la mesure du poids
+     */
+    public static final int POPUP_MESURE_POIDS = 5;
 
     /**
      * data from  bluetooth device
@@ -30,12 +44,13 @@ public class Res {
     /**
      * poid de l'utilisateur
      */
-    public static double POID=0;
+    public static double poids=0;
 
     public static ArrayList<Prehension> prehensions = new ArrayList<Prehension>();
 
     public static Prehension currentPrehension;
     public static double currentWeight;
+
 
 
     /**
@@ -78,10 +93,10 @@ public class Res {
      * @param pull
      */
     public static int getPour(double pull){
-        if(POID == 0)
+        if(poids == 0)
             return 0;
         else
-            return (int)((pull/POID)*100);
+            return (int)((pull/poids)*100);
     }
 
     /**
