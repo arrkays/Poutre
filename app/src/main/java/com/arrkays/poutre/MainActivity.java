@@ -3,47 +3,32 @@ package com.arrkays.poutre;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.app.Notification;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-import android.widget.Scroller;
-import android.widget.Spinner;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 import static android.os.SystemClock.sleep;
 
@@ -95,8 +80,11 @@ public class MainActivity extends AppCompatActivity {
     Button toggleSelectPrise = null;
     Button buttonHistoric = null;
     Button buttonRazTodayPull = null;
+    Button button_settings;  // bouton pour aller dans l'activité des paramètres
 
     ProgressBar loaderMonPoids = null;
+
+    private GestureDetectorCompat mDetector;
 
     DB dataBase = null;
     StoreData store;
@@ -141,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         else
             setContentView(R.layout.activity_main2_landscape);
 
+        mDetector = new GestureDetectorCompat(this, new MainActivity.ActivityChangeGestureListener());
+
         //on met un reference de this dans les ressource
         Res.ma = this;
 
@@ -177,9 +167,10 @@ public class MainActivity extends AppCompatActivity {
         charts = findViewById(R.id.charts);
         containerCharts = findViewById(R.id.containerChart);
         buttonRazTodayPull = findViewById(R.id.buttonRazTodayPull);
-        lastPullPull = findViewById(R.id.lastPullPull);
+        lastPullPull = findViewById(R.id.lastPullTextView);
         lastPullPourc = findViewById(R.id.lastPullPourc);
         containerInfoPrise = findViewById(R.id.containerInfoPrise);
+        button_settings = findViewById(R.id.button_Settings);
 
         graph.handler = myHandler;
 
@@ -252,7 +243,6 @@ public class MainActivity extends AppCompatActivity {
 
     //*************************************************************************EVENT********************************************************************
     private void event(){
-
         //bouton pour ouvrir le menue
         showMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,6 +254,14 @@ public class MainActivity extends AppCompatActivity {
                     navigationMenu.setVisibility(View.GONE);
                     setMenuOff();
                 }
+            }
+        });
+        button_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                MainActivity.this.startActivity(myIntent);
+                navigationMenu.setVisibility(View.GONE);
             }
         });
 
@@ -1171,6 +1169,37 @@ public class MainActivity extends AppCompatActivity {
                 Res.showKeyboard(ma);
             }
         });
+    }
+    /**
+     * classe pour gérer les gestes
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        this.mDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+    class ActivityChangeGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent event) {
+            //Log.d(Res.TAG_gesture,"onDown: " + event.toString());
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+            if (event1.getX() - event2.getX() > 300.0) {
+                if (Math.abs(event1.getY() - event2.getY()) < 150.0){
+                    Log.d(Res.TAG_gesture, "onFling: " + event1.getX() + event2.getX());
+                    goToSuspensionActivity();
+                }
+            }
+            return true;
+        }
+    }
+    private void goToSuspensionActivity() {
+        Intent myIntent = new Intent(MainActivity.this, SuspensionsActivity.class);
+        //myIntent.putExtra("key", value); //Optional parameters
+        MainActivity.this.startActivity(myIntent);
     }
 }
 

@@ -15,6 +15,7 @@ public class Res {
     public static MainActivity ma;
 
     public static String TAG = "debug-bluetooth";
+    public static String TAG_gesture = "debug-gesture";
 
     /**
      * modifie la mesuer du poids de l'utilisateur et sauvegarde la mesure
@@ -40,7 +41,14 @@ public class Res {
      * update le statu du bluetooth: connecter ou non
      */
     public static int BT_STATUS_UPDATE = 2;
-    
+
+    // TAG pour lactivité de suspension
+    /**
+     * Pour changer la valeur du textview donnant la max de la dernière suspension
+     */
+    public static int CHANGE_VALUE_MAX_PULL=6;
+
+
     /**
      * poid de l'utilisateur
      */
@@ -82,6 +90,11 @@ public class Res {
      * 2 : max poucentage
      */
     public static final int mode = 1;
+
+    /**
+     * Autoriser ou non les suspensions
+     */
+    public static boolean vibration = false;
 
 
     //*********************UTIL**************//*********************UTIL**************//*********************UTIL**************

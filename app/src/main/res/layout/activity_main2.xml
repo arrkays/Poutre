@@ -321,6 +321,7 @@
         android:layout_marginEnd="8dp"
         android:background="@drawable/shape_shadow"
         android:elevation="10dp"
+        android:minHeight="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/containerInfoPrise"
         app:layout_constraintTop_toBottomOf="@+id/menu">
@@ -436,16 +437,40 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/navigationMenu"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="200dp"
         android:background="@drawable/shape_navigation_menu"
+        android:elevation="12dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menu">
 
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/button_Settings"
+            app:layout_constraintEnd_toStartOf="@+id/button_Settings"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/button_Settings"
+            app:srcCompat="@android:drawable/ic_menu_preferences" />
+
+        <Button
+            android:id="@+id/button_Settings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTintMode="screen"
+            android:text="Paramètres"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/suspensionsButton" />
+
         <Button
             android:id="@+id/suspensionsButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
@@ -455,15 +480,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/zeroButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="Zero"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/suspensionsButton" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -560,7 +576,7 @@
         app:layout_constraintStart_toStartOf="@+id/layoutBarTestPull">
 
         <TextView
-            android:id="@+id/lastPullPull"
+            android:id="@+id/lastPullTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -585,7 +601,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lastPullPull"
+            app:layout_constraintTop_toBottomOf="@+id/lastPullTextView"
             app:layout_constraintVertical_bias="0.0" />
     </android.support.constraint.ConstraintLayout>
 

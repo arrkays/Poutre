@@ -1,19 +1,24 @@
 package com.arrkays.poutre;
 
-import android.content.AsyncQueryHandler;
+
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.Vibrator;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.view.GestureDetectorCompat;
+
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -24,9 +29,11 @@ import static java.lang.Math.floor;
 
 public class SuspensionsActivity extends AppCompatActivity {
 
-    Button startButton = null;
-    Button optionsButton = null;
+    Button startButton;
+    Button button_excerciceSettings;
     Button timerStopButton;
+    Button button_option;
+    Button button_settings;
     ProgressBar progressBar = null;
     ProgressBar progressBar2 = null;
     ConstraintLayout optionsLayout = null;
@@ -42,17 +49,20 @@ public class SuspensionsActivity extends AppCompatActivity {
     TextView repChooseTextView;
     TextView setChooseTextView;
     TextView lastPullTextView;
+    TextView lastPullPourcTextView;
     TextView suspensionTimeTextView;
     ConstraintLayout mask;
     CheckBox maxHangsCheckBox;
     SeekBar repSeekBar;
     SeekBar setSeekBar;
+    ConstraintLayout layout_navigationMenu;
 
     CountDownTimerPausable timerE;
     CountDownTimerPausable timerRest;
     CountDownTimerPausable timerHangs;
 
     Vibrator v;
+    private GestureDetectorCompat mDetector;
 
     long suspensionTime = 10;
     long restTime = 10;
@@ -60,6 +70,7 @@ public class SuspensionsActivity extends AppCompatActivity {
     long timerDuration = suspensionTime;
     long timeStart = 0;
     long lastPullDuaration = 0;
+    double maxLastPull = 0.0;
     int nbrSet = 5;
     int nbrRep = 5;
     int setRealises = 0;
@@ -69,18 +80,35 @@ public class SuspensionsActivity extends AppCompatActivity {
     boolean endSet = false;
     String etatTimer = "Stop";
 
+    public Handler suspensionActivityHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.arg1 == Res.CHANGE_VALUE_MAX_PULL){
+                lastPullTextView.setText( String.valueOf((double)msg.obj) );
+                lastPullPourcTextView.setText( String.valueOf( Res.round((double)msg.obj/Res.poids *100.0, 1) ) );
+            }
+
+        }
+    };
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suspensions);
 
-        startButton = (Button) findViewById(R.id.startButton);
-        optionsButton = (Button) findViewById(R.id.optionsButton);
+        mDetector = new GestureDetectorCompat(this, new ActivityChangeGestureListener());
+
+        startButton = findViewById(R.id.startButton);
+        button_excerciceSettings = findViewById(R.id.button_excerciceSettings);
+        button_option = findViewById(R.id.button_option);
         timerStopButton = findViewById(R.id.timerStopButton);
+        button_settings = findViewById(R.id.button_Settings);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar2 = (ProgressBar) findViewById(R.id.progressBar2);
-        optionsLayout = (ConstraintLayout) findViewById(R.id.optionsLayout) ;
+        optionsLayout = (ConstraintLayout) findViewById(R.id.optionsLayout);
         suspensionsTimeNPsec = (NumberPicker) findViewById(R.id.suspensionTimeNPsec);
         suspensionsTimeNPmin = (NumberPicker) findViewById(R.id.suspensionTimeNPmin);
         restTimeNPsec = (NumberPicker) findViewById(R.id.restTimeNPsec);
@@ -93,11 +121,13 @@ public class SuspensionsActivity extends AppCompatActivity {
         repChooseTextView = findViewById(R.id.repChooseTextView);
         setChooseTextView = findViewById(R.id.setChooseTextView);
         lastPullTextView = findViewById(R.id.lastPullTextView);
+        lastPullPourcTextView = findViewById(R.id.lastPullPourcTextView);
         suspensionTimeTextView = findViewById(R.id.suspensionTimeTextView);
         mask = findViewById(R.id.mask);
         maxHangsCheckBox = findViewById(R.id.maxHangsCheckBox);
         setSeekBar = findViewById(R.id.setSeekBar);
         repSeekBar = findViewById(R.id.repSeekBar);
+        layout_navigationMenu = findViewById(R.id.navigationMenu);
 
         setSeekBar.setProgress(nbrSet);
         setChooseTextView.setText(nbrSet+"");
@@ -128,6 +158,27 @@ public class SuspensionsActivity extends AppCompatActivity {
         restTimeBtSets = 1000*(restTimeBtSetNPmin.getValue() * 60 + restTimeBtSetNPsec.getValue());
 
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+
+        button_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (layout_navigationMenu.getVisibility() == View.VISIBLE) {
+                    layout_navigationMenu.setVisibility(View.GONE);
+                }
+                else {
+                    layout_navigationMenu.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        button_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(SuspensionsActivity.this, SettingsActivity.class);
+                SuspensionsActivity.this.startActivity(myIntent);
+                layout_navigationMenu.setVisibility(View.GONE);
+            }
+        });
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,7 +243,7 @@ public class SuspensionsActivity extends AppCompatActivity {
             }
         });
 
-        optionsButton.setOnClickListener(new View.OnClickListener() {
+        button_excerciceSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (optionsLayout.getVisibility() == View.VISIBLE){
@@ -260,7 +311,7 @@ public class SuspensionsActivity extends AppCompatActivity {
         mask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (optionsButton.getVisibility() == View.VISIBLE) {
+                if (button_excerciceSettings.getVisibility() == View.VISIBLE) {
                     optionsLayout.setVisibility(View.GONE);
                     mask.setVisibility(View.GONE);
                     suspensionTime = 1000*(suspensionsTimeNPmin.getValue() * 60 + suspensionsTimeNPsec.getValue());
@@ -299,8 +350,25 @@ public class SuspensionsActivity extends AppCompatActivity {
 
 
     }
-    /*
-        Fonction pour faire des excercices de types rési
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    /**
+     * Fonction pour faire des suspensios de type rési
      */
     public void exercice() {
         timerE = new CountDownTimerPausable(timerDuration, 10) {
@@ -382,15 +450,24 @@ public class SuspensionsActivity extends AppCompatActivity {
         Fonction pour faire des suspension max. Lance un chrono lorsque l'utilisateur se met dessus et lance un temps de repos lorsqu'il tombe.
      */
     WeightListener weightListenerHangs = new WeightListener() {
+
         @Override
         public void onChange(double weight, boolean comp[]) {
             if (weight > 5.0 && timeStart == 0) {
                 timeStart = Calendar.getInstance().getTimeInMillis();
                 chronoTextView.setText(String.valueOf(0));
-                //excerciceMaxHangs(weight);
+                maxLastPull = 0;
             }
             else if (weight >= 5.0 && timeStart != 0) {
                 chronoTextView.setText(String.valueOf(floor(((double) Calendar.getInstance().getTimeInMillis() - (double) timeStart) / 100.0) / 10.0));
+                if (maxLastPull < weight){
+                    maxLastPull = weight;
+                    Message msg = new Message();
+                    msg.arg1 = Res.CHANGE_VALUE_MAX_PULL;
+                    msg.obj = maxLastPull;
+                    //Log.d(Res.TAG,maxLastPull+"");
+                    suspensionActivityHandler.sendMessage(msg);
+                }
             }
             else if (weight < 5.0 && timeStart != 0) {
                 lastPullDuaration = timeStart;
@@ -416,6 +493,9 @@ public class SuspensionsActivity extends AppCompatActivity {
                 progressBar.setProgress( 10000 );
                 progressBar2.setProgress(  10000 );
                 chronoTextView.setText("GO");
+                if (Res.vibration){
+                    v.vibrate(200);
+                }
                 Res.weightNotif.addListener(weightListenerHangs);
             }
         }.start();
@@ -437,10 +517,42 @@ public class SuspensionsActivity extends AppCompatActivity {
             return null;
         }
         protected void onPostExecute(Void param) {
-            lastPullTextView.setText(String.valueOf(floor(((double) Calendar.getInstance().getTimeInMillis() - (double) lastPullDuaration) / 100.0) / 10.0)); // affiche la durée de la dernière suspension
+            //lastPullTextView.setText(String.valueOf(floor(((double) Calendar.getInstance().getTimeInMillis() - (double) lastPullDuaration) / 100.0) / 10.0)); // affiche la durée de la dernière suspension
             repTextView.setText(repRealises + " / " + nbrRep);
             setTextView.setText(setRealises + " / " + nbrSet);
         }
+    }
+
+    /**
+     * classe pour gérer les gestes
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        this.mDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+    class ActivityChangeGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent event) {
+            //Log.d(Res.TAG_gesture,"onDown: " + event.toString());
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+            if (event2.getX() - event1.getX() > 300.0) {
+                if (Math.abs(event1.getY() - event2.getY()) < 150.0){
+                    Log.d(Res.TAG_gesture, "onFling: " + event1.getX() + event2.getX());
+                    goToMainActivity();
+                }
+            }
+            return true;
+        }
+    }
+    private void goToMainActivity() {
+        Intent myIntent = new Intent(SuspensionsActivity.this, MainActivity.class);
+        //myIntent.putExtra("key", value); //Optional parameters
+        SuspensionsActivity.this.startActivity(myIntent);
     }
 }
 
