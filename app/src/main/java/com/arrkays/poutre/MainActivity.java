@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -51,18 +52,19 @@ public class MainActivity extends AppCompatActivity {
     String titreActivity = "Mesurer force";
     String TAG = "debug-bluetooth";
     String TAGPB = "PB_pull";
+    String TAGMA = "MainActivity-debug";
     BT blutoothManager = null;
     WeightFunctions weightFunctions = null;
     boolean actif = true;//ce reactive que pull = 0
     //VIEW
-    Graph graph = null;
+    GraphMaxPullCirular graph = null;
 
     TextView titleActivity = null;
     TextView monPoid = null;
-    TextView currentPull = null;
+    //TextView currentPull = null;
     TextView record = null;
     TextView recordPullPour = null;
-    TextView currentPullPour = null;
+    //TextView currentPullPour = null;
     TextView priseSelected = null;
     TextView poidPopUpMesirePoid = null;
     TextView thisSessionPull = null;
@@ -125,7 +127,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            setContentView(R.layout.activity_main2);
+        else
+            setContentView(R.layout.activity_main2_landscape);
 
         //on met un reference de this dans les ressource
         Res.ma = this;
@@ -135,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
         monPoid = findViewById(R.id.monPoid);
         titleActivity = findViewById(R.id.titreActivite);
         record = findViewById(R.id.record);
-        currentPull = findViewById(R.id.currentPull);
+        //currentPull = findViewById(R.id.currentPull);
         recordPullPour = findViewById(R.id.recordPullPourcentage);
-        currentPullPour = findViewById(R.id.currentPullPoucentage);
+        //currentPullPour = findViewById(R.id.currentPullPoucentage);
         bluetoothOff =  findViewById(R.id.bluetoothNotActiv);
         bluetoothOn =  findViewById(R.id.bluetoothActiv);
         selectPrise = findViewById(R.id.selectPrise);
@@ -179,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
         //import prehenssion depuis DATABASE & Ajouter prehenssion dans select
         updatePrehension();
         displayListHold();
+        priseSelected.setText(Res.currentPrehension+"");
 
         //instruction*************************************
 
@@ -207,32 +213,32 @@ public class MainActivity extends AppCompatActivity {
         event();
     }
 
-
-
-
     @Override
     protected void onStop() {
         super.onStop();
         stopPullUpdate();
-
+        Log.d(TAGMA, "-----onStop()");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         stopPullUpdate();
+        Log.d(TAGMA, "-----onPause()");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         startPullUpdate();
+        Log.d(TAGMA, "-----onStart()");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         startPullUpdate();
+        Log.d(TAGMA, "-----onResume()");
     }
 
     //*************************************************************************EVENT********************************************************************
@@ -545,11 +551,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void displayCurrentPull(double pull){
-        currentPull.setText(pull+" Kg");
-        if(Res.getPour(pull) == 0)
-            currentPullPour.setText("");
-        else
-            currentPullPour.setText(Res.getPour(pull)+"%");
+        //currentPull.setText(pull+" Kg");
+        //if(Res.getPour(pull) == 0)
+            //currentPullPour.setText("");
+        //else
+            //currentPullPour.setText(Res.getPour(pull)+"%");
     }
 
     void displayRecord(){
