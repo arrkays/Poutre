@@ -483,7 +483,6 @@ public class SuspensionsActivity extends AppCompatActivity {
         timerHangs = new CountDownTimerPausable(restTime, 10) {
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.d(Res.TAG, "tick");
                 //progressBar.setProgress((int) (1 + (restTime - (double) (millisUntilFinished - 10)) / restTime * 10000));
                 //progressBar2.setProgress((int) (1 + (restTime - (double) (millisUntilFinished - 10)) / restTime * 10000));
                 chronoTextView.setText(String.valueOf( (int) (1 + (millisUntilFinished - 10) / 1000) ));
