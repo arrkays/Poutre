@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private GestureDetectorCompat mDetector;
 
     DB dataBase = null;
-    StoreData store;
+    //StoreData store;
 
     //handler sert a faire des modification sur l'UI a l'exterieur du thread principal
     public Handler myHandler = new Handler(){
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         //instanciation CLASS**********************************
         dataBase = new DB(this);
         weightFunctions = new WeightFunctions(this);
-        store = new StoreData(this);
+        Res.store = new StoreData(this);
 
 
         //import prehenssion depuis DATABASE & Ajouter prehenssion dans select
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
         blutoothManager.connect();
 
         // poids :instantiation de la classe pour mesurer le poids de corps
-        Res.poids = store.getPoid();
+        Res.poids = Res.store.getPoid();
         animateMesurePoid();
         monPoid.setText(Res.round(Res.poids, 1)+" kg");
 
@@ -428,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setPoid(double w){
         monPoid.setText(Res.round(w, 1) + " kg");
-        store.setPoid(w);
+        Res.store.setPoid(w);
         Res.poids = w;
     }
 
@@ -680,10 +680,10 @@ public class MainActivity extends AppCompatActivity {
                 Res.addNewHold(this, "prise 1");
             }
 
-            if (store.getCurrentPrehensionIndex() >= Res.prehensions.size())//si la prise selectioner n'existe plus
+            if (Res.store.getCurrentPrehensionIndex() >= Res.prehensions.size())//si la prise selectioner n'existe plus
                 Res.currentPrehension = Res.prehensions.get(0);
             else
-                Res.currentPrehension = Res.prehensions.get(store.getCurrentPrehensionIndex());
+                Res.currentPrehension = Res.prehensions.get(Res.store.getCurrentPrehensionIndex());
 
             priseSelected.setText(Res.currentPrehension.nom);
         }
@@ -932,7 +932,7 @@ public class MainActivity extends AppCompatActivity {
 
         //select
         Res.currentPrehension = p;
-        store.setCurrentPrehenssionIndex(Res.prehensions.indexOf(p));
+        Res.store.setCurrentPrehenssionIndex(Res.prehensions.indexOf(p));
 
         //show
         priseSelected.setText(p.nom);
@@ -1196,6 +1196,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     }
+
     private void goToSuspensionActivity() {
         Intent myIntent = new Intent(MainActivity.this, SuspensionsActivity.class);
         //myIntent.putExtra("key", value); //Optional parameters

@@ -59,7 +59,7 @@ public class Res {
     public static Prehension currentPrehension;
     public static double currentWeight;
 
-
+    static StoreData store = null;
 
     /**
      * add hold in list prehensions

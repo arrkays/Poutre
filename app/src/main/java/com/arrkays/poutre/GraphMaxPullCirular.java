@@ -1,8 +1,11 @@
 package com.arrkays.poutre;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.shapes.OvalShape;
@@ -12,11 +15,11 @@ import android.util.Log;
 
 public class GraphMaxPullCirular extends Graph {
 
-    int thickness = 50;
+    float thickness = 50;
     int colorInf = Color.rgb(0,190 ,0);
     int colorMoy = Color.rgb(255,110,0);
     int colorSup = Color.rgb(255,0,0);
-
+    Bitmap imgTest = BitmapFactory.decodeResource(getResources(),R.drawable.main_gauche_droite);
     public GraphMaxPullCirular(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
@@ -34,6 +37,10 @@ public class GraphMaxPullCirular extends Graph {
             if(r > height)
                 r = height;
         }
+
+        //thisckness
+        thickness = r*0.15f;
+
         int left = width/2 - r;
         int top = height-r;
         int right = width/2 + r;
@@ -77,17 +84,15 @@ public class GraphMaxPullCirular extends Graph {
         p.setColor(Color.WHITE);
         canvas.drawOval(ovalMask,p);
 
-        //aiguille
-        //p.setColor(Color.GRAY);
-        //canvas.drawArc(oval, 180+angle, 0.4f, true, p);
-
 
         //dessiner l'oval autour
         p.setColor(Color.BLACK);
         p.setStyle(Paint.Style.STROKE);
         canvas.drawOval(oval,p);
 
-        //canvas.drawRect(0,0,width-1,height-3,p);
+        //test
+        Matrix m = new Matrix();
+        canvas.drawBitmap(imgTest, m, p);
     }
 
     void barDeRccord(Canvas c, RectF o){
