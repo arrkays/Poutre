@@ -25,4 +25,23 @@
         <item name="android:scrollbarAlwaysDrawHorizontalTrack">false</item>
         <item name="android:scrollbarAlwaysDrawVerticalTrack">false</item>
     </style>
+
+    <style name="AppDarkTheme" parent="android:Theme.Holo.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorMenu">@color/DarkTheme_couleur_menu</item>
+        <item name="backgroundColor">@color/DarkTheme_backGroundColor</item>
+        <item name="buttonBackgroundColor">@color/DarkTheme_couleur_bouton</item>
+    </style>
+    <style name="AppLightTheme" parent="android:Theme.Holo.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorMenu">@color/LightTheme_couleur_menu</item>
+        <item name="backgroundColor">@color/LightTheme_backGroundColor</item>
+        <item name="buttonBackgroundColor">@color/LightTheme_couleur_bouton</item>
+    </style>
 </resources>

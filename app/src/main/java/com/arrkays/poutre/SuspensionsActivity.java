@@ -79,6 +79,7 @@ public class SuspensionsActivity extends AppCompatActivity {
     boolean rest = true;
     boolean endSet = false;
     String etatTimer = "Stop";
+    String currentTheme;
 
     public Handler suspensionActivityHandler = new Handler(){
         @Override
@@ -97,6 +98,15 @@ public class SuspensionsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Res.store.getCurrentTheme().equals("Dark")) {
+            setTheme(R.style.AppDarkTheme);
+            currentTheme = "Dark";
+        } else {
+            setTheme(R.style.AppLightTheme);
+            currentTheme = "Light";
+        }
+
         setContentView(R.layout.activity_suspensions);
 
         mDetector = new GestureDetectorCompat(this, new ActivityChangeGestureListener());
@@ -365,6 +375,12 @@ public class SuspensionsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (Res.store.getCurrentTheme().equals(currentTheme)) {}
+        else {
+            //recreate();
+        }
+
     }
 
     /**
