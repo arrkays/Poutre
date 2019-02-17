@@ -99,7 +99,7 @@ public class WeightFunctions {
             @Override
             public void onChange(double w, boolean[] evolutionPoid) {
                 //si le poid est stable et superieur a 10kg
-                if(evolutionPoid[0] && w>10){//remetre evolutionPoid[1] la c'est pour tester
+                if(evolutionPoid[0] && w>4){//remetre evolutionPoid[1] la c'est pour tester
                     nbMesureStable++;
                     bufferWeight += w;
                 }

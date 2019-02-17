@@ -19,7 +19,7 @@ public class GraphMaxPullCirular extends Graph {
     int colorInf = Color.rgb(0,190 ,0);
     int colorMoy = Color.rgb(255,110,0);
     int colorSup = Color.rgb(255,0,0);
-    Bitmap imgTest = BitmapFactory.decodeResource(getResources(),R.drawable.main_gauche_droite);
+    Bitmap needle = BitmapFactory.decodeResource(getResources(),R.drawable.needle_512);
     public GraphMaxPullCirular(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
@@ -27,6 +27,11 @@ public class GraphMaxPullCirular extends Graph {
     @Override
     protected void onDraw(Canvas canvas) {
         super.updateSize();
+
+        if(Res.poids==0)
+            poid =60;
+        else
+            poid = Res.poids;
 
         int r;
         if(width < height){//portrait
@@ -90,9 +95,31 @@ public class GraphMaxPullCirular extends Graph {
         p.setStyle(Paint.Style.STROKE);
         canvas.drawOval(oval,p);
 
-        //test
+        //aiguille
         Matrix m = new Matrix();
-        canvas.drawBitmap(imgTest, m, p);
+        //m.setTranslate(width/2-needle.getWidth()/2, -30);
+
+        //m.setRotate(angle, needle.getWidth()/2, needle.getHeight());
+        //m.postTranslate((width/2-needle.getWidth()/2)*(1f/0.3f)+200, 660);
+        //m.postScale(0.3f,0.3f);
+
+        float decalageTroueAiguille = 29;
+        float needleScale = ((float)r-thickness+decalageTroueAiguille)/needle.getWidth();
+        float needleHeigth =  61;//(float)needle.getHeight()*needleScale;
+        float needleWidth =  512;//(float)needle.getWidth()*needleScale;
+
+        m.setTranslate(thickness,height-(needleHeigth/2));
+        m.preScale(needleScale,needleScale);
+
+        float px = r;
+        float py = height;
+
+        m.postRotate(angle, px, py);
+        canvas.drawBitmap(needle, m, p);
+/*        p.setColor(Color.RED);
+        p.setStyle(Paint.Style.FILL);
+       canvas.drawCircle(px,py,2,p);
+*/
     }
 
     void barDeRccord(Canvas c, RectF o){
