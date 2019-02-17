@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
     android:visibility="visible"
     tools:layout_editor_absoluteY="25dp">
 
@@ -66,7 +67,7 @@
         android:id="@+id/menu"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:background="@color/couleur_menu"
+        android:background="?attr/colorMenu"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -114,9 +115,10 @@
 
     <Button
         android:id="@+id/startButton"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_width="140dp"
+        android:layout_height="34dp"
         android:layout_marginBottom="10dp"
+        android:background="@drawable/shape_button"
         android:elevation="24dp"
         android:text="Start"
         android:visibility="visible"
@@ -405,9 +407,11 @@
     <Button
         android:id="@+id/timerStopButton"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_width="140dp"
+        android:layout_height="34dp"
+        android:background="@drawable/shape_button"
         android:text="Stop"
+        android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/startButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -429,7 +433,7 @@
         android:id="@+id/navigationMenu"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:background="@drawable/shape_navigation_menu"
+        android:background="?attr/colorMenu"
         android:elevation="24dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"

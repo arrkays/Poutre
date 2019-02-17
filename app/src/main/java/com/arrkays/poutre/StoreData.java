@@ -32,4 +32,14 @@ public class StoreData {
     public int getCurrentPrehensionIndex() {
         return store.getInt("currentPrehenssion",0);
     }
+
+    ////////////////////////////////////////// PREFERENCES //////////////////////////////////////////
+    ///// Thème //////
+    public void setCurrentTheme(String theme) {
+        editor.putString("currentTheme", theme);
+        editor.commit();
+    }
+    public String getCurrentTheme() {return store.getString("currentTheme", "Light");}
+    ///// Vibrations /////
+
 }
