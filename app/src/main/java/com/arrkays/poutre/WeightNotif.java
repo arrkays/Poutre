@@ -3,8 +3,10 @@ package com.arrkays.poutre;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class WeightNotif {
 
@@ -44,7 +46,7 @@ public class WeightNotif {
             }
             it = null;
         }
-        catch (NullPointerException e) {
+        catch (NullPointerException | NoSuchElementException | ConcurrentModificationException e) {
             Log.d(Res.TAG, "weightListener cassé : problème remove listener");
         }
     }

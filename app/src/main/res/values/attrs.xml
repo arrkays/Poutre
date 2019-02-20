@@ -8,4 +8,7 @@
     <attr name="colorMenu" format="reference" />
     <attr name="backgroundColor" format="reference" />
     <attr name="buttonBackgroundColor" format="reference" />
+    <declare-styleable name="GraphMaxPullCirular">
+        <attr name="elevationCadran" format="float" />
+    </declare-styleable>
 </resources>

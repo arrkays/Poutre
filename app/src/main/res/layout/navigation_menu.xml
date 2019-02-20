@@ -1,31 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navigationMenu"
-    android:layout_width="227dp"
+    android:layout_width="wrap_content"
     android:layout_height="200dp"
     android:background="@drawable/shape_navigation_menu"
+    android:elevation="12dp"
     android:visibility="gone"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/menu">
 
-<Button
-    android:id="@+id/suspensionsButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:layout_marginEnd="8dp"
-    android:text="Suspensions"
-    app:layout_constraintEnd_toEndOf="@+id/navigationMenu"
-    app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/button_Settings"
+        app:layout_constraintEnd_toStartOf="@+id/button_Settings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/button_Settings"
+        app:srcCompat="@android:drawable/ic_menu_preferences" />
 
-<Button
-    android:id="@+id/zeroButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    android:text="Zero"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/suspensionsButton" />
+    <Button
+        android:id="@+id/button_Settings"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTintMode="screen"
+        android:text="Paramètres"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/suspensionsButton" />
+
+    <Button
+        android:id="@+id/suspensionsButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Suspensions"
+        app:layout_constraintEnd_toEndOf="@+id/navigationMenu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>
