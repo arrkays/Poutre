@@ -17,12 +17,21 @@ import android.util.Log;
 public class GraphMaxPullCirular extends Graph {
     String TAG = "Graph_Cirular_Debug";
     float thickness = 50;
-    float elevationCadran=0; //en degré
+    float elevationCadran=0; //en pixel
     float angleDebutFin; //  en degrée
+    float epaisseurCadran; //  ratio du rayon (entre 0 et 1)
+    float ratioMax;
+    float ratioMoy;
 
-    int colorInf = Color.rgb(0,190 ,0);
-    int colorMoy = Color.rgb(255,110,0);
-    int colorSup = Color.rgb(255,0,0);
+    int colorInf;
+    int colorMoy;
+    int colorSup ;
+    int colorCadran;
+    int colorBackground ;
+    int colorTrai10Kg ;
+
+    boolean showLastPull;
+
     Bitmap needle = BitmapFactory.decodeResource(getResources(),R.drawable.needle_512);
 
     public GraphMaxPullCirular(Context context, @Nullable AttributeSet attrs) {
@@ -30,8 +39,18 @@ public class GraphMaxPullCirular extends Graph {
 
         TypedArray a=getContext().obtainStyledAttributes(attrs,R.styleable.GraphMaxPullCirular);
         //Use a
-        elevationCadran = a.getFloat(R.styleable.GraphMaxPullCirular_elevationCadran, 0);
-        Log.d(TAG, "elevation cadrant "+elevationCadran);
+        elevationCadran = a.getFloat(R.styleable.GraphMaxPullCirular_custom_elevationCadran, 0);
+        ratioMax = a.getFloat(R.styleable.GraphMaxPullCirular_custom_ratioMax, 0.9f);
+        ratioMoy = a.getFloat(R.styleable.GraphMaxPullCirular_custom_ratioMoy, 0.5f);
+        epaisseurCadran = a.getFloat(R.styleable.GraphMaxPullCirular_custom_epaisseurCadran, 0.15f);
+        colorCadran = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorCadran,  Color.rgb(230,230,230));
+        colorInf = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorInf, Color.rgb(0,190 ,0));
+        colorMoy = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorMoy, Color.rgb(255,106,0));
+        colorSup = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorSup, Color.rgb(255,0,0));
+        colorBackground = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorBackground, Color.WHITE);
+        colorTrai10Kg = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorTrai10Kg, Color.GRAY);
+        showLastPull = a.getBoolean(R.styleable.GraphMaxPullCirular_custom_showLastPull, true);
+
         //Don't forget this
         a.recycle();
     }
@@ -42,7 +61,7 @@ public class GraphMaxPullCirular extends Graph {
 
         //dRAW background
         p.setStyle(Paint.Style.FILL);
-        p.setColor(Color.WHITE);
+        p.setColor(colorBackground);
         canvas.drawRect(0,0,width,height,p);
 
         //update poid
@@ -66,7 +85,8 @@ public class GraphMaxPullCirular extends Graph {
         //elevationCadran = (float) (Math.cos(Math.toRadians(90-angleDebutFin)) * r);
         angleDebutFin = (float) Math.toDegrees( Math.asin((elevationCadran/(double)r)));
         //thisckness
-        thickness = r*0.15f;
+        thickness = r*epaisseurCadran;
+        float thicknessLastPull = thickness * 0.9f;
 
         int left = width/2 - r;
         int top = (int) (height-r-elevationCadran);
@@ -76,32 +96,24 @@ public class GraphMaxPullCirular extends Graph {
         //calculation taille du cadrant
         RectF oval = new RectF(left,top,right,bottom);
         RectF ovalMask = new RectF(left+thickness,top+thickness,right-thickness,bottom-thickness);
+        RectF ovalLastPull = new RectF(left+thicknessLastPull,top+thicknessLastPull,right-thicknessLastPull,bottom-thicknessLastPull);
 
 
         //dessiner background du cadran
-        p.setColor(Color.rgb(230,230,230));
+        p.setColor(colorCadran);
         p.setStyle(Paint.Style.FILL);
         canvas.drawOval(oval,p);
 
         //calcule du pull
-        float angle =(float)( (180+(angleDebutFin*2) * ratio) * (pull / poid));
+        float angle =(float)( (180+(angleDebutFin*2) * ratioMax) * (pull / poid));
 
         //dessin du pull
-        p.setStyle(Paint.Style.FILL);
-            p.setColor(colorInf);
-            canvas.drawArc(oval, 180-angleDebutFin , angle, true, p);
+        drawPullCadran(canvas, oval, pull);
 
-        if(pull >= poid/2 ){
-            float starAngle = (float)( (180+(2*angleDebutFin) * ratio) * 0.5);
-            p.setColor(colorMoy);
-            canvas.drawArc(oval, 180-angleDebutFin+starAngle, angle-starAngle, true, p);
-        }
 
-        if(pull >= poid){
-            float starAngle = (float)( (180+(2*angleDebutFin) * ratio) );
-            p.setColor(colorSup);
-            canvas.drawArc(oval, 180-angleDebutFin+starAngle, angle-starAngle, true, p);
-        }
+        //dessin lastpull
+        if(showLastPull)
+            drawPullCadran(canvas, ovalLastPull, maxPull);
 
         //dessin bar record
         barDeRccord(canvas,oval);
@@ -117,7 +129,7 @@ public class GraphMaxPullCirular extends Graph {
 
         //ligne tout les 10kg
         double kiloAngle =  (180+(2*angleDebutFin) * ratio) /  poid;
-        p.setColor(Color.GRAY);
+        p.setColor(colorTrai10Kg);
         for(double i = 10; i < poid+11 ; i+=10){
             canvas.drawArc(oval, 180-angleDebutFin+(float)(i*kiloAngle), 0.4f, true, p);
         }
@@ -154,6 +166,27 @@ public class GraphMaxPullCirular extends Graph {
         p.setStyle(Paint.Style.FILL);
         canvas.drawCircle(px,py,2,p);
 
+    }
+
+
+    void drawPullCadran(Canvas canvas, RectF oval, double  pull){
+        p.setStyle(Paint.Style.FILL);
+
+        p.setColor(colorInf);
+        float angle =(float)( (180+(angleDebutFin*2) * ratioMax) * (pull / poid));
+        canvas.drawArc(oval, 180-angleDebutFin , angle, true, p);
+
+        if(pull >= poid*ratioMoy ){
+            float starAngle = (float)( (180+(2*angleDebutFin) * ratioMax) * ratioMoy);
+            p.setColor(colorMoy);
+            canvas.drawArc(oval, 180-angleDebutFin+starAngle, angle-starAngle, true, p);
+        }
+
+        if(pull >= poid){
+            float starAngle = (float)( (180+(2*angleDebutFin) * ratioMax) );
+            p.setColor(colorSup);
+            canvas.drawArc(oval, 180-angleDebutFin+starAngle, angle-starAngle, true, p);
+        }
     }
 
     void barDeRccord(Canvas c, RectF o){
