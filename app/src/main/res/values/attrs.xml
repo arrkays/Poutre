@@ -20,6 +20,7 @@
         <attr name="custom_colorCadran" format="color"/>
         <attr name="custom_colorBackground" format="color"/>
         <attr name="custom_colorGraduation" format="color"/>
+        <attr name="custom_colorGraduationTexe" format="color"/>
         <attr name="custom_showLastPull" format="boolean"/>
         <attr name="custom_graduationTextOn" format="boolean"/>
     </declare-styleable>
