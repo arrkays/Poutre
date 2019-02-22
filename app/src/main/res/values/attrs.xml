@@ -9,8 +9,9 @@
     <attr name="backgroundColor" format="reference" />
     <attr name="buttonBackgroundColor" format="reference" />
     <declare-styleable name="GraphMaxPullCirular">
-        <attr name="custom_elevationCadran" format="float" />
+        <attr name="custom_elevationRatio" format="float" />
         <attr name="custom_epaisseurCadran" format="float" />
+        <attr name="custom_graduation" format="float" />
         <attr name="custom_ratioMax" format="float" />
         <attr name="custom_ratioMoy" format="float" />
         <attr name="custom_colorInf" format="color"/>
@@ -18,7 +19,8 @@
         <attr name="custom_colorSup" format="color"/>
         <attr name="custom_colorCadran" format="color"/>
         <attr name="custom_colorBackground" format="color"/>
-        <attr name="custom_colorTrai10Kg" format="color"/>
+        <attr name="custom_colorGraduation" format="color"/>
         <attr name="custom_showLastPull" format="boolean"/>
+        <attr name="custom_graduationTextOn" format="boolean"/>
     </declare-styleable>
 </resources>

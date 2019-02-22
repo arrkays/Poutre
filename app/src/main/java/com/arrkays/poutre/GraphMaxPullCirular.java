@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.shapes.OvalShape;
 import android.support.annotation.Nullable;
@@ -17,20 +18,23 @@ import android.util.Log;
 public class GraphMaxPullCirular extends Graph {
     String TAG = "Graph_Cirular_Debug";
     float thickness = 50;
-    float elevationCadran=0; //en pixel
+    float elevationCadran = 0; //en pourcentage 1 = 100%
+    float elevationRatio; //en pourcentage 1 = 100%
     float angleDebutFin; //  en degrée
     float epaisseurCadran; //  ratio du rayon (entre 0 et 1)
     float ratioMax;
     float ratioMoy;
+    float graduation; //en kilo
 
     int colorInf;
     int colorMoy;
     int colorSup ;
     int colorCadran;
     int colorBackground ;
-    int colorTrai10Kg ;
+    int colorGraduation ;
 
     boolean showLastPull;
+    boolean graduationTextOn;
 
     Bitmap needle = BitmapFactory.decodeResource(getResources(),R.drawable.needle_512);
 
@@ -39,20 +43,25 @@ public class GraphMaxPullCirular extends Graph {
 
         TypedArray a=getContext().obtainStyledAttributes(attrs,R.styleable.GraphMaxPullCirular);
         //Use a
-        elevationCadran = a.getFloat(R.styleable.GraphMaxPullCirular_custom_elevationCadran, 0);
+        elevationRatio = a.getFloat(R.styleable.GraphMaxPullCirular_custom_elevationRatio, 0);
         ratioMax = a.getFloat(R.styleable.GraphMaxPullCirular_custom_ratioMax, 0.9f);
         ratioMoy = a.getFloat(R.styleable.GraphMaxPullCirular_custom_ratioMoy, 0.5f);
         epaisseurCadran = a.getFloat(R.styleable.GraphMaxPullCirular_custom_epaisseurCadran, 0.15f);
+        graduation = a.getFloat(R.styleable.GraphMaxPullCirular_custom_graduation, 10f);
+
         colorCadran = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorCadran,  Color.rgb(230,230,230));
         colorInf = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorInf, Color.rgb(0,190 ,0));
         colorMoy = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorMoy, Color.rgb(255,106,0));
         colorSup = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorSup, Color.rgb(255,0,0));
         colorBackground = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorBackground, Color.WHITE);
-        colorTrai10Kg = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorTrai10Kg, Color.GRAY);
+        colorGraduation = a.getColor(R.styleable.GraphMaxPullCirular_custom_colorGraduation, Color.GRAY);
+
         showLastPull = a.getBoolean(R.styleable.GraphMaxPullCirular_custom_showLastPull, true);
+        graduationTextOn = a.getBoolean(R.styleable.GraphMaxPullCirular_custom_graduationTextOn, true);
 
         //Don't forget this
         a.recycle();
+
     }
 
     @Override
@@ -69,6 +78,10 @@ public class GraphMaxPullCirular extends Graph {
             poid =60;
         else
             poid = Res.poids;
+
+
+        //elevation cadran
+        elevationCadran = height * elevationRatio;
 
         //calcul du rayon
         int r;
@@ -105,7 +118,7 @@ public class GraphMaxPullCirular extends Graph {
         canvas.drawOval(oval,p);
 
         //calcule du pull
-        float angle =(float)( (180+(angleDebutFin*2) * ratioMax) * (pull / poid));
+        float angle = (float) (swipeAngleCadran() * (pull / poid));
 
         //dessin du pull
         drawPullCadran(canvas, oval, pull);
@@ -116,22 +129,25 @@ public class GraphMaxPullCirular extends Graph {
             drawPullCadran(canvas, ovalLastPull, maxPull);
 
         //dessin bar record
-        barDeRccord(canvas,oval);
-        /*//all time
-        drawBar(canvas,oval,R.color.record, Res.currentPrehension.getAllTimeRecordPull().pull);
+        //barDeRccord(canvas,oval);
+        //all time
+        if(Res.currentPrehension.getAllTimeRecordPull() != null)
+            drawBar(canvas,oval,color(R.color.record), Res.currentPrehension.getAllTimeRecordPull().pull);
         //last session
-        drawBar(canvas,oval,R.color.last_session, Res.currentPrehension.getToDayPull().pull);
+        if(Res.currentPrehension.getToDayPull() != null)
+            drawBar(canvas,oval,color(R.color.last_session), Res.currentPrehension.getToDayPull().pull);
         //today
-        drawBar(canvas,oval,R.color.today_record, Res.currentPrehension.getToDayPull().pull);
+        if(Res.currentPrehension.getToDayPull() != null)
+            drawBar(canvas,oval,color(R.color.today_record), Res.currentPrehension.getToDayPull().pull);
         //max pull
-        drawBar(canvas,oval,Color.BLACK, maxPull);*/
+        drawBar(canvas,oval,Color.BLACK, maxPull);
 
-
-        //ligne tout les 10kg
-        double kiloAngle =  (180+(2*angleDebutFin) * ratio) /  poid;
-        p.setColor(colorTrai10Kg);
-        for(double i = 10; i < poid+11 ; i+=10){
-            canvas.drawArc(oval, 180-angleDebutFin+(float)(i*kiloAngle), 0.4f, true, p);
+        //ligne tout les graduation kg
+        double kiloAngle =  swipeAngleCadran() /  poid;
+        p.setColor(colorGraduation);
+        for(double i = graduation; i < poid+graduation+1 ; i+=graduation){
+            float angleTrait = 180-angleDebutFin+(float)(i*kiloAngle);
+            canvas.drawArc(oval, angleTrait, 0.4f, true, p);
         }
 
         //dessiner le maske
@@ -140,6 +156,32 @@ public class GraphMaxPullCirular extends Graph {
 
         canvas.drawArc(oval, 180-angleDebutFin, (-180+angleDebutFin*2), true, p);
 
+        //afficher text sur les graduation
+        if(graduationTextOn){
+            p.setColor(colorGraduation);
+            p.setTextSize(30);
+            float centerX = left + r;
+            float centerY = elevationCadran;
+            float distanceText = r-thickness-50;
+            for(double i = graduation; i < poid+graduation+1 ; i+=graduation){
+                float angleTrait = 180-angleDebutFin+(float)(i*kiloAngle);
+
+                float tX = (float) (Math.cos(Math.toRadians(angleTrait)) * distanceText);
+                if(angleTrait < 90)
+                    tX = -tX;
+
+                float tY = (float) (Math.sin(Math.toRadians(angleTrait)) * distanceText);
+                if(angleTrait < 0)
+                    tY = -tY;
+
+                Path path = new Path();
+                float decalagePath = 30;
+                path.addArc(left+thickness+decalagePath, top + thickness+decalagePath, right - thickness- decalagePath, bottom - thickness - decalagePath, angleTrait - 2,20);
+                //canvas.drawText(i+"Kg",centerX+tX, height-centerY+tY,p);
+                canvas.drawTextOnPath((int)i+"", path, 0,0,p);
+
+            }
+        }
         //dessiner l'oval autour
         /*p.setColor(Color.BLACK);
         p.setStyle(Paint.Style.STROKE);
@@ -173,21 +215,22 @@ public class GraphMaxPullCirular extends Graph {
         p.setStyle(Paint.Style.FILL);
 
         p.setColor(colorInf);
-        float angle =(float)( (180+(angleDebutFin*2) * ratioMax) * (pull / poid));
+        float angle = (float) (swipeAngleCadran() * (pull / poid));
         canvas.drawArc(oval, 180-angleDebutFin , angle, true, p);
 
         if(pull >= poid*ratioMoy ){
-            float starAngle = (float)( (180+(2*angleDebutFin) * ratioMax) * ratioMoy);
+            float starAngle = swipeAngleCadran() * ratioMoy;
             p.setColor(colorMoy);
             canvas.drawArc(oval, 180-angleDebutFin+starAngle, angle-starAngle, true, p);
         }
 
         if(pull >= poid){
-            float starAngle = (float)( (180+(2*angleDebutFin) * ratioMax) );
+            float starAngle = swipeAngleCadran();
             p.setColor(colorSup);
             canvas.drawArc(oval, 180-angleDebutFin+starAngle, angle-starAngle, true, p);
         }
     }
+
 
     void barDeRccord(Canvas c, RectF o){
         //Bar Record
@@ -222,9 +265,14 @@ public class GraphMaxPullCirular extends Graph {
 
     void drawBar(Canvas c, RectF o, int color, double barPull){
         p.setColor(color);
-        float a = ((float)( (180+(angleDebutFin*2) * ratio) * (barPull / poid)))- angleDebutFin;
-        c.drawArc(o, a+180,0.8f,true, p);
+        //float a = ((float)( (180+(angleDebutFin*2) * ratio) * (barPull / poid)))- angleDebutFin;
+        //c.drawArc(o, a+180,0.8f,true, p);
+
+        float angle = (float) (swipeAngleCadran() * (barPull / poid));
+        c.drawArc(o, angle-180-angleDebutFin , 0.8f, true, p);
     }
 
-
+    float swipeAngleCadran(){
+        return (float)((180+angleDebutFin*2) * ratioMax);
+    }
 }

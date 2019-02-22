@@ -18,4 +18,5 @@
     <color name="DarkTheme_backGroundColor">#585858</color>
     <color name="DarkTheme_couleur_menu">#494949</color>
     <color name="DarkTheme_couleur_bouton">#494949</color>
+    <color name="test">#cccccc</color>
 </resources>
