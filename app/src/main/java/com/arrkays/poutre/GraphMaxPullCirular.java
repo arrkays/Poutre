@@ -165,29 +165,19 @@ public class GraphMaxPullCirular extends Graph {
         //afficher text sur les graduation
         if(graduationTextOn){
             p.setColor(colorGraduationTexe);
-            p.setTextSize(30);
-            float centerX = left + r;
-            float centerY = elevationCadran;
-            float distanceText = r-thickness-50;
+            p.setTextSize(40);
+            p.setTextAlign(Paint.Align.CENTER);
             for(double i = graduation; i < poid+graduation+1 ; i+=graduation){
                 float angleTrait = 180-angleDebutFin+(float)(i*kiloAngle);
 
-                float tX = (float) (Math.cos(Math.toRadians(angleTrait)) * distanceText);
-                if(angleTrait < 90)
-                    tX = -tX;
-
-                float tY = (float) (Math.sin(Math.toRadians(angleTrait)) * distanceText);
-                if(angleTrait < 0)
-                    tY = -tY;
-
                 Path path = new Path();
-                float decalagePath = 30;
-                path.addArc(left+thickness+decalagePath, top + thickness+decalagePath, right - thickness- decalagePath, bottom - thickness - decalagePath, angleTrait - 2,20);
-                //canvas.drawText(i+"Kg",centerX+tX, height-centerY+tY,p);
+                float decalagePath = 38;
+                path.addArc(left+thickness+decalagePath, top + thickness+decalagePath, right - thickness- decalagePath, bottom - thickness - decalagePath, angleTrait - 10,20);
                 canvas.drawTextOnPath((int)i+"", path, 0,0,p);
 
             }
         }
+
         //dessiner l'oval autour
         /*p.setColor(Color.BLACK);
         p.setStyle(Paint.Style.STROKE);
