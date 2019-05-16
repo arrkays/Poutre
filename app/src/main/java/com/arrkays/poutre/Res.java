@@ -48,6 +48,16 @@ public class Res {
      */
     public static int CHANGE_VALUE_MAX_PULL=6;
 
+    /**
+     * valeur de chaque capteur en kg
+     * capteur [↙,↖,↗,↘]
+     */
+    static double capteurs[] = {0,0,0,0};
+
+    /**
+     * coef pour ajuster les capteur
+     */
+    static public double coef[] = {1,1,1,1};
 
     /**
      * poid de l'utilisateur

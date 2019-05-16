@@ -29,6 +29,7 @@ import static android.os.SystemClock.sleep;
 public class BT {
     boolean connected = false;
 
+
     String TAG = "debug-bluetooth";
 
     final UUID serviceUUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
@@ -181,24 +182,8 @@ public class BT {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            double weight;
-                            try {
-                                weight = Double.parseDouble(byteToString(characteristic.getValue()));
-                            }
-                            catch(NumberFormatException e){
-                                weight = 0;
-                            }
-                        /*Message msg= new Message();
-                        msg.arg1=Res.BT_DATA;
-                        msg.obj=weight;
-                        ma.myHandler.sendMessage(msg);*/
-                            if(weight < 0){
-                                //TODO ERROR?
-                            }
-                            else{
-                                Res.weightNotif.updateWeight(weight, WeightFunctions.comportement(weight));
-                                Res.currentWeight = weight;
-                            }
+                            eval2(characteristic.getValue());
+                            dataReceived();
                         }
                     }).start();
                 }
@@ -245,5 +230,47 @@ public class BT {
             msg += (char)(b & 0xFF);
         }
         return msg;
+    }
+
+    void dataReceived(){
+        double w = Res.capteurs[0] + Res.capteurs[1] + Res.capteurs[2] + Res.capteurs[3];
+        Res.weightNotif.updateWeight(w, WeightFunctions.comportement(w));
+        Res.currentWeight = w;
+    }
+
+
+
+    void eval2(byte tabByte[]){
+        double res = 0;
+        for(int i = 0; i < tabByte.length; i++){
+            if(i%2 == 0){
+                res = 0;
+                res += unsignedToBytes(tabByte[i]) * 256;
+            }
+            else{
+                res += unsignedToBytes(tabByte[i]);
+                Res.capteurs[i/2] = Res.round((res /10) * Res.coef[i/2],1);
+            }
+        }
+    }
+
+    void logTab (byte tab[]){
+        int i = 0;
+        for(Object o : tab){
+            Log.d(TAG, "tab "+i + " : " + o.toString());
+            i++;
+        }
+    }
+
+    void logTab (double tab[]){
+        int i = 0;
+        for(Object o : tab){
+            Log.d(TAG, "tab "+i + " : " + o.toString());
+            i++;
+        }
+    }
+
+    public static int unsignedToBytes(byte b) {
+        return b & 0xFF;
     }
 }

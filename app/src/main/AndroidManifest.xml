@@ -25,6 +25,8 @@
         </activity>
         <activity android:name=".SuspensionsActivity" >
         </activity>
+        <activity android:name=".Monitor" >
+        </activity>
 
     </application>
 

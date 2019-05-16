@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
     android:id="@+id/navigationMenu"
     android:layout_width="wrap_content"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/shape_navigation_menu"
     android:elevation="12dp"
     android:visibility="gone"
+
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/menu">
 
@@ -17,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/button_Settings"
         app:layout_constraintEnd_toStartOf="@+id/button_Settings"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,6 +34,7 @@
         android:layout_marginEnd="8dp"
         android:backgroundTintMode="screen"
         android:text="Paramètres"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/suspensionsButton" />
 
@@ -42,8 +46,32 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="Suspensions"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@+id/navigationMenu"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_Monitor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Monitor"
+        app:layout_constraintBottom_toTopOf="@+id/button_mainActivity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_Settings" />
+
+    <Button
+        android:id="@+id/button_mainActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Main activity"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

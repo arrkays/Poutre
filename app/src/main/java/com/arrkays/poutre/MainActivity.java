@@ -3,6 +3,7 @@ package com.arrkays.poutre;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -19,8 +20,10 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     Button toggleSelectPrise = null;
     Button buttonHistoric = null;
     Button buttonRazTodayPull = null;
-    Button button_settings;  // bouton pour aller dans l'activité des paramètres
+    //Button button_settings;  // bouton pour aller dans l'activité des paramètres
 
     ProgressBar loaderMonPoids = null;
 
@@ -133,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
 
         //on met un reference de this dans les ressource
         Res.ma = this;
-
         //instanciation des Views
         graph = findViewById(R.id.graph);
         monPoid = findViewById(R.id.monPoid);
@@ -170,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         lastPullPull = findViewById(R.id.lastPullTextView);
         lastPullPourc = findViewById(R.id.lastPullPourc);
         containerInfoPrise = findViewById(R.id.containerInfoPrise);
-        button_settings = findViewById(R.id.button_Settings);
+        //button_settings = findViewById(R.id.button_Settings);
 
         graph.handler = myHandler;
 
@@ -242,38 +244,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //*************************************************************************EVENT********************************************************************
+
     private void event(){
+        //Meun navigation
+        addMenuEvent(this);
+
         //bouton pour ouvrir le menue
-        showMenuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(navigationMenu.getVisibility()== View.GONE) {
-                    setMenuOn();
-                }
-                else {
-                    navigationMenu.setVisibility(View.GONE);
-                    setMenuOff();
-                }
-            }
-        });
-        button_settings.setOnClickListener(new View.OnClickListener() {
+
+        /*button_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 MainActivity.this.startActivity(myIntent);
                 navigationMenu.setVisibility(View.GONE);
             }
-        });
+        });*/
 
         //bluetooth
-        bluetoothOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                blutoothManager.connect();
-            }
-        });
 
-        suspensionsButton.setOnClickListener(new View.OnClickListener() {
+
+        /*suspensionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, SuspensionsActivity.class);
@@ -281,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(myIntent);
                 navigationMenu.setVisibility(View.GONE);
             }
-        });
+        });*/
 
         //mesure poid
         monPoid.setOnClickListener(new View.OnClickListener() {
@@ -393,34 +383,7 @@ public class MainActivity extends AppCompatActivity {
     //MENU *********************************************************************MENU****************************************************************MENU
     //MENU *********************************************************************MENU****************************************************************MENU
     //MENU *********************************************************************MENU****************************************************************MENU
-    private void setMenuOn(){
-        //positionement AXE Z elevation
-        navigationMenu.setElevation(35);
-        mask.setElevation(34);
 
-        //Action du mask
-        mask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setMenuOff();
-            }
-        });
-
-        mask.setVisibility(View.VISIBLE);
-
-        //TODO animation
-        navigationMenu.setVisibility(View.VISIBLE);
-    }
-
-    private void setMenuOff(){
-        mask.setVisibility(View.GONE);
-
-        //TODO anmiation
-        navigationMenu.setVisibility(View.GONE);
-
-        //positionement AXE Z elevation
-        navigationMenu.setElevation(10);
-    }
 
     //***********************************************************************************poids**************************************************************************************
     //***********************************************************************************poids**************************************************************************************
@@ -1201,6 +1164,160 @@ public class MainActivity extends AppCompatActivity {
         Intent myIntent = new Intent(MainActivity.this, SuspensionsActivity.class);
         //myIntent.putExtra("key", value); //Optional parameters
         MainActivity.this.startActivity(myIntent);
+    }
+
+    /**
+     * ajoute les evenements sur les buttons du menu
+     * include des menue doivent etre fait au paravent:
+     *     <include layout="@layout/menu" />
+     *     <include layout="@layout/navigation_menu" />
+     *     <include layout="@layout/mask" />
+     * @param a context (activité)
+     */
+    public static void addMenuEvent(final AppCompatActivity a){
+
+        Button showMenuButton = a.findViewById(R.id.showMenu);
+        final ConstraintLayout navigationMenu = a.findViewById(R.id.navigationMenu);
+
+        showMenuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(navigationMenu.getVisibility()== View.GONE) {
+                    setMenuOn(a);
+                }
+                else {
+                    navigationMenu.setVisibility(View.GONE);
+                    setMenuOff(a);
+                }
+            }
+        });
+
+        ImageView bluetoothOff = a.findViewById(R.id.bluetoothNotActiv);
+
+        bluetoothOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Res.ma.blutoothManager.connect();
+            }
+        });
+
+        addMenuNavigationEvent(a);
+    }
+
+    /**
+     * ajoute les evenements sur les buttons du menue navigation
+     * include des menue doivent etre fait au paravent:
+     *     <include layout="@layout/menu" />
+     *     <include layout="@layout/navigation_menu" />
+     *     <include layout="@layout/mask" />
+     * @param a context (activité)
+     */
+    private static void addMenuNavigationEvent(final AppCompatActivity a){
+        final ConstraintLayout navigationMenu = a.findViewById(R.id.navigationMenu);
+
+        //Monitor
+        Button buttonMonitor = a.findViewById(R.id.button_Monitor);
+        buttonMonitor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(a, Monitor.class);
+                //myIntent.putExtra("key", value); //Optional parameters
+                a.startActivity(myIntent);
+            }
+        });
+
+        //setting
+        Button button_settings = a.findViewById(R.id.button_Settings);
+        button_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(a, SettingsActivity.class);
+                a.startActivity(myIntent);
+                navigationMenu.setVisibility(View.GONE);
+            }
+        });
+
+        Button suspensionsButton = a.findViewById(R.id.suspensionsButton);
+        suspensionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(a, SuspensionsActivity.class);
+                //myIntent.putExtra("key", value); //Optional parameters
+                a.startActivity(myIntent);
+                navigationMenu.setVisibility(View.GONE);
+            }
+        });
+
+        Button button_mainActivity = a.findViewById(R.id.button_mainActivity);
+        button_mainActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(a, MainActivity.class);
+                //myIntent.putExtra("key", value); //Optional parameters
+                a.startActivity(myIntent);
+                navigationMenu.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private static void addMenu(final AppCompatActivity a){
+
+        //include Menu
+        View menu = LayoutInflater.from(a).inflate(R.layout.menu, null);
+        ConstraintLayout.LayoutParams paramsMenu = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+        paramsMenu.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+        a.addContentView(menu, paramsMenu);
+
+        //include navigation menu
+        View navigation_menu = LayoutInflater.from(a).inflate(R.layout.navigation_menu, null);
+        ConstraintLayout.LayoutParams paramsNavMenu = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+        paramsNavMenu.bottomToTop = R.id.menu;
+        paramsNavMenu.endToEnd = R.id.container_main;
+        a.addContentView(navigation_menu, paramsNavMenu);
+
+        //include navigation menu
+        View mask = LayoutInflater.from(a).inflate(R.layout.mask, null);
+        ConstraintLayout.LayoutParams paramsMask = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT);
+        a.addContentView(mask, paramsMask);
+
+        addMenuEvent(a);
+    }
+
+
+
+    static private void setMenuOn(final AppCompatActivity a){
+        ConstraintLayout navigationMenu = a.findViewById(R.id.navigationMenu);
+        ConstraintLayout mask = a.findViewById(R.id.mask);
+
+        //positionement AXE Z elevation
+        navigationMenu.setElevation(35);
+        mask.setElevation(34);
+
+        //Action du mask
+        mask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMenuOff(a);
+            }
+        });
+
+        mask.setVisibility(View.VISIBLE);
+
+        //TODO animation
+        navigationMenu.setVisibility(View.VISIBLE);
+    }
+
+    static private void setMenuOff(final AppCompatActivity a){
+        ConstraintLayout navigationMenu = a.findViewById(R.id.navigationMenu);
+        ConstraintLayout mask = a.findViewById(R.id.mask);
+
+        mask.setVisibility(View.GONE);
+
+        //TODO anmiation
+        navigationMenu.setVisibility(View.GONE);
+
+        //positionement AXE Z elevation
+        navigationMenu.setElevation(10);
     }
 }
 
